@@ -6,8 +6,8 @@ on:
       - main
 
 jobs:
-  ktlint-detekt-kover:
-    name: ktlint-detekt-kover
+  push-checks:
+    name: Code check (ktlint, Detekt, SonaType, Kover)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -71,8 +71,8 @@ jobs:
           name: kover-report
           path: app/build/reports/kover/html/
 
-  android-lint:
-    name: android-lint
+  push-check-android-lint:
+    name: Code check (Android Lint only)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
