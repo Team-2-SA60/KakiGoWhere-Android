@@ -1,4 +1,4 @@
-package team2.kakigowhere_android
+package team2.kakigowhere
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

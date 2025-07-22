@@ -1,10 +1,16 @@
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("io.gitlab.arturbosch.detekt")
+    id("org.jetbrains.kotlinx.kover")
+    id("org.sonatype.gradle.plugins.scan")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 android {
-    namespace = "team2.kakigowhere_android"
+    namespace = "team2.kakigowhere"
     compileSdk = 36
 
     defaultConfig {
@@ -22,7 +28,7 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -48,4 +54,18 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+}
+
+ktlint {
+    reporters {
+        reporter(ReporterType.HTML)
+    }
+}
+
+val isCI = System.getenv("CI") == "true"
+
+if (!isCI) {
+    tasks.named("build") {
+        dependsOn("ktlintCheck", "detekt", "lint", "ossIndexAudit", "koverHtmlReport")
+    }
 }
