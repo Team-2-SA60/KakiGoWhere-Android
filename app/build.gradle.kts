@@ -61,3 +61,11 @@ ktlint {
         reporter(ReporterType.HTML)
     }
 }
+
+val isCI = System.getenv("CI") == "true"
+
+if (!isCI) {
+    tasks.named("build") {
+        dependsOn("ktlintCheck", "detekt", "lint", "ossIndexAudit", "koverHtmlReport")
+    }
+}
