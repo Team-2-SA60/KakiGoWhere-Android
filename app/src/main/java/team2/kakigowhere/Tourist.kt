@@ -4,5 +4,5 @@ data class Tourist(
     val touristId: Long,
     val touristEmail: String,
     val touristPassword: String,
-    val touristName: String
+    val touristName: String,
 )
