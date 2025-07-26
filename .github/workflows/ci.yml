@@ -6,7 +6,7 @@ on:
 
 jobs:
   push-checks:
-    name: Code check (ktlint, Detekt, SonaType, Kover)
+    name: ktlint, Detekt, SonaType, Kover
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -33,45 +33,24 @@ jobs:
       - name: Run ktlint check
         run: ./gradlew ktlintCheck --continue
 
-      - name: Upload ktlint Results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ktlint-report
-          path: app/build/reports/ktlint/ktlintMainSourceSetCheck
-
       - name: Run Detekt (Static Code Analysis)
         run: ./gradlew detekt --continue
-
-      - name: Upload Detekt Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: detekt-report
-          path: app/build/reports/detekt/
 
       - name: Run SonaType (Software Composition Analysis)
         run: ./gradlew ossIndexAudit --continue
 
-      - name: Upload SonaType Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: sonatype-report
-          path: build/reports/problems/
-
       - name: Run Kover (Code Coverage)
         run: ./gradlew koverHtmlReport --continue
 
-      - name: Upload Kover Report
+      - name: Upload Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: kover-report
-          path: app/build/reports/kover/html/
+          name: all-reports
+          path: app/build/reports/
 
   push-check-android-lint:
-    name: Code check (Android Lint only)
+    name: Android Lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -105,7 +84,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lint-report
+          name: android-lint-report
           path: app/build/reports/lint-results-debug.html
 
       - name: Check for Gradle Failures
