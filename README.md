@@ -1,4 +1,4 @@
-#### Commands for local testing
+## Commands for local testing
 
 1. Run all tests (Lint + Software Composition Analysis + Static Code Analysis + Code Coverage)
 ```
@@ -12,11 +12,11 @@
 
 3. Kotlin Lint + Code formatter (ktlint)
 
-Check linting issues
+- Check linting issues
 ```
 ./gradlew ktlintCheck 
 ```
-Auto-Correct linting issues
+- Auto-Correct linting issues
 ```
 ./gradlew ktlintFormat 
 ```
