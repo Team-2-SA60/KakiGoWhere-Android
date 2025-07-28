@@ -8,8 +8,8 @@ data class Place (
     var description: String,
     var imagePath: String,
     var URL: String,
-    var openingHour: LocalTime,
-    var closingHour: LocalTime,
+    var openingHour: String, // to change to LocalTime after testing api
+    var closingHour: String, // to change to LocalTime after testing api
     var latitude: Double,
     var longitude: Double,
     var activeStatus: Boolean
