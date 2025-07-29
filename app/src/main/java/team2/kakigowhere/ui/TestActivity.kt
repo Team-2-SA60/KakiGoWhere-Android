@@ -1,14 +1,18 @@
 package team2.kakigowhere.ui
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.Place
@@ -40,6 +44,15 @@ class TestActivity : AppCompatActivity() {
                             Log.i("API Success", place.toString())
                             Log.i("API Success", "----------------------")
                         }
+                        var testPlace = places.get(0)
+                        testPlace.image?.let { image ->
+                            val bitmap = BitmapFactory.decodeByteArray(image.data, 0, image.data.size)
+                            withContext(Dispatchers.Main) {
+                                findViewById<ImageView>(R.id.test_image).setImageBitmap(bitmap)
+                            }
+                        }
+                    } else {
+                        Log.d("API Error", "Other issues with api call")
                     }
                 } catch (e: Exception) {
                     Log.d("API Error", "Cannot fetch from API")
