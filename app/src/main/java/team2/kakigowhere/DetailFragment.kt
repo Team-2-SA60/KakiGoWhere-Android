@@ -22,6 +22,7 @@ class DetailFragment : Fragment() {
         val backButton: TextView = view.findViewById(R.id.backButton)
         val websiteLink: TextView = view.findViewById(R.id.websiteLink)
 
+
         backButton.setOnClickListener {
             // Pops the current fragment off the back stack
             parentFragmentManager.popBackStack()
