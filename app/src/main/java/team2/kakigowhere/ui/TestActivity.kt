@@ -30,7 +30,6 @@ class TestActivity : AppCompatActivity() {
     private fun initButtons() {
         val apiBtn = findViewById<Button>(R.id.test_api)
         apiBtn.setOnClickListener {
-
             lifecycleScope.launch {
                 try {
                     val response = RetrofitClient.api.getPlaces()
@@ -46,7 +45,6 @@ class TestActivity : AppCompatActivity() {
                     Log.d("API Error", "Cannot fetch from API")
                     Log.d("API Error", e.toString())
                 }
-
             }
         }
     }

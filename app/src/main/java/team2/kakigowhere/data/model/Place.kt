@@ -1,8 +1,6 @@
 package team2.kakigowhere.data.model
 
-import java.time.LocalTime
-
-data class Place (
+data class Place(
     var id: Long,
     var name: String,
     var description: String,
@@ -12,5 +10,5 @@ data class Place (
     var closingHour: String, // to change to LocalTime after testing api
     var latitude: Double,
     var longitude: Double,
-    var activeStatus: Boolean
+    var activeStatus: Boolean,
 )
