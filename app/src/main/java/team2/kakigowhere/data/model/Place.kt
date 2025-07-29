@@ -4,7 +4,7 @@ data class Place(
     var id: Long,
     var name: String,
     var description: String,
-    var image: ImageDTO?,
+    var imagePath: String,
     var url: String,
     var openingHour: String, // to change to LocalTime after testing api
     var closingHour: String, // to change to LocalTime after testing api
@@ -13,8 +13,3 @@ data class Place(
     var active: Boolean,
 )
 
-data class ImageDTO(
-    var path: String,
-    var data: ByteArray,
-    var mimeType: String
-)
