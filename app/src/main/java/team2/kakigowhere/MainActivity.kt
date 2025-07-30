@@ -1,53 +1,39 @@
 package team2.kakigowhere
 
 import android.os.Bundle
+import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
 
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
+
         setContentView(R.layout.activity_main)
 
-        // Load the default fragment (e.g., Home)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, HomeFragment())
-            .commit()
-
-        // Set up custom bottom nav bar interactions
-        findViewById<LinearLayout>(R.id.nav_home).setOnClickListener {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, HomeFragment())
-                .commit()
+        // Adjust insets for the nav_home view
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_container)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
         }
 
-//        findViewById<LinearLayout>(R.id.nav_map).setOnClickListener {
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, MapFragment())
-//                .commit()
-//        }
-//
-//        findViewById<LinearLayout>(R.id.nav_explore).setOnClickListener {
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, ExploreFragment())
-//                .commit()
-//        }
-//
-//        findViewById<LinearLayout>(R.id.nav_saved).setOnClickListener {
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, SavedFragment())
-//                .commit()
-//        }
-//
-//        findViewById<LinearLayout>(R.id.nav_profile).setOnClickListener {
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, ProfileFragment())
-//                .commit()
-//        }
-
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, MainFragment())
+                .commit()
+        }
     }
 }
