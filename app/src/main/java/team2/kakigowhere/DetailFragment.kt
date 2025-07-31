@@ -3,11 +3,11 @@ package team2.kakigowhere
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 
 class DetailFragment : Fragment() {
 
@@ -23,10 +23,10 @@ class DetailFragment : Fragment() {
         val websiteLink: TextView = view.findViewById(R.id.websiteLink)
 
 
-        backButton.setOnClickListener {
-            // Pops the current fragment off the back stack
-            parentFragmentManager.popBackStack()
-        }
+//        backButton.setOnClickListener {
+//            // Pops the current fragment off the back stack
+//            parentFragmentManager.popBackStack()
+//        }
 
         websiteLink.setOnClickListener {
             val url = websiteLink.text.toString()
