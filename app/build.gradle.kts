@@ -7,6 +7,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover")
     id("org.sonatype.gradle.plugins.scan")
     id("org.jlleitschuh.gradle.ktlint")
+    id("org.jetbrains.kotlin.kapt")
 }
 
 android {
@@ -68,9 +69,12 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
 
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
 }
 
 ktlint {
