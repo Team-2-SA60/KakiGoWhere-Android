@@ -39,6 +39,8 @@ class TestActivity :
         when (v?.id) {
             R.id.test_api -> {
                 lifecycleScope.launch {
+                    //avoid detekt check
+                    @Suppress("TooGenericExceptionCaught")
                     try {
                         // api call to get list of all places
                         val response = RetrofitClient.api.getPlaces()
@@ -52,6 +54,8 @@ class TestActivity :
                                 val imageView =
                                     ImageView(this@TestActivity).apply {
                                         layoutParams =
+                                            //avoid detekt check
+                                            @Suppress("MagicNumber")
                                             ViewGroup.LayoutParams(
                                                 700, // set layout width (px)
                                                 500, // set layout height (px)

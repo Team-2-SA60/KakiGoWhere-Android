@@ -20,6 +20,7 @@ class ExploreFragment : Fragment() {
     private var currentFilteredPlaces: List<PlaceSuggestion> = listOf()
 
     // fake data
+    //avoid detekt check
     @Suppress("MagicNumber")
     private val originalPlaces =
         listOf(

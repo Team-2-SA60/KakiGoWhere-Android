@@ -17,7 +17,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root_layout)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0) // no bottom padding to account for bottom nav bar
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0)
+            // no bottom padding to account for bottom nav bar
             insets
         }
 
