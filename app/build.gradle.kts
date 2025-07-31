@@ -7,6 +7,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover")
     id("org.sonatype.gradle.plugins.scan")
     id("org.jlleitschuh.gradle.ktlint")
+    alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
 android {

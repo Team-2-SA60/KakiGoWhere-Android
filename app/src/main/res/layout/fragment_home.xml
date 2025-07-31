@@ -44,7 +44,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@drawable/outline_box"
+                android:background="@color/material_dynamic_neutral_variant90"
                 android:padding="8dp"
                 android:layout_marginTop="8dp">
 

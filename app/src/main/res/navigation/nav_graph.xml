@@ -15,9 +15,9 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="team2.kakigowhere.ui.MapFragment"
+        android:name="team2.kakigowhere.ui.MapsFragment"
         android:label="Map"
-        tools:layout="@layout/fragment_map">
+        tools:layout="@layout/fragment_maps">
     </fragment>
 
     <fragment
