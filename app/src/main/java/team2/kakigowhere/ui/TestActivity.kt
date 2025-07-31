@@ -39,7 +39,7 @@ class TestActivity :
         when (v?.id) {
             R.id.test_api -> {
                 lifecycleScope.launch {
-                    //avoid detekt check
+                    // avoid detekt check
                     @Suppress("TooGenericExceptionCaught")
                     try {
                         // api call to get list of all places
@@ -54,7 +54,7 @@ class TestActivity :
                                 val imageView =
                                     ImageView(this@TestActivity).apply {
                                         layoutParams =
-                                            //avoid detekt check
+                                            // avoid detekt check
                                             @Suppress("MagicNumber")
                                             ViewGroup.LayoutParams(
                                                 700, // set layout width (px)

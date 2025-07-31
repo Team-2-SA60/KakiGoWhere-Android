@@ -36,10 +36,10 @@ class PlaceAdapter(
     ) {
         val place = places[position]
         holder.tvName.text = place.name
-        //avoid detekt check
+        // avoid detekt check
         @Suppress("MagicNumber")
         holder.tvRating.text = "${place.rating} " + "★".repeat(place.rating.toInt()) +
-                if (place.rating % 1 >= 0.5) "½" else ""
+            if (place.rating % 1 >= 0.5) "½" else ""
         holder.tvCategory.text = "Category: ${place.category}"
         holder.imgPlace.setImageResource(place.imageResId)
     }

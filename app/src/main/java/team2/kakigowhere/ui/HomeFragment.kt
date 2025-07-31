@@ -29,7 +29,7 @@ class HomeFragment : Fragment() {
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerSuggestions)
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
-        //avoid detekt check
+        // avoid detekt check
         @Suppress("MagicNumber")
         val suggestions =
             listOf(
