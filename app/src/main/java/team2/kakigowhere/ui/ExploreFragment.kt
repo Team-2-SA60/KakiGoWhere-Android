@@ -20,6 +20,7 @@ class ExploreFragment : Fragment() {
     private var currentFilteredPlaces: List<PlaceSuggestion> = listOf()
 
     // fake data
+    @Suppress("MagicNumber")
     private val originalPlaces =
         listOf(
             PlaceSuggestion("Marina Bay Sands", 4.2, "Entertainment, Shopping", R.drawable.marina_bay_sands),
