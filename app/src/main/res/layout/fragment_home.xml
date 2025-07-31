@@ -102,6 +102,5 @@
 
         </LinearLayout>
     </ScrollView>
-    <!-- Bottom Navigation Bar -->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
