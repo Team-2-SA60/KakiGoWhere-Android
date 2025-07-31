@@ -5,26 +5,48 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
+    <!-- fragments in main navigation bar -->
     <fragment
         android:id="@+id/homeFragment"
-        android:name="team2.kakigowhere.HomeFragment"
+        android:name="team2.kakigowhere.ui.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
     </fragment>
 
     <fragment
+        android:id="@+id/mapFragment"
+        android:name="team2.kakigowhere.ui.MapFragment"
+        android:label="Map"
+        tools:layout="@layout/fragment_map">
+    </fragment>
+
+    <fragment
+        android:id="@+id/exploreFragment"
+        android:name="team2.kakigowhere.ui.ExploreFragment"
+        android:label="Explore"
+        tools:layout="@layout/fragment_explore">
+    </fragment>
+
+    <fragment
+        android:id="@+id/savedFragment"
+        android:name="team2.kakigowhere.ui.SavedFragment"
+        android:label="Saved"
+        tools:layout="@layout/fragment_saved">
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="team2.kakigowhere.ui.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
+    </fragment>
+
+    <!-- fragments for sub screens -->
+    <fragment
         android:id="@+id/detailFragment"
         android:name="team2.kakigowhere.DetailFragment"
         android:label="Details"
         tools:layout="@layout/fragment_detail">
-    </fragment>
-
-    <fragment
-        android:id="@+id/mapFragment"
-        android:name="team2.kakigowhere.MapFragment"
-        android:label="Map"
-        tools:layout="@layout/fragment_map">
-
     </fragment>
 
 </navigation>
