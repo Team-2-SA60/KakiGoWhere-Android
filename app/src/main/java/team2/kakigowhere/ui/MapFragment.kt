@@ -8,9 +8,13 @@ import androidx.fragment.app.Fragment
 import team2.kakigowhere.R
 
 class MapFragment : Fragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? = inflater.inflate(R.layout.fragment_map, container, false)
+        savedInstanceState: Bundle?
+    ) : View? {
+        return inflater.inflate(R.layout.fragment_map, container, false)
+    }
+
 }
