@@ -18,7 +18,9 @@ import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.Place
 
-class TestActivity : AppCompatActivity(), View.OnClickListener {
+class TestActivity :
+    AppCompatActivity(),
+    View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -47,16 +49,19 @@ class TestActivity : AppCompatActivity(), View.OnClickListener {
 
                             places.forEach { place ->
                                 // initialise Image View for each place
-                                val imageView = ImageView(this@TestActivity).apply {
-                                    layoutParams = ViewGroup.LayoutParams(
-                                        700, // set layout width (px)
-                                        500  // set layout height (px)
-                                    )
-                                }
+                                val imageView =
+                                    ImageView(this@TestActivity).apply {
+                                        layoutParams =
+                                            ViewGroup.LayoutParams(
+                                                700, // set layout width (px)
+                                                500, // set layout height (px)
+                                            )
+                                    }
 
                                 // use Glide to call image and set Image View
                                 val imagePath = ApiConstants.IMAGE_URL + place.imagePath
-                                Glide.with(this@TestActivity)
+                                Glide
+                                    .with(this@TestActivity)
                                     .load(imagePath)
                                     .into(imageView)
 

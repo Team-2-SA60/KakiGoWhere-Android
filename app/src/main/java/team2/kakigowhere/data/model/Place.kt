@@ -12,4 +12,3 @@ data class Place(
     var longitude: Double,
     var active: Boolean,
 )
-
