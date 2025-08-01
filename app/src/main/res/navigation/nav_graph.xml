@@ -5,6 +5,9 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
+    <include app:graph="@navigation/login_nav_graph" />
+
+
     <!-- fragments in main navigation bar -->
     <fragment
         android:id="@+id/homeFragment"
