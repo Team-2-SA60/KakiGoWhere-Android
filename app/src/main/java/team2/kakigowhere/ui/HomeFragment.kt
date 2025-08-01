@@ -38,7 +38,6 @@ class HomeFragment : Fragment() {
                 imageUrl = place.imagePath // Use imageUrl here!
             )
         }
-
         recycler.adapter = PlaceAdapter(suggestions)
     }
 }
