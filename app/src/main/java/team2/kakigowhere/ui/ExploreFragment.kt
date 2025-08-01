@@ -11,6 +11,7 @@ import team2.kakigowhere.PlaceAdapter
 import team2.kakigowhere.PlaceSuggestion
 import team2.kakigowhere.R
 import team2.kakigowhere.databinding.FragmentExploreBinding
+import team2.kakigowhere.FakePlacesData
 
 class ExploreFragment : Fragment() {
     private var _binding: FragmentExploreBinding? = null
@@ -21,14 +22,23 @@ class ExploreFragment : Fragment() {
 
     // fake data
     // avoid detekt check
+    //now able to use a pool of fake data and get results from there rather than hard coding.
     @Suppress("MagicNumber")
     private val originalPlaces =
-        listOf(
-            PlaceSuggestion("Marina Bay Sands", 4.2, "Entertainment, Shopping", R.drawable.marina_bay_sands),
-            PlaceSuggestion("Singapore Zoo", 4.5, "Wildlife and Zoos", R.drawable.marina_bay_sands),
-            PlaceSuggestion("Sentosa", 4.0, "Entertainment", R.drawable.marina_bay_sands),
-            PlaceSuggestion("Sands Marina", 4.7, "Shopping", R.drawable.marina_bay_sands),
-        )
+        FakePlacesData.getPlaces().map { place ->
+            PlaceSuggestion(
+                name = place.name,
+                rating = 4.0, // You can change this if rating is available
+                category = "placeholder", // Add real category if needed
+                imageUrl = place.imagePath // Use imageUrl here!
+            )
+        }
+//        listOf(
+//            PlaceSuggestion("Marina Bay Sands", 4.2, "Entertainment, Shopping", R.drawable.marina_bay_sands),
+//            PlaceSuggestion("Singapore Zoo", 4.5, "Wildlife and Zoos", R.drawable.marina_bay_sands),
+//            PlaceSuggestion("Sentosa", 4.0, "Entertainment", R.drawable.marina_bay_sands),
+//            PlaceSuggestion("Sands Marina", 4.7, "Shopping", R.drawable.marina_bay),
+//        )
 
     override fun onCreateView(
         inflater: LayoutInflater,
