@@ -58,6 +58,7 @@ class MapsFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 Log.d("API Error", "Error fetching from API")
+                Log.d("API Error", e.toString())
             }
         }
     }

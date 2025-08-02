@@ -1,15 +1,18 @@
 package team2.kakigowhere.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 import team2.kakigowhere.R
-import team2.kakigowhere.data.model.Itinerary
-import java.time.LocalDate
+import team2.kakigowhere.data.api.RetrofitClient
+import team2.kakigowhere.data.model.ItineraryDTO
 
 class SavedFragment : Fragment() {
 
@@ -23,20 +26,38 @@ class SavedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var itineraryList = mutableListOf<Itinerary>(
-            Itinerary(1, "My awesome itinerary", LocalDate.of(2025, 8, 1)),
-            Itinerary(2, "My good itinerary", LocalDate.of(2025, 8, 7)),
-            Itinerary(3, "My bad itinerary", LocalDate.of(2025, 8, 12))
-        )
+        // mock email
+        var touristEmail = "cy@kaki.com"
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.itinerary_list)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        var itineraryList = mutableListOf<ItineraryDTO>()
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitClient.api.getItineraries(touristEmail)
+                if (response.isSuccessful && response.body() != null) {
+                    itineraryList = response.body()!!.toMutableList()
+                    Log.d("API PRINT", itineraryList.toString())
+                }
 
-        val adapter = ItineraryAdapter(itineraryList) { item ->
-            //  openItineraryDetail()
+                val recyclerView = view.findViewById<RecyclerView>(R.id.itinerary_list)
+                recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+                val adapter = ItineraryAdapter(this@SavedFragment, itineraryList) { item ->
+                    //  openItineraryDetail()
+                }
+
+                recyclerView.adapter = adapter
+            } catch (e: Exception) {
+                Log.d("API Error", "Error fetching itineraries")
+                Log.d("API Error", e.toString())
+            }
         }
 
-        recyclerView.adapter = adapter
+//        var itineraryList = mutableListOf<Itinerary>(
+//            Itinerary(1, "My awesome itinerary", LocalDate.of(2025, 8, 1)),
+//            Itinerary(2, "My good itinerary", LocalDate.of(2025, 8, 7)),
+//            Itinerary(3, "My bad itinerary", LocalDate.of(2025, 8, 12))
+//        )
+
     }
 
 }
