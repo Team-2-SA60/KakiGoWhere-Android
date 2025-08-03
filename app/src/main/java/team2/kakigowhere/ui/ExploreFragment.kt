@@ -8,8 +8,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import team2.kakigowhere.PlaceAdapter
-import team2.kakigowhere.PlaceSuggestion
-import team2.kakigowhere.R
+import team2.kakigowhere.PlaceRowItem
 import team2.kakigowhere.databinding.FragmentExploreBinding
 import team2.kakigowhere.FakePlacesData
 
@@ -18,7 +17,7 @@ class ExploreFragment : Fragment() {
     val binding get() = _binding!!
 
     private lateinit var adapter: PlaceAdapter
-    private var currentFilteredPlaces: List<PlaceSuggestion> = listOf()
+    private var currentFilteredPlaces: List<PlaceRowItem> = listOf()
 
     // fake data
     // avoid detekt check
@@ -26,11 +25,10 @@ class ExploreFragment : Fragment() {
     @Suppress("MagicNumber")
     private val originalPlaces =
         FakePlacesData.getPlaces().map { place ->
-            PlaceSuggestion(
+            PlaceRowItem(
+                id = 1,
                 name = place.name,
                 rating = 4.0, // You can change this if rating is available
-                category = "placeholder", // Add real category if needed
-                imageUrl = place.imagePath // Use imageUrl here!
             )
         }
 //        listOf(
@@ -93,8 +91,7 @@ class ExploreFragment : Fragment() {
             // search name or category
             val filtered =
                 originalPlaces.filter {
-                    it.name.contains(query, ignoreCase = true) ||
-                            it.category.contains(query, ignoreCase = true)
+                    it.name.contains(query, ignoreCase = true)
                 }
 
             currentFilteredPlaces = filtered
