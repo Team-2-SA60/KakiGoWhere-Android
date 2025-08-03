@@ -19,8 +19,6 @@ import team2.kakigowhere.R
 import team2.kakigowhere.data.api.MLRetrofitClient
 import team2.kakigowhere.data.api.RecommendRequest
 import team2.kakigowhere.data.api.RetrofitClient
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 class HomeFragment : Fragment() {
     // mock interests for now
