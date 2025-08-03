@@ -27,6 +27,7 @@ class HomeFragment : Fragment() {
 
     private val prefs by lazy { requireContext().getSharedPreferences("recommendation_cache", 0) }
     private var loading = false
+    private var lastSubmittedIds: List<Long>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +53,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadRecommendations() {
-        if (hasLoadedOnce()) return
+        if (hasLoadedOnce() || loading) return
         loading = true
         markLoaded()
 
@@ -74,6 +75,7 @@ class HomeFragment : Fragment() {
             } catch (e: Exception) {
                 Log.e("HomeFragment", "recommend API failed", e)
                 fadeOutOverlay(overlay)
+                loading = false
                 return@launch
             }
 
@@ -85,15 +87,16 @@ class HomeFragment : Fragment() {
                 }
             }
 
-            if (suggestionItems.isEmpty()) {
-                fadeOutOverlay(overlay)
-                return@launch
+            if (suggestionItems.isNotEmpty()) {
+                if (lastSubmittedIds != fetchedIds) {
+                    adapter.submitList(suggestionItems)
+                    lastSubmittedIds = fetchedIds.toList()
+                }
+                saveIds(fetchedIds)
             }
 
-            adapter.submitList(suggestionItems)
-            saveIds(fetchedIds)
-            markLoaded()
             fadeOutOverlay(overlay)
+            loading = false
         }
     }
 
@@ -119,6 +122,7 @@ class HomeFragment : Fragment() {
 
             if (restored.isNotEmpty()) {
                 adapter.submitList(restored)
+                lastSubmittedIds = restored.map { it.id }
             }
             fadeOutOverlay(overlay)
         }
