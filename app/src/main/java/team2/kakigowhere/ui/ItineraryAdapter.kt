@@ -9,13 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
-import team2.kakigowhere.data.model.Itinerary
 import team2.kakigowhere.data.model.ItineraryDTO
 
 class ItineraryAdapter(
     private val context: SavedFragment,
     private val itineraryList: List<ItineraryDTO>,
-    private val onItemClick: (Itinerary) -> Unit
+    private val onItemClick: (ItineraryDTO) -> Unit
 ) : RecyclerView.Adapter<ItineraryAdapter.ItineraryViewHolder>() {
 
     inner class ItineraryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -45,7 +44,8 @@ class ItineraryAdapter(
             .into(holder.image)
 
         holder.title.text = itineraryItem.title
-        holder.dates.text = itineraryItem.startDate
+        holder.dates.text = itineraryItem.startDate + " ~ " + itineraryItem.getLastDate() + " · " + itineraryItem.days.toString() + " days"
+        holder.itemView.setOnClickListener { onItemClick(itineraryItem) }
     }
 
     override fun getItemCount(): Int = itineraryList.size

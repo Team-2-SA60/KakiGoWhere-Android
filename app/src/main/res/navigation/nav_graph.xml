@@ -32,6 +32,21 @@
         android:name="team2.kakigowhere.ui.SavedFragment"
         android:label="Saved"
         tools:layout="@layout/fragment_saved">
+
+        <action
+            android:id="@+id/action_savedFragment_to_savedItemFragment"
+            app:destination="@id/savedItemFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/savedItemFragment"
+        android:name="team2.kakigowhere.ui.ItineraryDetailFragment"
+        android:label="Saved Item"
+        tools:layout="@layout/fragment_itinerary_detail">
+
+        <argument
+            android:name="itinerary_id"
+            app:argType="long"/>
     </fragment>
 
     <fragment

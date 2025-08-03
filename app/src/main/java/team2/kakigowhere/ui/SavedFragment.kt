@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
@@ -42,7 +43,7 @@ class SavedFragment : Fragment() {
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
                 val adapter = ItineraryAdapter(this@SavedFragment, itineraryList) { item ->
-                    //  openItineraryDetail()
+                    launchSavedItemFragment(item.id)
                 }
 
                 recyclerView.adapter = adapter
@@ -51,13 +52,12 @@ class SavedFragment : Fragment() {
                 Log.d("API Error", e.toString())
             }
         }
+    }
 
-//        var itineraryList = mutableListOf<Itinerary>(
-//            Itinerary(1, "My awesome itinerary", LocalDate.of(2025, 8, 1)),
-//            Itinerary(2, "My good itinerary", LocalDate.of(2025, 8, 7)),
-//            Itinerary(3, "My bad itinerary", LocalDate.of(2025, 8, 12))
-//        )
-
+    private fun launchSavedItemFragment(itineraryId: Long) {
+        findNavController().navigate(
+            SavedFragmentDirections.actionSavedFragmentToSavedItemFragment(itineraryId)
+        )
     }
 
 }
