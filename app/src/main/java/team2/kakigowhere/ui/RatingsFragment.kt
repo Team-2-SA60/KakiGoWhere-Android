@@ -7,10 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.adapters.RatingsAdapter
 import team2.kakigowhere.databinding.FragmentRatingsBinding
@@ -42,6 +44,17 @@ class RatingsFragment : Fragment() {
         }
 
         if (!alreadyLoaded) {
+            loadRatings()
+        }
+
+        binding.btnWriteEdit.setOnClickListener {
+            // navigate to write/edit screen
+            findNavController().navigate(R.id.action_ratings_to_writeRating)
+        }
+
+        // handle result from fragment
+        parentFragmentManager.setFragmentResultListener("rating_updated", this) { _, _ ->
+            alreadyLoaded = false
             loadRatings()
         }
     }
