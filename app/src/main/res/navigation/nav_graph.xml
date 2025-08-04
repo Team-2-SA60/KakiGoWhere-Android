@@ -34,12 +34,20 @@
         tools:layout="@layout/fragment_saved">
     </fragment>
 
+
+<!--    change this out when profile is up-->
     <fragment
         android:id="@+id/profileFragment"
-        android:name="team2.kakigowhere.ui.ProfileFragment"
-        android:label="Profile"
-        tools:layout="@layout/fragment_profile">
+        android:name="team2.kakigowhere.ui.RatingsFragment"
+        android:label="Ratings"
+        tools:layout="@layout/fragment_ratings">
     </fragment>
+<!--    <fragment-->
+<!--        android:id="@+id/profileFragment"-->
+<!--        android:name="team2.kakigowhere.ui.ProfileFragment"-->
+<!--        android:label="Profile"-->
+<!--        tools:layout="@layout/fragment_profile">-->
+<!--    </fragment>-->
 
     <!-- fragments for sub screens -->
     <fragment
