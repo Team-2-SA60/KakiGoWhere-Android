@@ -1,34 +1,21 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import team2.kakigowhere.R
+import androidx.appcompat.app.AppCompatActivity
 import team2.kakigowhere.data.auth.AuthService
-import team2.kakigowhere.databinding.FragmentRegisterPage2Binding
+import team2.kakigowhere.databinding.ActivityRegisterPage2Binding
 
-class RegisterPage2Fragment : Fragment() {
+class RegisterPage2Activity : AppCompatActivity() {
 
-    private var _binding: FragmentRegisterPage2Binding? = null
-    private val binding get() = _binding!!
-    private val args: RegisterPage2FragmentArgs by navArgs()
+    private lateinit var binding: ActivityRegisterPage2Binding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentRegisterPage2Binding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityRegisterPage2Binding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setupBackButton()
         setupInterestSelection()
@@ -37,7 +24,7 @@ class RegisterPage2Fragment : Fragment() {
 
     private fun setupBackButton() {
         binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
+            finish() // 返回上一页
         }
     }
 
@@ -69,19 +56,26 @@ class RegisterPage2Fragment : Fragment() {
             val selectedInterests = getSelectedInterests()
 
             if (validateInterests(selectedInterests)) {
+                // 获取从第一页传递过来的数据
+                val name = intent.getStringExtra("name") ?: ""
+                val email = intent.getStringExtra("email") ?: ""
+                val password = intent.getStringExtra("password") ?: ""
+
                 // 注册用户
                 val result = AuthService.registerUser(
-                    name = args.name,
-                    email = args.email,
-                    password = args.password,
+                    name = name,
+                    email = email,
+                    password = password,
                     interests = selectedInterests
                 )
 
                 when (result) {
                     is AuthService.RegisterResult.Success -> {
-                        Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
                         // 注册成功后直接进入主页面
-                        findNavController().navigate(R.id.action_registerPage2Fragment_to_homeFragment)
+                        val intent = Intent(this, MainActivity::class.java)
+                        startActivity(intent)
+                        finish() // 结束注册Activity
                     }
                     is AuthService.RegisterResult.EmailAlreadyExists -> {
                         showError("Email already registered")
@@ -129,10 +123,5 @@ class RegisterPage2Fragment : Fragment() {
 
     private fun hideError() {
         binding.errorMessageText.visibility = View.INVISIBLE
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

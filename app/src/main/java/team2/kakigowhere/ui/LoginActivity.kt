@@ -1,32 +1,21 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import team2.kakigowhere.R
+import androidx.appcompat.app.AppCompatActivity
 import team2.kakigowhere.data.auth.AuthService
-import team2.kakigowhere.databinding.FragmentLoginBinding
+import team2.kakigowhere.databinding.ActivityLoginBinding
 
-class LoginFragment : Fragment() {
+class LoginActivity : AppCompatActivity() {
 
-    private var _binding: FragmentLoginBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityLoginBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setupLoginButton()
         setupSignUpButton()
@@ -52,9 +41,11 @@ class LoginFragment : Fragment() {
         when (result) {
             is AuthService.AuthResult.Success -> {
                 hideError()
-                // 导航到主页面
-                findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
+                // 跳转到主页面
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish() // 结束登录Activity，防止返回
+                Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
             }
             is AuthService.AuthResult.EmailNotFound -> {
                 showError("Email cannot found")
@@ -65,6 +56,13 @@ class LoginFragment : Fragment() {
         }
     }
 
+    private fun setupSignUpButton() {
+        binding.signUpButton.setOnClickListener {
+            val intent = Intent(this, RegisterPage1Activity::class.java)
+            startActivity(intent)
+        }
+    }
+
     private fun showError(message: String) {
         binding.errorMessageText.text = message
         binding.errorMessageText.visibility = View.VISIBLE
@@ -72,16 +70,5 @@ class LoginFragment : Fragment() {
 
     private fun hideError() {
         binding.errorMessageText.visibility = View.INVISIBLE
-    }
-
-    private fun setupSignUpButton() {
-        binding.signUpButton.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registerPage1Fragment)
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

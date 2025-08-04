@@ -1,31 +1,20 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import team2.kakigowhere.R
+import androidx.appcompat.app.AppCompatActivity
 import team2.kakigowhere.data.auth.AuthService
-import team2.kakigowhere.databinding.FragmentRegisterPage1Binding
+import team2.kakigowhere.databinding.ActivityRegisterPage1Binding
 
-class RegisterPage1Fragment : Fragment() {
+class RegisterPage1Activity : AppCompatActivity() {
 
-    private var _binding: FragmentRegisterPage1Binding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityRegisterPage1Binding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentRegisterPage1Binding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityRegisterPage1Binding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setupBackButton()
         setupRegisterButton()
@@ -33,7 +22,7 @@ class RegisterPage1Fragment : Fragment() {
 
     private fun setupBackButton() {
         binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
+            finish() // 返回上一页
         }
     }
 
@@ -45,13 +34,12 @@ class RegisterPage1Fragment : Fragment() {
             val confirmPassword = binding.confirmPasswordEditText.text.toString().trim()
 
             if (validateInputs(name, email, password, confirmPassword)) {
-                // 传递数据到第二页
-                val action = RegisterPage1FragmentDirections.actionRegisterPage1FragmentToRegisterPage2Fragment(
-                    name = name,
-                    email = email,
-                    password = password
-                )
-                binding.findNavController().navigate(action)
+                // 跳转到注册第二页，传递数据
+                val intent = Intent(this, RegisterPage2Activity::class.java)
+                intent.putExtra("name", name)
+                intent.putExtra("email", email)
+                intent.putExtra("password", password)
+                startActivity(intent)
             }
         }
     }
@@ -112,10 +100,5 @@ class RegisterPage1Fragment : Fragment() {
 
     private fun hidePasswordError() {
         binding.passwordErrorMessageText.visibility = View.INVISIBLE
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
