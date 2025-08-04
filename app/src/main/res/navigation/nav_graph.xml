@@ -58,6 +58,10 @@
         android:name="team2.kakigowhere.ui.ItineraryCreateFragment"
         android:label="Create Itinerary"
         tools:layout="@layout/fragment_itinerary_create">
+
+        <argument
+            android:name="tourist_email"
+            app:argType="string"/>
     </fragment>
 
     <fragment

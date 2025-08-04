@@ -18,6 +18,8 @@ import team2.kakigowhere.data.model.ItineraryDTO
 
 class SavedFragment : Fragment(), View.OnClickListener {
 
+    private lateinit var touristEmail: String
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,8 +30,8 @@ class SavedFragment : Fragment(), View.OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // mock email
-        var touristEmail = "cy@kaki.com"
+        // mock email (TODO: use actual email from user)
+        touristEmail = "cy@kaki.com"
 
         var itineraryList = mutableListOf<ItineraryDTO>()
         lifecycleScope.launch {
@@ -68,7 +70,7 @@ class SavedFragment : Fragment(), View.OnClickListener {
         when(v?.id) {
             R.id.create_itinerary -> {
                 findNavController().navigate(
-                    SavedFragmentDirections.actionSavedFragmentToCreateItineraryFragment()
+                    SavedFragmentDirections.actionSavedFragmentToCreateItineraryFragment(touristEmail)
                 )
             }
         }
