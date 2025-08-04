@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.ItineraryDTO
+import java.time.LocalDate
 
 class SavedFragment : Fragment(), View.OnClickListener {
 
@@ -45,7 +46,8 @@ class SavedFragment : Fragment(), View.OnClickListener {
                 val recyclerView = view.findViewById<RecyclerView>(R.id.itinerary_list)
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-                val adapter = ItineraryAdapter(this@SavedFragment, itineraryList) { item ->
+                val sortedList = itineraryList.sortedBy { LocalDate.parse(it.startDate) }
+                val adapter = ItineraryAdapter(this@SavedFragment, sortedList) { item ->
                     launchSavedItemFragment(item.id)
                 }
 

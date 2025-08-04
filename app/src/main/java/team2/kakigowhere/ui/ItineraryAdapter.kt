@@ -36,6 +36,15 @@ class ItineraryAdapter(
         position: Int
     ) {
         val itineraryItem = itineraryList[position]
+
+        // if itinerary does not have items
+        if (itineraryItem.days == 0L) {
+            holder.image.setImageResource(R.drawable.kakigowhere)
+            holder.title.text = itineraryItem.title
+            holder.dates.text = itineraryItem.startDate
+            return
+        }
+
         val placeImagePath = ApiConstants.IMAGE_URL + itineraryItem.placeDisplayId.toString()
 
         Glide.with(context)

@@ -59,6 +59,10 @@
         android:label="Create Itinerary"
         tools:layout="@layout/fragment_itinerary_create">
 
+        <action
+            android:id="@+id/action_createItineraryFragment_to_savedFragment"
+            app:destination="@id/savedFragment"/>
+
         <argument
             android:name="tourist_email"
             app:argType="string"/>

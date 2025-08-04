@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
-import team2.kakigowhere.data.model.Itinerary
+import team2.kakigowhere.data.model.CreateItineraryDTO
 import team2.kakigowhere.data.model.ItineraryDTO
 import team2.kakigowhere.data.model.ItineraryDetailDTO
 import team2.kakigowhere.data.model.Place
@@ -28,6 +28,6 @@ interface ApiService {
     @POST("itinerary/create")
     suspend fun createItinerary(
         @Header("user-email") email: String,
-        @Body itinerary: Itinerary
+        @Body itinerary: CreateItineraryDTO
     ): Response<Unit>
 }
