@@ -20,7 +20,7 @@ interface ApiService {
     suspend fun getPlaceDetail(@Path("placeId") placeId: Long): Response<PlaceDTO>
 
     @GET("ratings/{placeId}/summary")
-    suspend fun getRatingSummary(@Path("placeId") placeId: Long): RatingSummary
+    suspend fun getRatingSummary(@Path("placeId") placeId: Long): Response<RatingSummary>
 
     // may be empty as Tourist may not have given rating
     @GET("ratings/{placeId}/me")
@@ -33,12 +33,12 @@ interface ApiService {
     suspend fun getOtherRatings(
         @Path("placeId") placeId: Long,
         @Query("touristId") touristId: Long
-    ): List<RatingItem>
+    ): Response<List<RatingItem>>
 
     @POST("ratings/{placeId}")
     suspend fun submitOrUpdateRating(
         @Path("placeId") placeId: Long,
         @Query("touristId") touristId: Long,
         @Body request: RatingRequest
-    ): RatingItem
+    ): Response<RatingItem>
 }
