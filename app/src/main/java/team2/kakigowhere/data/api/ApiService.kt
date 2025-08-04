@@ -9,11 +9,11 @@ import retrofit2.http.Path
 import team2.kakigowhere.data.model.CreateItineraryDTO
 import team2.kakigowhere.data.model.ItineraryDTO
 import team2.kakigowhere.data.model.ItineraryDetailDTO
-import team2.kakigowhere.data.model.Place
+import team2.kakigowhere.data.model.PlaceDTO
 
 interface ApiService {
     @GET("places")
-    suspend fun getPlaces(): Response<List<Place>>
+    suspend fun getPlaces(): Response<List<PlaceDTO>>
 
     @GET("itinerary/{email}")
     suspend fun getItineraries(
