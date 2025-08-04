@@ -1,5 +1,9 @@
 package team2.kakigowhere.data.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Place(
     var id: Long,
     var name: String,
@@ -10,6 +14,7 @@ data class Place(
     var closingHour: String, // to change to LocalTime after testing api
     var latitude: Double,
     var longitude: Double,
-    var active: Boolean,
-)
+    var active: Boolean
+)   :Parcelable {
+}
 

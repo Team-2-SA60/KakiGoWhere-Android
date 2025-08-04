@@ -1,126 +1,80 @@
 package team2.kakigowhere.ui
 
+import team2.kakigowhere.PlaceAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import team2.kakigowhere.PlaceAdapter
-import team2.kakigowhere.PlaceRowItem
-import team2.kakigowhere.databinding.FragmentExploreBinding
+import androidx.recyclerview.widget.RecyclerView
 import team2.kakigowhere.FakePlacesData
+import team2.kakigowhere.PlaceRowItem
+import team2.kakigowhere.R
+import team2.kakigowhere.databinding.FragmentExploreBinding
+import kotlin.random.Random
 
 class ExploreFragment : Fragment() {
-    private var _binding: FragmentExploreBinding? = null
-    val binding get() = _binding!!
 
     private lateinit var adapter: PlaceAdapter
-    private var currentFilteredPlaces: List<PlaceRowItem> = listOf()
-
-    // fake data
-    // avoid detekt check
-    //now able to use a pool of fake data and get results from there rather than hard coding.
-    @Suppress("MagicNumber")
-    private val originalPlaces =
-        FakePlacesData.getPlaces().map { place ->
-            PlaceRowItem(
-                id = 1,
-                name = place.name,
-                rating = 4.0, // You can change this if rating is available
-            )
-        }
-//        listOf(
-//            PlaceSuggestion("Marina Bay Sands", 4.2, "Entertainment, Shopping", R.drawable.marina_bay_sands),
-//            PlaceSuggestion("Singapore Zoo", 4.5, "Wildlife and Zoos", R.drawable.marina_bay_sands),
-//            PlaceSuggestion("Sentosa", 4.0, "Entertainment", R.drawable.marina_bay_sands),
-//            PlaceSuggestion("Sands Marina", 4.7, "Shopping", R.drawable.marina_bay),
-//        )
+    private lateinit var placeRowItems: List<PlaceRowItem>
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        _binding = FragmentExploreBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = inflater.inflate(R.layout.fragment_explore, container, false)
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewExplore)
+        val searchInput = view.findViewById<EditText>(R.id.search_input)
+        val searchButton = view.findViewById<Button>(R.id.search_button)
+        val refreshButton = view.findViewById<Button>(R.id.refresh_button)
+        val sortDefault = view.findViewById<Button>(R.id.sort_default)
+        val sortRating = view.findViewById<Button>(R.id.sort_rating)
+        val noResult = view.findViewById<TextView>(R.id.tv_no_result)
 
-        // original view
-        binding.recyclerViewExplore.layoutManager = LinearLayoutManager(requireContext())
-        currentFilteredPlaces = originalPlaces
-        adapter = PlaceAdapter(currentFilteredPlaces.sortedBy { it.name })
-        binding.recyclerViewExplore.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // default filter
-        binding.sortDefault.setOnClickListener {
-            val sorted = currentFilteredPlaces.sortedBy { it.name }
-            adapter = PlaceAdapter(sorted)
-            binding.recyclerViewExplore.adapter = adapter
-            binding.tvNoResult.visibility = View.GONE
+        placeRowItems = FakePlacesData.getPlaces().map {
+            PlaceRowItem(it, Random.nextDouble(3.5, 5.0))
         }
 
-        // rating filter
-        binding.sortRating.setOnClickListener {
-            val sorted = currentFilteredPlaces.sortedByDescending { it.rating }
-            adapter = PlaceAdapter(sorted)
-            binding.recyclerViewExplore.adapter = adapter
-            binding.tvNoResult.visibility = View.GONE
-        }
-
-        // search
-        binding.searchButton.setOnClickListener {
-            val query =
-                binding.searchInput.text
-                    .toString()
-                    .trim()
-
-            // input nothing
-            if (query.isEmpty()) {
-                Toast.makeText(requireContext(), "Please enter a search term", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+        fun updateRecycler(items: List<PlaceRowItem>) {
+            noResult.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+            adapter = PlaceAdapter(items) { place ->
+                val action = ExploreFragmentDirections.actionExploreFragmentToDetailFragment(place)
+                findNavController().navigate(action)
             }
+            recyclerView.adapter = adapter
+        }
 
-            // search name or category
-            val filtered =
-                originalPlaces.filter {
-                    it.name.contains(query, ignoreCase = true)
-                }
+        updateRecycler(placeRowItems)
 
-            currentFilteredPlaces = filtered
-
-            // no result or have result
-            if (filtered.isEmpty()) {
-                adapter = PlaceAdapter(emptyList())
-                binding.recyclerViewExplore.adapter = adapter
-                binding.tvNoResult.visibility = View.VISIBLE
-                binding.tvNoResult.text = "No such place"
-            } else {
-                adapter = PlaceAdapter(filtered.sortedBy { it.name })
-                binding.recyclerViewExplore.adapter = adapter
-                binding.tvNoResult.visibility = View.GONE
+        searchButton.setOnClickListener {
+            val query = searchInput.text.toString().trim()
+            val filtered = placeRowItems.filter {
+                it.place.name.contains(query, ignoreCase = true)
             }
+            updateRecycler(filtered)
         }
 
-        // Refresh
-        binding.refreshButton.setOnClickListener {
-            binding.searchInput.text.clear()
-            binding.tvNoResult.visibility = View.GONE
-            currentFilteredPlaces = originalPlaces
-            adapter = PlaceAdapter(currentFilteredPlaces.sortedBy { it.name })
-            binding.recyclerViewExplore.adapter = adapter
+        refreshButton.setOnClickListener {
+            searchInput.setText("")
+            updateRecycler(placeRowItems)
         }
-    }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        sortDefault.setOnClickListener {
+            updateRecycler(placeRowItems)
+        }
+
+        sortRating.setOnClickListener {
+            val sorted = placeRowItems.sortedByDescending { it.rating }
+            updateRecycler(sorted)
+        }
     }
 }

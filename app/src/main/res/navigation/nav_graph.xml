@@ -1,52 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
-    <!-- fragments in main navigation bar -->
+    <!-- HomeFragment → DetailFragment -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="team2.kakigowhere.ui.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_homeFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
 
-    <fragment
-        android:id="@+id/mapFragment"
-        android:name="team2.kakigowhere.ui.MapsFragment"
-        android:label="Map"
-        tools:layout="@layout/fragment_maps">
-    </fragment>
-
+    <!-- ExploreFragment → DetailFragment -->
     <fragment
         android:id="@+id/exploreFragment"
         android:name="team2.kakigowhere.ui.ExploreFragment"
         android:label="Explore"
         tools:layout="@layout/fragment_explore">
+        <action
+            android:id="@+id/action_exploreFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
 
+    <!-- DetailFragment → MapFragment (passes lat, lng, showBack=true) -->
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="team2.kakigowhere.ui.DetailFragment"
+        android:label="Details"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="place"
+            app:argType="team2.kakigowhere.data.model.Place" />
+        <action
+            android:id="@+id/action_detailFragment_to_mapFragment"
+            app:destination="@id/mapFragment">
+            <argument
+                android:name="lat"
+                app:argType="float" />
+            <argument
+                android:name="lng"
+                app:argType="float" />
+            <argument
+                android:name="showBack"
+                app:argType="boolean"
+                android:defaultValue="false" />
+        </action>
+    </fragment>
+
+    <!-- MapFragment (lat, lng, showBack) -->
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="team2.kakigowhere.ui.MapsFragment"
+        android:label="Map"
+        tools:layout="@layout/fragment_maps">
+        <argument
+            android:name="lat"
+            app:argType="float" />
+        <argument
+            android:name="lng"
+            app:argType="float" />
+        <argument
+            android:name="showBack"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
+    <!-- Saved & Profile (unchanged) -->
     <fragment
         android:id="@+id/savedFragment"
         android:name="team2.kakigowhere.ui.SavedFragment"
         android:label="Saved"
-        tools:layout="@layout/fragment_saved">
-    </fragment>
-
+        tools:layout="@layout/fragment_saved" />
     <fragment
         android:id="@+id/profileFragment"
         android:name="team2.kakigowhere.ui.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile">
-    </fragment>
-
-    <!-- fragments for sub screens -->
-    <fragment
-        android:id="@+id/detailFragment"
-        android:name="team2.kakigowhere.DetailFragment"
-        android:label="Details"
-        tools:layout="@layout/fragment_detail">
-    </fragment>
-
+        tools:layout="@layout/fragment_profile" />
 </navigation>

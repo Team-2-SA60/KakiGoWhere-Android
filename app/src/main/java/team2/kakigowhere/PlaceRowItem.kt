@@ -1,12 +1,13 @@
 package team2.kakigowhere
 
+import team2.kakigowhere.data.model.Place
+
 data class PlaceRowItem(
-    val id: Long,
-    val name: String,
-    val rating: Double
+    val place: Place,
+    val rating: Double = 4.0
 ) {
     fun imageUrl(): String {
         val base = team2.kakigowhere.data.api.ApiConstants.IMAGE_URL.trimEnd('/')
-        return "$base/$id"
+        return "$base/${place.imagePath}"
     }
 }

@@ -2,92 +2,72 @@ package team2.kakigowhere.ui
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.View.GONE
+import android.view.View.VISIBLE
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.Place
 
-class MapsFragment : Fragment() {
+class MapsFragment : Fragment(), OnMapReadyCallback {
 
-    private var places: List<Place>? = null
-
-    private val callback = OnMapReadyCallback { googleMap ->
-        // initial zoom to Singapore
-        val singapore = LatLng(1.290270, 103.851959)
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, 14f))
-        googleMap.uiSettings.isZoomControlsEnabled = true
-
-        // set up markers for places on map
-        if (places != null) {
-            addPlaceMarkers(googleMap)
-        }
-    }
+    private var places: List<Place> = emptyList()
+    private lateinit var googleMap: GoogleMap
+    private val args: MapsFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_maps, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_maps, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // get notified when the map is ready to be used
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
-        mapFragment?.getMapAsync(callback)
+        // Back button: only show if showBack==true
+        view.findViewById<Button>(R.id.backButton).apply {
+            visibility = if (args.showBack) VISIBLE else GONE
+            setOnClickListener { findNavController().navigateUp() }
+        }
 
-        // call list of places from backend api
+        // Initialize the map
+        (childFragmentManager
+            .findFragmentById(R.id.map) as SupportMapFragment)
+            .getMapAsync(this)
+
+        // Fetch places from API
         lifecycleScope.launch {
             try {
-                val response = RetrofitClient.api.getPlaces()
-                if (response.isSuccessful && response.body() != null) {
-                    places = response.body()!!
+                val resp = RetrofitClient.api.getPlaces()
+                if (resp.isSuccessful) {
+                    places = resp.body() ?: emptyList()
                 }
             } catch (e: Exception) {
-                Log.d("API Error", "Error fetching from API")
+                Log.e("MapsFragment", "Error fetching places", e)
             }
         }
     }
 
-    private fun addPlaceMarkers(googleMap: GoogleMap) {
-        places!!.forEach { place ->
-            val location = LatLng(place.latitude, place.longitude)
-            val marker = googleMap.addMarker(
-                MarkerOptions()
-                    .position(location)
-                    .title(place.name))
-            marker?.tag = place.id
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        googleMap.uiSettings.isZoomControlsEnabled = true
+
+        // Add markers for all places
+        places.forEach { p ->
+            val pos = LatLng(p.latitude, p.longitude)
+            googleMap.addMarker(MarkerOptions().position(pos).title(p.name))
         }
 
-        // set custom info window adapter
-        googleMap.setInfoWindowAdapter(InfoWindowAdapter(requireContext(), places!!))
-
-        // handle marker clicks
-        googleMap.setOnMarkerClickListener { marker ->
-            val place = places!!.find { it.id == marker.tag }
-            if (place != null) {
-                val location = LatLng(place.latitude, place.longitude)
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14f))
-                marker.showInfoWindow()
-                true
-            } else {
-                false // falls back on default behaviour
-            }
-        }
-
-        // TODO: map.setOnInfoWindowClickListener
+        // Center on passed-in coordinates
+        val target = LatLng(args.lat.toDouble(), args.lng.toDouble())
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(target, 14f))
     }
 }

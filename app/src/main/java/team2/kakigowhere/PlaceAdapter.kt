@@ -1,52 +1,59 @@
 package team2.kakigowhere
 
-import android.util.Log
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import team2.kakigowhere.databinding.PlaceItemBinding
+import team2.kakigowhere.data.model.Place
 
-class PlaceAdapter(private var places: List<PlaceRowItem>) :
-    RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
+class PlaceAdapter(
+    private val places: List<PlaceRowItem>,
+    private val onItemClick: (Place) -> Unit
+) : RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
 
-    fun submitList(newList: List<PlaceRowItem>) {
-        if (places.map { it.id } == newList.map { it.id }) return
-        places = newList
-        notifyDataSetChanged()
-    }
+    inner class PlaceViewHolder(private val binding: PlaceItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-    inner class PlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imgPlace: ImageView = itemView.findViewById(R.id.imgPlace)
-        val tvName: TextView = itemView.findViewById(R.id.tvName)
-        val tvRating: TextView = itemView.findViewById(R.id.tvRating)
+        fun bind(rowItem: PlaceRowItem) {
+            val place = rowItem.place
+
+            binding.placeName.text = place.name
+            binding.placeRating.text = "Rating: %.1f".format(rowItem.rating)
+
+            CoroutineScope(Dispatchers.Main).launch {
+                val imageFile = downloadImageToFile(
+                    binding.root.context,
+                    place.imagePath,
+                    "place_${place.id}.jpg"
+                )
+
+                imageFile?.let { file ->
+                    binding.placeImage.setImageBitmap(BitmapFactory.decodeFile(file.absolutePath))
+                }
+            }
+
+            binding.root.setOnClickListener {
+                onItemClick(place)
+            }
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_place_suggestion, parent, false)
-        return PlaceViewHolder(view)
+        val binding = PlaceItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return PlaceViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
-        val place = places[position]
-
-        holder.tvName.text = place.name
-
-        // Round to 1 decimal place
-        val roundedRating = "%.1f".format(place.rating.coerceAtLeast(0.0))
-        // Stars based on integer part only
-        val numberOfStars = place.rating.toInt()
-        val stars = "★".repeat(numberOfStars)
-        holder.tvRating.text = "$roundedRating $stars"
-
-        Log.d("PlaceAdapter", "Loading image for id=${place.id}, url=${place.imageUrl()}")
-
-        Glide.with(holder.imgPlace.context)
-            .load(place.imageUrl())
-            .into(holder.imgPlace)
+        holder.bind(places[position])
     }
 
     override fun getItemCount(): Int = places.size
