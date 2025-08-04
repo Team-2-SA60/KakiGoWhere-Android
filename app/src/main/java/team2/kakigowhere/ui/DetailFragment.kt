@@ -1,21 +1,17 @@
 package team2.kakigowhere.ui
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.coroutines.launch
+import com.bumptech.glide.Glide
+import team2.kakigowhere.R
 import team2.kakigowhere.databinding.FragmentDetailBinding
-import team2.kakigowhere.downloadImageToFile
-import kotlin.math.round
-import kotlin.random.Random
 
 class DetailFragment : Fragment() {
 
@@ -36,48 +32,34 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val place = args.place
 
-        // Random rating
-        val raw = Random.nextDouble(1.0, 5.0)
-        val randomRating = round(raw * 10) / 10.0
-
+        // Populate text fields
         binding.placeName.text = place.name
-        binding.placeRating.text = "%.1f / 5".format(randomRating)
-        binding.placeHours.text =
-            "Opening Hours: ${place.openingHour} - ${place.closingHour}"
+        // Random rating for demo:
+        val rating = String.format("%.1f / 5", (1..50).random() / 10.0)
+        binding.placeRating.text = rating
+        binding.placeHours.text = "Opening Hours: ${place.openingHour} - ${place.closingHour}"
         binding.placeDescription.text = place.description
         binding.placeWebsite.text = place.url
 
+        // Clickable website
         binding.placeWebsite.setOnClickListener {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(place.url)))
         }
 
-        // Load image
-        lifecycleScope.launch {
-            val imageFile = downloadImageToFile(
-                requireContext(),
-                place.imagePath,
-                "place_${place.id}.jpg"
-            )
-            imageFile?.let {
-                val bmp = BitmapFactory.decodeFile(it.absolutePath)
-                binding.placeImage.setImageBitmap(bmp)
-            }
-        }
+        // Load image with Glide (lifecycle-aware)
+        Glide.with(this)
+            .load(place.imagePath)
+            .placeholder(R.drawable.placeholder_image)
+            .error(R.drawable.error_image)
+            .centerCrop()
+            .into(binding.placeImage)
 
+        // Back button
         binding.backButton.setOnClickListener {
             findNavController().navigateUp()
         }
 
-        binding.btnShowOnMap.setOnClickListener {
-            // Pass Float args
-            val action = DetailFragmentDirections
-                .actionDetailFragmentToMapFragment(
-                    lat = place.latitude.toFloat(),
-                    lng = place.longitude.toFloat()
-                )
-            findNavController().navigate(action)
-        }
-
+        // Show on Map (passing coords + showBack=true)
         binding.btnShowOnMap.setOnClickListener {
             val action = DetailFragmentDirections
                 .actionDetailFragmentToMapFragment(
@@ -88,8 +70,9 @@ class DetailFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        binding.btnBookmark.setOnClickListener { /* TODO */ }
-        binding.btnAddToItinerary.setOnClickListener { /* TODO */ }
+        // Stubs for future logic
+        binding.btnBookmark.setOnClickListener { /* TODO: bookmark */ }
+        binding.btnAddToItinerary.setOnClickListener { /* TODO: add to itinerary */ }
     }
 
     override fun onDestroyView() {

@@ -2,9 +2,9 @@ package team2.kakigowhere.ui
 
 import android.os.Bundle
 import android.util.Log
-import android.view.*
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -32,9 +32,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Back button: only show if showBack==true
+        // Show or hide Back button
         view.findViewById<Button>(R.id.backButton).apply {
-            visibility = if (args.showBack) VISIBLE else GONE
+            visibility = if (args.showBack) View.VISIBLE else View.GONE
             setOnClickListener { findNavController().navigateUp() }
         }
 
@@ -60,13 +60,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
         googleMap.uiSettings.isZoomControlsEnabled = true
 
-        // Add markers for all places
+        // Place all markers
         places.forEach { p ->
             val pos = LatLng(p.latitude, p.longitude)
             googleMap.addMarker(MarkerOptions().position(pos).title(p.name))
         }
 
-        // Center on passed-in coordinates
+        // Center map on passed-in coords
         val target = LatLng(args.lat.toDouble(), args.lng.toDouble())
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(target, 14f))
     }

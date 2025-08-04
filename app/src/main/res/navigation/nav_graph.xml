@@ -6,7 +6,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
-    <!-- HomeFragment → DetailFragment -->
+    <!-- HomeFragment -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="team2.kakigowhere.ui.HomeFragment"
@@ -17,7 +17,7 @@
             app:destination="@id/detailFragment" />
     </fragment>
 
-    <!-- ExploreFragment → DetailFragment -->
+    <!-- ExploreFragment -->
     <fragment
         android:id="@+id/exploreFragment"
         android:name="team2.kakigowhere.ui.ExploreFragment"
@@ -28,7 +28,7 @@
             app:destination="@id/detailFragment" />
     </fragment>
 
-    <!-- DetailFragment → MapFragment (passes lat, lng, showBack=true) -->
+    <!-- DetailFragment -->
     <fragment
         android:id="@+id/detailFragment"
         android:name="team2.kakigowhere.ui.DetailFragment"
@@ -40,12 +40,15 @@
         <action
             android:id="@+id/action_detailFragment_to_mapFragment"
             app:destination="@id/mapFragment">
+            <!-- Pass coordinates and showBack -->
             <argument
                 android:name="lat"
-                app:argType="float" />
+                app:argType="float"
+                android:defaultValue="1.29027" />
             <argument
                 android:name="lng"
-                app:argType="float" />
+                app:argType="float"
+                android:defaultValue="103.85196" />
             <argument
                 android:name="showBack"
                 app:argType="boolean"
@@ -53,30 +56,35 @@
         </action>
     </fragment>
 
-    <!-- MapFragment (lat, lng, showBack) -->
+    <!-- MapFragment -->
     <fragment
         android:id="@+id/mapFragment"
         android:name="team2.kakigowhere.ui.MapsFragment"
         android:label="Map"
         tools:layout="@layout/fragment_maps">
+        <!-- Required args with defaults -->
         <argument
             android:name="lat"
-            app:argType="float" />
+            app:argType="float"
+            android:defaultValue="1.29027" />
         <argument
             android:name="lng"
-            app:argType="float" />
+            app:argType="float"
+            android:defaultValue="103.85196" />
         <argument
             android:name="showBack"
             app:argType="boolean"
             android:defaultValue="false" />
     </fragment>
 
-    <!-- Saved & Profile (unchanged) -->
+    <!-- SavedFragment -->
     <fragment
         android:id="@+id/savedFragment"
         android:name="team2.kakigowhere.ui.SavedFragment"
         android:label="Saved"
         tools:layout="@layout/fragment_saved" />
+
+    <!-- ProfileFragment -->
     <fragment
         android:id="@+id/profileFragment"
         android:name="team2.kakigowhere.ui.ProfileFragment"
