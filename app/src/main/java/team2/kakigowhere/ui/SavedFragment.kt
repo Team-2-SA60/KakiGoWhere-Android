@@ -10,12 +10,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.ItineraryDTO
 
-class SavedFragment : Fragment() {
+class SavedFragment : Fragment(), View.OnClickListener {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +53,9 @@ class SavedFragment : Fragment() {
                 Log.d("API Error", e.toString())
             }
         }
+
+        val fab = view.findViewById<FloatingActionButton>(R.id.create_itinerary)
+        fab.setOnClickListener(this)
     }
 
     private fun launchSavedItemFragment(itineraryId: Long) {
@@ -60,4 +64,13 @@ class SavedFragment : Fragment() {
         )
     }
 
+    override fun onClick(v: View?) {
+        when(v?.id) {
+            R.id.create_itinerary -> {
+                findNavController().navigate(
+                    SavedFragmentDirections.actionSavedFragmentToCreateItineraryFragment()
+                )
+            }
+        }
+    }
 }

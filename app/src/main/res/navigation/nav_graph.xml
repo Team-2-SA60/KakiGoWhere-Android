@@ -36,6 +36,10 @@
         <action
             android:id="@+id/action_savedFragment_to_savedItemFragment"
             app:destination="@id/savedItemFragment"/>
+
+        <action
+            android:id="@+id/action_savedFragment_to_createItineraryFragment"
+            app:destination="@id/createItineraryFragment"/>
     </fragment>
 
     <fragment
@@ -47,6 +51,13 @@
         <argument
             android:name="itinerary_id"
             app:argType="long"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/createItineraryFragment"
+        android:name="team2.kakigowhere.ui.ItineraryCreateFragment"
+        android:label="Create Itinerary"
+        tools:layout="@layout/fragment_itinerary_create">
     </fragment>
 
     <fragment
