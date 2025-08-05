@@ -6,8 +6,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import team2.kakigowhere.data.model.PlaceViewModel
 
@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root_layout)) { v, insets ->
@@ -34,6 +33,66 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         // sets bottom navigation view with the navigation controller
-        findViewById<BottomNavigationView>(R.id.bottom_nav_view).setupWithNavController(navController)
+        val navView = findViewById<BottomNavigationView>(R.id.bottom_nav_view)
+        navView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.homeFragment -> {
+                    navController.navigate(
+                        R.id.homeFragment,
+                        null,
+                        NavOptions.Builder()
+                            .setPopUpTo(navController.graph.startDestinationId, false)
+                            .setLaunchSingleTop(true)
+                            .build()
+                    )
+                    true
+                }
+                R.id.mapFragment -> {
+                    navController.navigate(
+                        R.id.mapFragment,
+                        null,
+                        NavOptions.Builder()
+                            .setPopUpTo(navController.graph.startDestinationId, false)
+                            .setLaunchSingleTop(true)
+                            .build()
+                    )
+                    true
+                }
+                R.id.exploreFragment -> {
+                    navController.navigate(
+                        R.id.exploreFragment,
+                        null,
+                        NavOptions.Builder()
+                            .setPopUpTo(navController.graph.startDestinationId, false)
+                            .setLaunchSingleTop(true)
+                            .build()
+                    )
+                    true
+                }
+                R.id.savedFragment -> {
+                    navController.navigate(
+                        R.id.savedFragment,
+                        null,
+                        NavOptions.Builder()
+                            .setPopUpTo(navController.graph.startDestinationId, false)
+                            .setLaunchSingleTop(true)
+                            .build()
+                    )
+                    true
+                }
+                R.id.profileFragment -> {
+                    navController.navigate(
+                        R.id.profileFragment,
+                        null,
+                        NavOptions.Builder()
+                            .setPopUpTo(navController.graph.startDestinationId, false)
+                            .setLaunchSingleTop(true)
+                            .build()
+                    )
+                    true
+                }
+                else -> false
+            }
+        }
     }
 }

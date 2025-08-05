@@ -1,5 +1,6 @@
 package team2.kakigowhere
 
+// TODO: delete?
 //import team2.kakigowhere.data.model.Place
 //
 //object FakePlacesData {

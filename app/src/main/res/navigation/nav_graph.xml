@@ -51,13 +51,13 @@
 <!--                android:name="showBack"-->
 <!--                app:argType="boolean"-->
 <!--                android:defaultValue="false" />-->
-            <argument
-                android:name="place_id"
-                app:argType="long"/>
-            <argument
-                android:name="showBack"
-                app:argType="boolean"
-                android:defaultValue="false"/>
+<!--            <argument-->
+<!--                android:name="place_id"-->
+<!--                app:argType="long"/>-->
+<!--            <argument-->
+<!--                android:name="showBack"-->
+<!--                app:argType="boolean"-->
+<!--                android:defaultValue="false"/>-->
         </action>
     </fragment>
 
