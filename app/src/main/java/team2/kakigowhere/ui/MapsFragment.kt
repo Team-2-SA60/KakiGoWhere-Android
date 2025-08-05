@@ -16,22 +16,20 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.model.Place
+import team2.kakigowhere.data.model.PlaceDTO
 
 class MapsFragment : Fragment() {
 
-    private var places: List<Place>? = null
+    private lateinit var googleMap: GoogleMap
+    private var places: List<PlaceDTO>? = null
 
-    private val callback = OnMapReadyCallback { googleMap ->
+    private val callback = OnMapReadyCallback { map ->
+        googleMap = map
+
         // initial zoom to Singapore
         val singapore = LatLng(1.290270, 103.851959)
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, 14f))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, 16f))
         googleMap.uiSettings.isZoomControlsEnabled = true
-
-        // set up markers for places on map
-        if (places != null) {
-            addPlaceMarkers(googleMap)
-        }
     }
 
     override fun onCreateView(
@@ -55,9 +53,14 @@ class MapsFragment : Fragment() {
                 val response = RetrofitClient.api.getPlaces()
                 if (response.isSuccessful && response.body() != null) {
                     places = response.body()!!
+                    Log.d("API PRINT", "success")
+                    Log.d("API PRINT", places.toString())
+
+                    addPlaceMarkers(googleMap)
                 }
             } catch (e: Exception) {
                 Log.d("API Error", "Error fetching from API")
+                Log.d("API Error", e.toString())
             }
         }
     }
@@ -80,7 +83,7 @@ class MapsFragment : Fragment() {
             val place = places!!.find { it.id == marker.tag }
             if (place != null) {
                 val location = LatLng(place.latitude, place.longitude)
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14f))
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 18f))
                 marker.showInfoWindow()
                 true
             } else {
