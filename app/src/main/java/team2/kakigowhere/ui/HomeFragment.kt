@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import team2.kakigowhere.PlaceAdapter
 import team2.kakigowhere.PlaceRowItem
 import team2.kakigowhere.R
-import kotlin.random.Random
 import team2.kakigowhere.data.model.PlacesViewModel
 
 class HomeFragment : Fragment() {
@@ -38,14 +37,14 @@ class HomeFragment : Fragment() {
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
         // Observe live data from ViewModel
-        viewModel.places.observe(viewLifecycleOwner) { places ->
-            // Map each Place to a PlaceRowItem (with a random rating for now)
-            val items = places.map { place ->
-                PlaceRowItem(place, Random.nextDouble(3.5, 5.0))
+        viewModel.places.observe(viewLifecycleOwner) { dtoList ->
+            val items = dtoList.map { dto ->
+                PlaceRowItem(dto, dto.averageRating)
             }
-            recycler.adapter = PlaceAdapter(items) { place ->
+            recycler.adapter = PlaceAdapter(items) { rowItem ->
+                val dto = rowItem.place
                 val action = HomeFragmentDirections
-                    .actionHomeFragmentToDetailFragment(place)
+                    .actionHomeFragmentToDetailFragment(dto)
                 findNavController().navigate(action)
             }
         }

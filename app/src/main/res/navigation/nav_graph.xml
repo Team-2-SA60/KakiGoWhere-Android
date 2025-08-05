@@ -34,7 +34,7 @@
         tools:layout="@layout/fragment_detail">
         <argument
             android:name="place"
-            app:argType="team2.kakigowhere.data.model.Place" />
+            app:argType="team2.kakigowhere.data.model.PlaceDTO" />
         <action
             android:id="@+id/action_detailFragment_to_mapFragment"
             app:destination="@id/mapFragment">
@@ -120,7 +120,7 @@
 
 <!--    change this out when profile is up-->
     <fragment
-        android:id="@+id/profileFragment"
+        android:id="@+id/ratingFragment"
         android:name="team2.kakigowhere.ui.RatingsFragment"
         android:label="Ratings"
         tools:layout="@layout/fragment_ratings">
@@ -128,19 +128,12 @@
             android:id="@+id/action_ratings_to_writeRating"
             app:destination="@id/writeRatingFragment" />
     </fragment>
-<!--    <fragment-->
-<!--        android:id="@+id/profileFragment"-->
-<!--        android:name="team2.kakigowhere.ui.ProfileFragment"-->
-<!--        android:label="Profile"-->
-<!--        tools:layout="@layout/fragment_profile">-->
-<!--    </fragment>-->
 
-    <!-- fragments for sub screens -->
     <fragment
-        android:id="@+id/detailFragment"
-        android:name="team2.kakigowhere.DetailFragment"
-        android:label="Details"
-        tools:layout="@layout/fragment_detail">
+        android:id="@+id/profileFragment"
+        android:name="team2.kakigowhere.ui.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
     </fragment>
 
     <fragment

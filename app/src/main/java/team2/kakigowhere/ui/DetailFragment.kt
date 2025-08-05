@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import team2.kakigowhere.R
+import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.databinding.FragmentDetailBinding
 
 class DetailFragment : Fragment() {
@@ -34,21 +35,20 @@ class DetailFragment : Fragment() {
 
         // Populate text fields
         binding.placeName.text = place.name
-        // Random rating for demo:
-        val rating = String.format("%.1f / 5", (1..50).random() / 10.0)
-        binding.placeRating.text = rating
-        binding.placeHours.text = "Opening Hours: ${place.openingHour} - ${place.closingHour}"
-        binding.placeDescription.text = place.description
-        binding.placeWebsite.text = place.url
+        binding.placeRating.text = place.averageRating.toString()
+        binding.placeHours.text = "Opening Hours: ${place.isOpen}"
+        binding.placeDescription.text = "PlaceHolder" // TODO:
+        binding.placeWebsite.text = "https://www.google.com/maps/search/?api=1&query=${Uri.encode(place.name)}"
 
         // Clickable website
         binding.placeWebsite.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(place.url)))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encode(place.name)}")))
         }
+        var imageUrl = ApiConstants.IMAGE_URL + place.id
 
         // Load image with Glide (lifecycle-aware)
         Glide.with(this)
-            .load(place.imagePath)
+            .load(imageUrl)
             .placeholder(R.drawable.placeholder_image)
             .error(R.drawable.error_image)
             .centerCrop()

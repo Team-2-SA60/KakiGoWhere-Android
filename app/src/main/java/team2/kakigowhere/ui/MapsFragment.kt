@@ -17,10 +17,16 @@ import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.Place
+import team2.kakigowhere.data.PlacesRepository
+import team2.kakigowhere.data.model.PlaceDTO
 
-class MapsFragment : Fragment() {
+class MapsFragment : Fragment(), OnMapReadyCallback {
 
-    private var places: List<Place>? = null
+    private val repository = PlacesRepository()
+    private var places: List<PlaceDTO> = emptyList()
+    private var mapReady = false
+    private var googleMap: GoogleMap? = null
+    private val args: MapsFragmentArgs by navArgs()
 
 //    private val callback = OnMapReadyCallback { googleMap ->
 //        // initial zoom to Singapore
@@ -87,6 +93,17 @@ class MapsFragment : Fragment() {
             addMarkersAndCenter()
         }
     }
+    private fun addMarkersAndCenter() {
+        val map = googleMap ?: return
+        // Add a marker for each place
+        places.forEach { p ->
+            val pos = LatLng(p.latitude, p.longitude)
+            map.addMarker(MarkerOptions().position(pos).title(p.name))
+        }
+        // Center on the coordinates passed in
+        val target = LatLng(args.lat.toDouble(), args.lng.toDouble())
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(target, 14f))
+    }
 
     private fun addPlaceMarkers(googleMap: GoogleMap) {
         places!!.forEach { place ->
@@ -102,17 +119,7 @@ class MapsFragment : Fragment() {
         googleMap.setInfoWindowAdapter(InfoWindowAdapter(requireContext(), places!!))
 
         // handle marker clicks
-        private fun addMarkersAndCenter() {
-            val map = googleMap ?: return
-            // Add a marker for each place
-            places.forEach { p ->
-                val pos = LatLng(p.latitude, p.longitude)
-                map.addMarker(MarkerOptions().position(pos).title(p.name))
-            }
-            // Center on the coordinates passed in
-            val target = LatLng(args.lat.toDouble(), args.lng.toDouble())
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(target, 14f))
-        }
+
 //        googleMap.setOnMarkerClickListener { marker ->
 //            val place = places!!.find { it.id == marker.tag }
 //            if (place != null) {

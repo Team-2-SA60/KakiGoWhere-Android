@@ -5,34 +5,31 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import team2.kakigowhere.databinding.PlaceItemBinding
-import team2.kakigowhere.data.model.Place
 
 class PlaceAdapter(
-    private val places: List<PlaceRowItem>,
-    private val onItemClick: (Place) -> Unit
+    private val items: List<PlaceRowItem>,
+    private val onItemClick: (PlaceRowItem) -> Unit
 ) : RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
 
     inner class PlaceViewHolder(private val binding: PlaceItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(rowItem: PlaceRowItem) {
-            val place = rowItem.place
-
-            // Name & rating
-            binding.placeName.text = place.name
-            binding.placeRating.text = "Rating: %.1f".format(rowItem.rating)
+        fun bind(item: PlaceRowItem) {
+            // Display name and rating
+            binding.placeName.text = item.place.name
+            binding.placeRating.text = "Rating: %.1f".format(item.rating)
 
             // Load image with Glide
             Glide.with(binding.placeImage.context)
-                .load(place.imagePath)
-                .placeholder(R.drawable.placeholder_image) // your placeholder
-                .error(R.drawable.error_image)             // your error drawable
+                .load(item.imageUrl())
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.error_image)
                 .centerCrop()
                 .into(binding.placeImage)
 
-            // Click callback
+            // Click callback passes the full PlaceRowItem
             binding.root.setOnClickListener {
-                onItemClick(place)
+                onItemClick(item)
             }
         }
     }
@@ -47,8 +44,8 @@ class PlaceAdapter(
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
-        holder.bind(places[position])
+        holder.bind(items[position])
     }
 
-    override fun getItemCount(): Int = places.size
+    override fun getItemCount(): Int = items.size
 }

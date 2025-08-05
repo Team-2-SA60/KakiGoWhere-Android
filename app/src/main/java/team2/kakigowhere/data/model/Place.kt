@@ -18,21 +18,24 @@ data class Place(
 )   :Parcelable {
 }
 
+// PlaceDTO.kt
+@Parcelize
 data class PlaceDTO(
-    var id: Long,
-    var googleId: String,
-    var name: String,
-    var address: String,
-    var latitude: Double,
-    var longitude: Double,
-    var isActive: Boolean,
-    var isOpen: Boolean,
-    var averageRating: Double,
-    var interestCategories: List<InterestCategory>
-)
+    val id: Long,
+    val googleId: String,
+    val name: String,
+    val address: String,
+    val latitude: Double,
+    val longitude: Double,
+    val isActive: Boolean,
+    val isOpen: Boolean,
+    val averageRating: Double,
+    val interestCategories: List<InterestCategory>
+) : Parcelable
 
+@Parcelize
 data class InterestCategory(
     var id: Long,
     var name: String,
     var description: String
-)
+)   :Parcelable
