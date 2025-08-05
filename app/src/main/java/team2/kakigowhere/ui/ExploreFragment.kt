@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import team2.kakigowhere.PlaceAdapter
 import team2.kakigowhere.PlaceRowItem
-import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.PlaceDTO
 import team2.kakigowhere.databinding.FragmentExploreBinding
@@ -51,7 +50,7 @@ class ExploreFragment : Fragment() {
             currentFilteredPlaces = originalPlaces
 
             withContext(Dispatchers.Main) {
-                setupRecycler(currentFilteredPlaces)
+                setupRecycler(currentFilteredPlaces.sortedBy { it.place.name })
                 binding.loadingOverlay.visibility = View.GONE
             }
         }
@@ -70,23 +69,19 @@ class ExploreFragment : Fragment() {
                 Toast.makeText(requireContext(), "Enter a search term", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val filtered = originalPlaces.filter { it.place.name.contains(q, true) }
-            if (filtered.isEmpty()) {
+            currentFilteredPlaces = originalPlaces.filter { it.place.name.contains(q, true) }
+            if (currentFilteredPlaces.isEmpty()) {
                 setupRecycler(emptyList())
-                binding.tvNoResult.apply {
-                    text = "No such place"
-                    visibility = View.VISIBLE
-                }
+                binding.tvNoResult.visibility = View.VISIBLE
             } else {
-                currentFilteredPlaces = filtered
-                setupRecycler(filtered)
+                setupRecycler(currentFilteredPlaces.sortedBy { it.place.name })
             }
         }
         binding.refreshButton.setOnClickListener {
             binding.searchInput.text?.clear()
             binding.tvNoResult.visibility = View.GONE
             currentFilteredPlaces = originalPlaces
-            setupRecycler(originalPlaces)
+            setupRecycler(currentFilteredPlaces.sortedBy { it.place.name })
         }
     }
 
