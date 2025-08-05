@@ -17,7 +17,7 @@ class PlaceAdapter(
         fun bind(item: PlaceRowItem) {
             // Display name and rating
             binding.placeName.text = item.place.name
-            binding.placeRating.text = "Rating: %.1f".format(item.rating)
+            binding.placeRating.text = if (item.rating == 0.0) "Rating Not Available" else "Rating: %.1f".format(item.rating)
 
             // Load image with Glide
             Glide.with(binding.placeImage.context)
