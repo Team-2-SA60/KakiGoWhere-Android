@@ -35,8 +35,8 @@ class DetailFragment : Fragment() {
 
         // Populate text fields
         binding.placeName.text = place.name
-        binding.placeRating.text = place.averageRating.toString()
-        binding.placeHours.text = "Opening Hours: ${place.isOpen}"
+        binding.placeRating.text = if (place.averageRating == 0.0) "Rating Not Available" else place.averageRating.toString()
+        binding.placeHours.text = if (place.isOpen) "Open Now" else "Closed"
         binding.placeDescription.text = "PlaceHolder" // TODO:
         binding.placeWebsite.text = "https://www.google.com/maps/search/?api=1&query=${Uri.encode(place.name)}"
 
