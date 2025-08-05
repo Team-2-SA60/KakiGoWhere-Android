@@ -8,22 +8,26 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 import team2.kakigowhere.R
-import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.model.Place
-import team2.kakigowhere.data.PlacesRepository
 import team2.kakigowhere.data.model.PlaceDTO
+import team2.kakigowhere.data.model.PlaceViewModel
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
-    private val repository = PlacesRepository()
-    private var places: List<PlaceDTO> = emptyList()
+    val placeViewModel: PlaceViewModel by activityViewModels()
+
+    private lateinit var places: List<PlaceDTO>
     private var mapReady = false
     private var googleMap: GoogleMap? = null
     private val args: MapsFragmentArgs by navArgs()
@@ -58,7 +62,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         // call list of places from backend api
         lifecycleScope.launch {
             try {
-                places = repository.fetchPlaces() // added this part *Adrian!!!
+                places = placeViewModel.places.value!!
                 // If map is already ready, add markers now
                 if (mapReady) addMarkersAndCenter()
             } catch (e: Exception) {

@@ -11,11 +11,11 @@ data class ItineraryDTO(
     var placeDisplayId: Long
 ) {
     // convert date in String to LocalDate
-    //val startDate: LocalDate get() = LocalDate.parse(startDateString, DateTimeFormatter.ISO_LOCAL_DATE)
+    val getstartDate: LocalDate get() = LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE)
 
     // get last date of itinerary
     fun getLastDate(): String {
-        val firstDate = LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE)
+        val firstDate = getstartDate
         val lastDate = firstDate.plusDays(days - 1)
         return lastDate.toString()
     }

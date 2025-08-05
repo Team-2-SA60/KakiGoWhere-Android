@@ -3,22 +3,21 @@ package team2.kakigowhere.data.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-@Parcelize
-data class Place(
-    var id: Long,
-    var name: String,
-    var description: String,
-    var imagePath: String,
-    var url: String,
-    var openingHour: String, // to change to LocalTime after testing api
-    var closingHour: String, // to change to LocalTime after testing api
-    var latitude: Double,
-    var longitude: Double,
-    var active: Boolean
-)   :Parcelable {
-}
+//@Parcelize
+//// TODO: this class is not used so far, consider removing
+//data class Place(
+//    var id: Long,
+//    var name: String,
+//    var description: String,
+//    var imagePath: String,
+//    var url: String,
+//    var openingHour: String, // to change to LocalTime after testing api
+//    var closingHour: String, // to change to LocalTime after testing api
+//    var latitude: Double,
+//    var longitude: Double,
+//    var active: Boolean
+//)   :Parcelable
 
-// PlaceDTO.kt
 @Parcelize
 data class PlaceDTO(
     val id: Long,
@@ -38,4 +37,4 @@ data class InterestCategory(
     var id: Long,
     var name: String,
     var description: String
-)   :Parcelable
+) : Parcelable
