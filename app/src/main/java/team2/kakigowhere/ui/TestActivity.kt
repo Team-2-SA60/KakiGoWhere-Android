@@ -16,58 +16,62 @@ import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.model.Place
+import team2.kakigowhere.data.model.PlaceDTO
 
-class TestActivity : AppCompatActivity(), View.OnClickListener {
+class TestActivity : AppCompatActivity() {
+
+    private lateinit var container: ViewGroup
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_test)
+
+        // Apply edge-to-edge insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(bars.left, bars.top, bars.right, bars.bottom)
             insets
         }
 
-        val apiBtn = findViewById<Button>(R.id.test_api)
-        apiBtn.setOnClickListener(this)
-    }
+        container = findViewById(R.id.main)
 
-    override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.test_api -> {
-                lifecycleScope.launch {
-                    try {
-                        // api call to get list of all places
-                        val response = RetrofitClient.api.getPlaces()
+        findViewById<Button>(R.id.test_api).setOnClickListener {
+            // clear previous content
+            container.removeAllViews()
 
-                        if (response.isSuccessful && (response.body() != null)) {
-                            var places: List<Place> = response.body()!!
-                            val layoutContainer = findViewById<ViewGroup>(R.id.main)
-
-                            places.forEach { place ->
-                                // initialise Image View for each place
-                                val imageView = ImageView(this@TestActivity).apply {
-                                    layoutParams = ViewGroup.LayoutParams(
-                                        700, // set layout width (px)
-                                        500  // set layout height (px)
-                                    )
-                                }
-
-                                // use Glide to call image and set Image View
-                                val imagePath = ApiConstants.IMAGE_URL + place.imagePath
-                                Glide.with(this@TestActivity)
-                                    .load(imagePath)
-                                    .into(imageView)
-
-                                // add Image View to our layout
-                                layoutContainer.addView(imageView)
+            // fetch places from API
+            lifecycleScope.launch {
+                try {
+                    val response = RetrofitClient.api.getPlaces()
+                    if (response.isSuccessful) {
+                        val places: List<PlaceDTO> = response.body()!!
+                        places.forEach { dto ->
+                            // create an ImageView for each place
+                            val iv = ImageView(this@TestActivity).apply {
+                                layoutParams = ViewGroup.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    500  // px height, or wrap_content / dp-to-px conversion
+                                )
+                                scaleType = ImageView.ScaleType.CENTER_CROP
                             }
+
+                            // load image via Glide
+                            val imageUrl = ApiConstants.IMAGE_URL + dto.googleId
+                            Glide.with(this@TestActivity)
+                                .load(imageUrl)
+                                .placeholder(R.drawable.placeholder_image)
+                                .error(R.drawable.error_image)
+                                .into(iv)
+
+                            // add to container
+                            container.addView(iv)
                         }
-                    } catch (e: Exception) {
-                        Log.d("API Error", "Cannot fetch from API")
-                        Log.d("API Error", e.toString())
+                    } else {
+                        Log.e("TestActivity", "API error code: ${response.code()}")
                     }
+                } catch (e: Exception) {
+                    Log.e("TestActivity", "Network error fetching places", e)
                 }
             }
         }

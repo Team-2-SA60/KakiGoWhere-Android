@@ -5,41 +5,59 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import team2.kakigowhere.FakePlacesData
 import team2.kakigowhere.PlaceAdapter
 import team2.kakigowhere.PlaceRowItem
 import team2.kakigowhere.R
 import kotlin.random.Random
+import team2.kakigowhere.data.model.PlacesViewModel
 
 class HomeFragment : Fragment() {
 
+    private val viewModel: PlacesViewModel by viewModels()
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_home, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val greeting = view.findViewById<TextView>(R.id.tvGreeting)
-        greeting.text = "Hi, Adrian!"
+        super.onViewCreated(view, savedInstanceState)
 
+        // Set greeting
+        view.findViewById<TextView>(R.id.tvGreeting).text = "Hi, Adrian!"
+
+        // RecyclerView setup
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerSuggestions)
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
-        val realPlaces = FakePlacesData.getPlaces()
-
-        val placeRowItems = realPlaces.map {
-            PlaceRowItem(it, Random.nextDouble(3.5, 5.0))
+        // Observe live data from ViewModel
+        viewModel.places.observe(viewLifecycleOwner) { places ->
+            // Map each Place to a PlaceRowItem (with a random rating for now)
+            val items = places.map { place ->
+                PlaceRowItem(place, Random.nextDouble(3.5, 5.0))
+            }
+            recycler.adapter = PlaceAdapter(items) { place ->
+                val action = HomeFragmentDirections
+                    .actionHomeFragmentToDetailFragment(place)
+                findNavController().navigate(action)
+            }
         }
 
-        recycler.adapter = PlaceAdapter(placeRowItems) { place ->
-            val action = HomeFragmentDirections.actionHomeFragmentToDetailFragment(place)
-            findNavController().navigate(action)
+        // Observe errors
+        viewModel.error.observe(viewLifecycleOwner) { errorMsg ->
+            errorMsg?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+            }
         }
 
-
+        // Trigger loading from backend
+        viewModel.loadPlaces()
     }
 }

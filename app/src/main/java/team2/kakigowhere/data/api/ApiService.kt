@@ -8,7 +8,7 @@ import team2.kakigowhere.data.model.PlaceDTO
 
 interface ApiService {
     @GET("places")
-    suspend fun getPlaces(): Response<List<Place>>
+    suspend fun getPlaces(): Response<List<PlaceDTO>>
 
     @GET("places/id/{placeId}")
     suspend fun getPlaceDetail(@Path("placeId") placeId: Long): Response<PlaceDTO>
