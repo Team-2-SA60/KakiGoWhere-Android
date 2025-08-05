@@ -11,13 +11,9 @@
         android:name="team2.kakigowhere.ui.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
-    </fragment>
-
-    <fragment
-        android:id="@+id/mapFragment"
-        android:name="team2.kakigowhere.ui.MapsFragment"
-        android:label="Map"
-        tools:layout="@layout/fragment_maps">
+        <action
+            android:id="@+id/action_homeFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
 
     <fragment
@@ -25,8 +21,61 @@
         android:name="team2.kakigowhere.ui.ExploreFragment"
         android:label="Explore"
         tools:layout="@layout/fragment_explore">
+        <action
+            android:id="@+id/action_exploreFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
     </fragment>
 
+    <!-- DetailFragment -->
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="team2.kakigowhere.ui.DetailFragment"
+        android:label="Details"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="place"
+            app:argType="team2.kakigowhere.data.model.PlaceDTO" />
+        <action
+            android:id="@+id/action_detailFragment_to_mapFragment"
+            app:destination="@id/mapFragment">
+            <!-- Pass coordinates and showBack -->
+            <argument
+                android:name="lat"
+                app:argType="float"
+                android:defaultValue="1.29027" />
+            <argument
+                android:name="lng"
+                app:argType="float"
+                android:defaultValue="103.85196" />
+            <argument
+                android:name="showBack"
+                app:argType="boolean"
+                android:defaultValue="false" />
+        </action>
+    </fragment>
+
+    <!-- MapFragment -->
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="team2.kakigowhere.ui.MapsFragment"
+        android:label="Map"
+        tools:layout="@layout/fragment_maps">
+        <!-- Required args with defaults -->
+        <argument
+            android:name="lat"
+            app:argType="float"
+            android:defaultValue="1.29027" />
+        <argument
+            android:name="lng"
+            app:argType="float"
+            android:defaultValue="103.85196" />
+        <argument
+            android:name="showBack"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+
+    <!-- SavedFragment -->
     <fragment
         android:id="@+id/savedFragment"
         android:name="team2.kakigowhere.ui.SavedFragment"
@@ -71,7 +120,7 @@
 
 <!--    change this out when profile is up-->
     <fragment
-        android:id="@+id/profileFragment"
+        android:id="@+id/ratingFragment"
         android:name="team2.kakigowhere.ui.RatingsFragment"
         android:label="Ratings"
         tools:layout="@layout/fragment_ratings">
@@ -79,19 +128,12 @@
             android:id="@+id/action_ratings_to_writeRating"
             app:destination="@id/writeRatingFragment" />
     </fragment>
-<!--    <fragment-->
-<!--        android:id="@+id/profileFragment"-->
-<!--        android:name="team2.kakigowhere.ui.ProfileFragment"-->
-<!--        android:label="Profile"-->
-<!--        tools:layout="@layout/fragment_profile">-->
-<!--    </fragment>-->
 
-    <!-- fragments for sub screens -->
     <fragment
-        android:id="@+id/detailFragment"
-        android:name="team2.kakigowhere.DetailFragment"
-        android:label="Details"
-        tools:layout="@layout/fragment_detail">
+        android:id="@+id/profileFragment"
+        android:name="team2.kakigowhere.ui.ProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_profile">
     </fragment>
 
     <fragment

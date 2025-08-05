@@ -1,53 +1,51 @@
 package team2.kakigowhere
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import team2.kakigowhere.databinding.PlaceItemBinding
 
-class PlaceAdapter(private var places: List<PlaceRowItem>) :
-    RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
+class PlaceAdapter(
+    private val items: List<PlaceRowItem>,
+    private val onItemClick: (PlaceRowItem) -> Unit
+) : RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
 
-    fun submitList(newList: List<PlaceRowItem>) {
-        if (places.map { it.id } == newList.map { it.id }) return
-        places = newList
-        notifyDataSetChanged()
-    }
+    inner class PlaceViewHolder(private val binding: PlaceItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
-    inner class PlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imgPlace: ImageView = itemView.findViewById(R.id.imgPlace)
-        val tvName: TextView = itemView.findViewById(R.id.tvName)
-        val tvRating: TextView = itemView.findViewById(R.id.tvRating)
+        fun bind(item: PlaceRowItem) {
+            // Display name and rating
+            binding.placeName.text = item.place.name
+            binding.placeRating.text = "Rating: %.1f".format(item.rating)
+
+            // Load image with Glide
+            Glide.with(binding.placeImage.context)
+                .load(item.imageUrl())
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.error_image)
+                .centerCrop()
+                .into(binding.placeImage)
+
+            // Click callback passes the full PlaceRowItem
+            binding.root.setOnClickListener {
+                onItemClick(item)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_place_suggestion, parent, false)
-        return PlaceViewHolder(view)
+        val binding = PlaceItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return PlaceViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
-        val place = places[position]
-
-        holder.tvName.text = place.name
-
-        // Round to 1 decimal place
-        val roundedRating = "%.1f".format(place.rating.coerceAtLeast(0.0))
-        // Stars based on integer part only
-        val numberOfStars = place.rating.toInt()
-        val stars = "★".repeat(numberOfStars)
-        holder.tvRating.text = "$roundedRating $stars"
-
-        Log.d("PlaceAdapter", "Loading image for id=${place.id}, url=${place.imageUrl()}")
-
-        Glide.with(holder.imgPlace.context)
-            .load(place.imageUrl())
-            .into(holder.imgPlace)
+        holder.bind(items[position])
     }
 
-    override fun getItemCount(): Int = places.size
+    override fun getItemCount(): Int = items.size
 }

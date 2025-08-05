@@ -7,6 +7,7 @@ plugins {
     id("org.jetbrains.kotlinx.kover")
     id("org.sonatype.gradle.plugins.scan")
     id("org.jlleitschuh.gradle.ktlint")
+    id("kotlin-parcelize")
     id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
@@ -53,8 +54,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.cardview)
-    implementation(libs.androidx.recyclerview)
 
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)

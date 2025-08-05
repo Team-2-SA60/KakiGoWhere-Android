@@ -7,122 +7,102 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import team2.kakigowhere.PlaceAdapter
 import team2.kakigowhere.PlaceRowItem
-import team2.kakigowhere.databinding.FragmentExploreBinding
-import team2.kakigowhere.FakePlacesData
+import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.api.RetrofitClient
+import team2.kakigowhere.data.model.PlaceDTO
+import team2.kakigowhere.databinding.FragmentExploreBinding
 
 class ExploreFragment : Fragment() {
     private var _binding: FragmentExploreBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var adapter: PlaceAdapter
-    private var originalPlaces: List<PlaceRowItem> = listOf()
-    private var currentFilteredPlaces: List<PlaceRowItem> = listOf()
+    private var originalPlaces = listOf<PlaceRowItem>()
+    private var currentFilteredPlaces = listOf<PlaceRowItem>()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentExploreBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // api to get places
         binding.loadingOverlay.visibility = View.VISIBLE
+
+        // Fetch PlaceDTOs
         lifecycleScope.launch {
-            val response = RetrofitClient.api.getPlaces()
-            val basicPlaces = response.body() ?: listOf()
+            val resp = RetrofitClient.api.getPlaces()
+            val dtoList = resp.body() ?: emptyList<PlaceDTO>()
 
-            originalPlaces = basicPlaces.map { place ->
-            val detail = withContext(Dispatchers.IO) {
-                RetrofitClient.api.getPlaceDetail(place.id).body()
+            originalPlaces = dtoList.map { dto ->
+                PlaceRowItem(dto, dto.averageRating)
             }
-            PlaceRowItem(
-                id = place.id,
-                name = place.name,
-                rating = detail?.averageRating ?: 0.0
-            )
-            }
-
-            //original view
             currentFilteredPlaces = originalPlaces
-            adapter = PlaceAdapter(currentFilteredPlaces.sortedBy { it.name })
-            binding.recyclerViewExplore.layoutManager = LinearLayoutManager(requireContext())
-            binding.recyclerViewExplore.adapter = adapter
-            binding.loadingOverlay.visibility = View.GONE
+
+            withContext(Dispatchers.Main) {
+                setupRecycler(currentFilteredPlaces)
+                binding.loadingOverlay.visibility = View.GONE
+            }
         }
 
-        // default filter
         binding.sortDefault.setOnClickListener {
-            val sorted = currentFilteredPlaces.sortedBy { it.name }
-            adapter = PlaceAdapter(sorted)
-            binding.recyclerViewExplore.adapter = adapter
-            binding.tvNoResult.visibility = View.GONE
+            currentFilteredPlaces = currentFilteredPlaces.sortedBy { it.place.name }
+            setupRecycler(currentFilteredPlaces)
         }
-
-        // rating filter
         binding.sortRating.setOnClickListener {
-            val sorted = currentFilteredPlaces.sortedByDescending { it.rating }
-            adapter = PlaceAdapter(sorted)
-            binding.recyclerViewExplore.adapter = adapter
-            binding.tvNoResult.visibility = View.GONE
+            currentFilteredPlaces = currentFilteredPlaces.sortedByDescending { it.rating }
+            setupRecycler(currentFilteredPlaces)
         }
-
-        // search
         binding.searchButton.setOnClickListener {
-            val query =
-                binding.searchInput.text
-                    .toString()
-                    .trim()
-
-            // input nothing
-            if (query.isEmpty()) {
-                Toast.makeText(requireContext(), "Please enter a search term", Toast.LENGTH_SHORT).show()
+            val q = binding.searchInput.text.toString().trim()
+            if (q.isEmpty()) {
+                Toast.makeText(requireContext(), "Enter a search term", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
-            // search name or category
-            val filtered =
-                originalPlaces.filter {
-                    it.name.contains(query, ignoreCase = true)
-                }
-
-            currentFilteredPlaces = filtered
-
-            // no result or have result
+            val filtered = originalPlaces.filter { it.place.name.contains(q, true) }
             if (filtered.isEmpty()) {
-                adapter = PlaceAdapter(emptyList())
-                binding.recyclerViewExplore.adapter = adapter
-                binding.tvNoResult.visibility = View.VISIBLE
-                binding.tvNoResult.text = "No such place"
+                setupRecycler(emptyList())
+                binding.tvNoResult.apply {
+                    text = "No such place"
+                    visibility = View.VISIBLE
+                }
             } else {
-                adapter = PlaceAdapter(filtered.sortedBy { it.name })
-                binding.recyclerViewExplore.adapter = adapter
-                binding.tvNoResult.visibility = View.GONE
+                currentFilteredPlaces = filtered
+                setupRecycler(filtered)
             }
         }
-
-        // Refresh
         binding.refreshButton.setOnClickListener {
-            binding.searchInput.text.clear()
+            binding.searchInput.text?.clear()
             binding.tvNoResult.visibility = View.GONE
             currentFilteredPlaces = originalPlaces
-            adapter = PlaceAdapter(currentFilteredPlaces.sortedBy { it.name })
-            binding.recyclerViewExplore.adapter = adapter
+            setupRecycler(originalPlaces)
         }
+    }
+
+    private fun setupRecycler(list: List<PlaceRowItem>) {
+        adapter = PlaceAdapter(list) { rowItem ->
+            // Navigate passing the PlaceDTO directly
+            val action = ExploreFragmentDirections
+                .actionExploreFragmentToDetailFragment(rowItem.place)
+            findNavController().navigate(action)
+        }
+
+        binding.recyclerViewExplore.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@ExploreFragment.adapter
+        }
+        binding.tvNoResult.visibility = View.GONE
     }
 
     override fun onDestroyView() {
