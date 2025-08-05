@@ -18,3 +18,21 @@ data class Place(
 )   :Parcelable {
 }
 
+data class PlaceDTO(
+    var id: Long,
+    var googleId: String,
+    var name: String,
+    var address: String,
+    var latitude: Double,
+    var longitude: Double,
+    var isActive: Boolean,
+    var isOpen: Boolean,
+    var averageRating: Double,
+    var interestCategories: List<InterestCategory>
+)
+
+data class InterestCategory(
+    var id: Long,
+    var name: String,
+    var description: String
+)

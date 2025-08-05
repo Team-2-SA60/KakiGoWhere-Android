@@ -15,16 +15,24 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import kotlinx.coroutines.launch
 import team2.kakigowhere.R
-import team2.kakigowhere.data.PlacesRepository
+import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.Place
 
-class MapsFragment : Fragment(), OnMapReadyCallback {
+class MapsFragment : Fragment() {
 
-    private val repository = PlacesRepository()
-    private var places: List<Place> = emptyList()
-    private var mapReady = false
-    private var googleMap: GoogleMap? = null
-    private val args: MapsFragmentArgs by navArgs()
+    private var places: List<Place>? = null
+
+//    private val callback = OnMapReadyCallback { googleMap ->
+//        // initial zoom to Singapore
+//        val singapore = LatLng(1.290270, 103.851959)
+//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, 14f))
+//        googleMap.uiSettings.isZoomControlsEnabled = true
+//
+//        // set up markers for places on map
+//        if (places != null) {
+//            addPlaceMarkers(googleMap)
+//        }
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,14 +49,27 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             setOnClickListener { findNavController().navigateUp() }
         }
 
-        // Kick off fetching places
+        // call list of places from backend api
         lifecycleScope.launch {
             try {
-                places = repository.fetchPlaces()
+                places = repository.fetchPlaces() // added this part *Adrian!!!
                 // If map is already ready, add markers now
                 if (mapReady) addMarkersAndCenter()
             } catch (e: Exception) {
                 Log.e("MapsFragment", "Error fetching places", e)
+
+//
+//                val response = RetrofitClient.api.getPlaces()
+//                if (response.isSuccessful && response.body() != null) {
+//                    places = response.body()!!
+//                    Log.d("API PRINT", "success")
+//                    Log.d("API PRINT", places.toString())
+//
+//                    addPlaceMarkers(googleMap)
+//                }
+//            } catch (e: Exception) {
+//                Log.d("API Error", "Error fetching from API")
+//                Log.d("API Error", e.toString())
             }
         }
 
@@ -67,16 +88,43 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-
-    private fun addMarkersAndCenter() {
-        val map = googleMap ?: return
-        // Add a marker for each place
-        places.forEach { p ->
-            val pos = LatLng(p.latitude, p.longitude)
-            map.addMarker(MarkerOptions().position(pos).title(p.name))
+    private fun addPlaceMarkers(googleMap: GoogleMap) {
+        places!!.forEach { place ->
+            val location = LatLng(place.latitude, place.longitude)
+            val marker = googleMap.addMarker(
+                MarkerOptions()
+                    .position(location)
+                    .title(place.name))
+            marker?.tag = place.id
         }
-        // Center on the coordinates passed in
-        val target = LatLng(args.lat.toDouble(), args.lng.toDouble())
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(target, 14f))
+
+        // set custom info window adapter
+        googleMap.setInfoWindowAdapter(InfoWindowAdapter(requireContext(), places!!))
+
+        // handle marker clicks
+        private fun addMarkersAndCenter() {
+            val map = googleMap ?: return
+            // Add a marker for each place
+            places.forEach { p ->
+                val pos = LatLng(p.latitude, p.longitude)
+                map.addMarker(MarkerOptions().position(pos).title(p.name))
+            }
+            // Center on the coordinates passed in
+            val target = LatLng(args.lat.toDouble(), args.lng.toDouble())
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(target, 14f))
+        }
+//        googleMap.setOnMarkerClickListener { marker ->
+//            val place = places!!.find { it.id == marker.tag }
+//            if (place != null) {
+//                val location = LatLng(place.latitude, place.longitude)
+//                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 14f))
+//                marker.showInfoWindow()
+//                true
+//            } else {
+//                false // falls back on default behaviour
+//            }
+//        }
+
+        // TODO: map.setOnInfoWindowClickListener
     }
 }

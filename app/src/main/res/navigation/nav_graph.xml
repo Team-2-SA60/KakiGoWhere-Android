@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<navigation
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
-    <!-- HomeFragment -->
+    <!-- fragments in main navigation bar -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="team2.kakigowhere.ui.HomeFragment"
@@ -17,7 +16,6 @@
             app:destination="@id/detailFragment" />
     </fragment>
 
-    <!-- ExploreFragment -->
     <fragment
         android:id="@+id/exploreFragment"
         android:name="team2.kakigowhere.ui.ExploreFragment"
@@ -82,12 +80,72 @@
         android:id="@+id/savedFragment"
         android:name="team2.kakigowhere.ui.SavedFragment"
         android:label="Saved"
-        tools:layout="@layout/fragment_saved" />
+        tools:layout="@layout/fragment_saved">
 
-    <!-- ProfileFragment -->
+        <action
+            android:id="@+id/action_savedFragment_to_savedItemFragment"
+            app:destination="@id/savedItemFragment"/>
+
+        <action
+            android:id="@+id/action_savedFragment_to_createItineraryFragment"
+            app:destination="@id/createItineraryFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/savedItemFragment"
+        android:name="team2.kakigowhere.ui.ItineraryDetailFragment"
+        android:label="Saved Item"
+        tools:layout="@layout/fragment_itinerary_detail">
+
+        <argument
+            android:name="itinerary_id"
+            app:argType="long"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/createItineraryFragment"
+        android:name="team2.kakigowhere.ui.ItineraryCreateFragment"
+        android:label="Create Itinerary"
+        tools:layout="@layout/fragment_itinerary_create">
+
+        <action
+            android:id="@+id/action_createItineraryFragment_to_savedFragment"
+            app:destination="@id/savedFragment"/>
+
+        <argument
+            android:name="tourist_email"
+            app:argType="string"/>
+    </fragment>
+
+
+<!--    change this out when profile is up-->
     <fragment
         android:id="@+id/profileFragment"
-        android:name="team2.kakigowhere.ui.ProfileFragment"
-        android:label="Profile"
-        tools:layout="@layout/fragment_profile" />
+        android:name="team2.kakigowhere.ui.RatingsFragment"
+        android:label="Ratings"
+        tools:layout="@layout/fragment_ratings">
+        <action
+            android:id="@+id/action_ratings_to_writeRating"
+            app:destination="@id/writeRatingFragment" />
+    </fragment>
+<!--    <fragment-->
+<!--        android:id="@+id/profileFragment"-->
+<!--        android:name="team2.kakigowhere.ui.ProfileFragment"-->
+<!--        android:label="Profile"-->
+<!--        tools:layout="@layout/fragment_profile">-->
+<!--    </fragment>-->
+
+    <!-- fragments for sub screens -->
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="team2.kakigowhere.DetailFragment"
+        android:label="Details"
+        tools:layout="@layout/fragment_detail">
+    </fragment>
+
+    <fragment
+        android:id="@+id/writeRatingFragment"
+        android:name="team2.kakigowhere.ui.WriteRatingFragment"
+        android:label="Write/Edit Rating" />
+
 </navigation>

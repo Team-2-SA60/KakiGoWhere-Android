@@ -1,80 +1,132 @@
 package team2.kakigowhere.ui
 
-import team2.kakigowhere.PlaceAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import team2.kakigowhere.FakePlacesData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import team2.kakigowhere.PlaceAdapter
 import team2.kakigowhere.PlaceRowItem
-import team2.kakigowhere.R
 import team2.kakigowhere.databinding.FragmentExploreBinding
-import kotlin.random.Random
+import team2.kakigowhere.FakePlacesData
+import team2.kakigowhere.data.api.RetrofitClient
 
 class ExploreFragment : Fragment() {
+    private var _binding: FragmentExploreBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var adapter: PlaceAdapter
-    private lateinit var placeRowItems: List<PlaceRowItem>
+    private var originalPlaces: List<PlaceRowItem> = listOf()
+    private var currentFilteredPlaces: List<PlaceRowItem> = listOf()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = inflater.inflate(R.layout.fragment_explore, container, false)
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        _binding = FragmentExploreBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewExplore)
-        val searchInput = view.findViewById<EditText>(R.id.search_input)
-        val searchButton = view.findViewById<Button>(R.id.search_button)
-        val refreshButton = view.findViewById<Button>(R.id.refresh_button)
-        val sortDefault = view.findViewById<Button>(R.id.sort_default)
-        val sortRating = view.findViewById<Button>(R.id.sort_rating)
-        val noResult = view.findViewById<TextView>(R.id.tv_no_result)
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
+        super.onViewCreated(view, savedInstanceState)
 
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        // api to get places
+        binding.loadingOverlay.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            val response = RetrofitClient.api.getPlaces()
+            val basicPlaces = response.body() ?: listOf()
 
-        placeRowItems = FakePlacesData.getPlaces().map {
-            PlaceRowItem(it, Random.nextDouble(3.5, 5.0))
-        }
-
-        fun updateRecycler(items: List<PlaceRowItem>) {
-            noResult.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
-            adapter = PlaceAdapter(items) { place ->
-                val action = ExploreFragmentDirections.actionExploreFragmentToDetailFragment(place)
-                findNavController().navigate(action)
+            originalPlaces = basicPlaces.map { place ->
+            val detail = withContext(Dispatchers.IO) {
+                RetrofitClient.api.getPlaceDetail(place.id).body()
             }
-            recyclerView.adapter = adapter
-        }
-
-        updateRecycler(placeRowItems)
-
-        searchButton.setOnClickListener {
-            val query = searchInput.text.toString().trim()
-            val filtered = placeRowItems.filter {
-                it.place.name.contains(query, ignoreCase = true)
+            PlaceRowItem(
+                id = place.id,
+                name = place.name,
+                rating = detail?.averageRating ?: 0.0
+            )
             }
-            updateRecycler(filtered)
+
+            //original view
+            currentFilteredPlaces = originalPlaces
+            adapter = PlaceAdapter(currentFilteredPlaces.sortedBy { it.name })
+            binding.recyclerViewExplore.layoutManager = LinearLayoutManager(requireContext())
+            binding.recyclerViewExplore.adapter = adapter
+            binding.loadingOverlay.visibility = View.GONE
         }
 
-        refreshButton.setOnClickListener {
-            searchInput.setText("")
-            updateRecycler(placeRowItems)
+        // default filter
+        binding.sortDefault.setOnClickListener {
+            val sorted = currentFilteredPlaces.sortedBy { it.name }
+            adapter = PlaceAdapter(sorted)
+            binding.recyclerViewExplore.adapter = adapter
+            binding.tvNoResult.visibility = View.GONE
         }
 
-        sortDefault.setOnClickListener {
-            updateRecycler(placeRowItems)
+        // rating filter
+        binding.sortRating.setOnClickListener {
+            val sorted = currentFilteredPlaces.sortedByDescending { it.rating }
+            adapter = PlaceAdapter(sorted)
+            binding.recyclerViewExplore.adapter = adapter
+            binding.tvNoResult.visibility = View.GONE
         }
 
-        sortRating.setOnClickListener {
-            val sorted = placeRowItems.sortedByDescending { it.rating }
-            updateRecycler(sorted)
+        // search
+        binding.searchButton.setOnClickListener {
+            val query =
+                binding.searchInput.text
+                    .toString()
+                    .trim()
+
+            // input nothing
+            if (query.isEmpty()) {
+                Toast.makeText(requireContext(), "Please enter a search term", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // search name or category
+            val filtered =
+                originalPlaces.filter {
+                    it.name.contains(query, ignoreCase = true)
+                }
+
+            currentFilteredPlaces = filtered
+
+            // no result or have result
+            if (filtered.isEmpty()) {
+                adapter = PlaceAdapter(emptyList())
+                binding.recyclerViewExplore.adapter = adapter
+                binding.tvNoResult.visibility = View.VISIBLE
+                binding.tvNoResult.text = "No such place"
+            } else {
+                adapter = PlaceAdapter(filtered.sortedBy { it.name })
+                binding.recyclerViewExplore.adapter = adapter
+                binding.tvNoResult.visibility = View.GONE
+            }
         }
+
+        // Refresh
+        binding.refreshButton.setOnClickListener {
+            binding.searchInput.text.clear()
+            binding.tvNoResult.visibility = View.GONE
+            currentFilteredPlaces = originalPlaces
+            adapter = PlaceAdapter(currentFilteredPlaces.sortedBy { it.name })
+            binding.recyclerViewExplore.adapter = adapter
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
