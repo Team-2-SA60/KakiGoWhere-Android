@@ -8,6 +8,8 @@ plugins {
     id("org.jetbrains.kotlinx.kover")
     id("org.sonatype.gradle.plugins.scan")
     id("org.jlleitschuh.gradle.ktlint")
+    id("kotlin-parcelize")
+    id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 

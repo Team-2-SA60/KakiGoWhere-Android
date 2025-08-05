@@ -5,40 +5,58 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import team2.kakigowhere.PlaceAdapter
-import team2.kakigowhere.PlaceSuggestion
+import team2.kakigowhere.PlaceRowItem
 import team2.kakigowhere.R
+import team2.kakigowhere.data.model.PlacesViewModel
 
 class HomeFragment : Fragment() {
 
+    private val viewModel: PlacesViewModel by viewModels()
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
-    }
+    ): View? = inflater.inflate(R.layout.fragment_home, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val greeting = view.findViewById<TextView>(R.id.tvGreeting)
-        greeting.text = "Hi, Adrian!" // or dynamic
+        super.onViewCreated(view, savedInstanceState)
 
+        // Set greeting
+        view.findViewById<TextView>(R.id.tvGreeting).text = "Hi, Adrian!"
+
+        // RecyclerView setup
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerSuggestions)
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
-        val suggestions = listOf(
-            PlaceSuggestion(
-                "Marina Bay Sands",
-                4.5,
-                "Entertainment, Shopping",
-                R.drawable.marina_bay_sands
-            ),
-            PlaceSuggestion("Singapore Zoo", 4.0, "Wildlife and Zoos", R.drawable.marina_bay_sands),
-            PlaceSuggestion("Sentosa", 4.0, "Entertainment", R.drawable.marina_bay_sands)
-        )
+        // Observe live data from ViewModel
+        viewModel.places.observe(viewLifecycleOwner) { dtoList ->
+            val items = dtoList.map { dto ->
+                PlaceRowItem(dto, dto.averageRating)
+            }
+            recycler.adapter = PlaceAdapter(items) { rowItem ->
+                val dto = rowItem.place
+                val action = HomeFragmentDirections
+                    .actionHomeFragmentToDetailFragment(dto)
+                findNavController().navigate(action)
+            }
+        }
 
-        recycler.adapter = PlaceAdapter(suggestions)
+        // Observe errors
+        viewModel.error.observe(viewLifecycleOwner) { errorMsg ->
+            errorMsg?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+            }
+        }
+
+        // Trigger loading from backend
+        viewModel.loadPlaces()
     }
 }

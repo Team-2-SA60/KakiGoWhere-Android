@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/myRating"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/other_rating_border"
+        android:padding="10dp"
+        android:layout_marginBottom="15dp"
+        android:clipToPadding="false">
+
+        <TextView
+            android:id="@+id/tvReviewerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Rating"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvReviewerRating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4 / 5"
+            android:textSize="18sp"
+            android:layout_marginTop="4dp" />
+
+        <TextView
+            android:id="@+id/tvReviewerComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Your comment goes here."
+            android:textSize="18sp"
+            android:layout_marginTop="6dp" />
+
+</LinearLayout>
+

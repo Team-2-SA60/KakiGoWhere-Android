@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.model.Place
+import team2.kakigowhere.data.model.PlaceDTO
 
 class TestActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +42,7 @@ class TestActivity : AppCompatActivity(), View.OnClickListener {
                         val response = RetrofitClient.api.getPlaces()
 
                         if (response.isSuccessful && (response.body() != null)) {
-                            var places: List<Place> = response.body()!!
+                            var places: List<PlaceDTO> = response.body()!!
                             val layoutContainer = findViewById<ViewGroup>(R.id.main)
 
                             places.forEach { place ->
@@ -55,7 +55,7 @@ class TestActivity : AppCompatActivity(), View.OnClickListener {
                                 }
 
                                 // use Glide to call image and set Image View
-                                val imagePath = ApiConstants.IMAGE_URL + place.imagePath
+                                val imagePath = ApiConstants.IMAGE_URL + place.id
                                 Glide.with(this@TestActivity)
                                     .load(imagePath)
                                     .into(imageView)
