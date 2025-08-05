@@ -6,39 +6,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import team2.kakigowhere.PlaceAdapter
-import team2.kakigowhere.PlaceSuggestion
-import team2.kakigowhere.R
+import team2.kakigowhere.PlaceRowItem
 import team2.kakigowhere.databinding.FragmentExploreBinding
 import team2.kakigowhere.FakePlacesData
+import team2.kakigowhere.data.api.RetrofitClient
 
 class ExploreFragment : Fragment() {
     private var _binding: FragmentExploreBinding? = null
-    val binding get() = _binding!!
+    private val binding get() = _binding!!
 
     private lateinit var adapter: PlaceAdapter
-    private var currentFilteredPlaces: List<PlaceSuggestion> = listOf()
-
-    // fake data
-    // avoid detekt check
-    //now able to use a pool of fake data and get results from there rather than hard coding.
-    @Suppress("MagicNumber")
-    private val originalPlaces =
-        FakePlacesData.getPlaces().map { place ->
-            PlaceSuggestion(
-                name = place.name,
-                rating = 4.0, // You can change this if rating is available
-                category = "placeholder", // Add real category if needed
-                imageUrl = place.imagePath // Use imageUrl here!
-            )
-        }
-//        listOf(
-//            PlaceSuggestion("Marina Bay Sands", 4.2, "Entertainment, Shopping", R.drawable.marina_bay_sands),
-//            PlaceSuggestion("Singapore Zoo", 4.5, "Wildlife and Zoos", R.drawable.marina_bay_sands),
-//            PlaceSuggestion("Sentosa", 4.0, "Entertainment", R.drawable.marina_bay_sands),
-//            PlaceSuggestion("Sands Marina", 4.7, "Shopping", R.drawable.marina_bay),
-//        )
+    private var originalPlaces: List<PlaceRowItem> = listOf()
+    private var currentFilteredPlaces: List<PlaceRowItem> = listOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,11 +40,30 @@ class ExploreFragment : Fragment() {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        // original view
-        binding.recyclerViewExplore.layoutManager = LinearLayoutManager(requireContext())
-        currentFilteredPlaces = originalPlaces
-        adapter = PlaceAdapter(currentFilteredPlaces.sortedBy { it.name })
-        binding.recyclerViewExplore.adapter = adapter
+        // api to get places
+        binding.loadingOverlay.visibility = View.VISIBLE
+        lifecycleScope.launch {
+            val response = RetrofitClient.api.getPlaces()
+            val basicPlaces = response.body() ?: listOf()
+
+            originalPlaces = basicPlaces.map { place ->
+            val detail = withContext(Dispatchers.IO) {
+                RetrofitClient.api.getPlaceDetail(place.id).body()
+            }
+            PlaceRowItem(
+                id = place.id,
+                name = place.name,
+                rating = detail?.averageRating ?: 0.0
+            )
+            }
+
+            //original view
+            currentFilteredPlaces = originalPlaces
+            adapter = PlaceAdapter(currentFilteredPlaces.sortedBy { it.name })
+            binding.recyclerViewExplore.layoutManager = LinearLayoutManager(requireContext())
+            binding.recyclerViewExplore.adapter = adapter
+            binding.loadingOverlay.visibility = View.GONE
+        }
 
         // default filter
         binding.sortDefault.setOnClickListener {
@@ -93,8 +97,7 @@ class ExploreFragment : Fragment() {
             // search name or category
             val filtered =
                 originalPlaces.filter {
-                    it.name.contains(query, ignoreCase = true) ||
-                            it.category.contains(query, ignoreCase = true)
+                    it.name.contains(query, ignoreCase = true)
                 }
 
             currentFilteredPlaces = filtered

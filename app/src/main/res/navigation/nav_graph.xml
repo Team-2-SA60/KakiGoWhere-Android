@@ -68,12 +68,23 @@
             app:argType="string"/>
     </fragment>
 
+
+<!--    change this out when profile is up-->
     <fragment
         android:id="@+id/profileFragment"
-        android:name="team2.kakigowhere.ui.ProfileFragment"
-        android:label="Profile"
-        tools:layout="@layout/fragment_profile">
+        android:name="team2.kakigowhere.ui.RatingsFragment"
+        android:label="Ratings"
+        tools:layout="@layout/fragment_ratings">
+        <action
+            android:id="@+id/action_ratings_to_writeRating"
+            app:destination="@id/writeRatingFragment" />
     </fragment>
+<!--    <fragment-->
+<!--        android:id="@+id/profileFragment"-->
+<!--        android:name="team2.kakigowhere.ui.ProfileFragment"-->
+<!--        android:label="Profile"-->
+<!--        tools:layout="@layout/fragment_profile">-->
+<!--    </fragment>-->
 
     <!-- fragments for sub screens -->
     <fragment
@@ -82,5 +93,10 @@
         android:label="Details"
         tools:layout="@layout/fragment_detail">
     </fragment>
+
+    <fragment
+        android:id="@+id/writeRatingFragment"
+        android:name="team2.kakigowhere.ui.WriteRatingFragment"
+        android:label="Write/Edit Rating" />
 
 </navigation>

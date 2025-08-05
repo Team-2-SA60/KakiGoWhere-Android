@@ -1,24 +1,27 @@
 package team2.kakigowhere
 
-import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.*
-import java.io.File
+import com.bumptech.glide.Glide
 
-class PlaceAdapter(private var places: List<PlaceSuggestion>) :
+class PlaceAdapter(private var places: List<PlaceRowItem>) :
     RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
+
+    fun submitList(newList: List<PlaceRowItem>) {
+        if (places.map { it.id } == newList.map { it.id }) return
+        places = newList
+        notifyDataSetChanged()
+    }
 
     inner class PlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imgPlace: ImageView = itemView.findViewById(R.id.imgPlace)
         val tvName: TextView = itemView.findViewById(R.id.tvName)
         val tvRating: TextView = itemView.findViewById(R.id.tvRating)
-        val tvCategory: TextView = itemView.findViewById(R.id.tvCategory)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
@@ -31,30 +34,19 @@ class PlaceAdapter(private var places: List<PlaceSuggestion>) :
         val place = places[position]
 
         holder.tvName.text = place.name
-        holder.tvRating.text = "${place.rating} " + "★".repeat(place.rating.toInt()) +
-                if (place.rating % 1 >= 0.5) "½" else ""
-        holder.tvCategory.text = "Category: ${place.category}"
 
-        val context = holder.itemView.context
-        val fileName = place.name.replace(" ", "_").lowercase() + ".jpg"
-        val imageFile = getImageFile(context, fileName)
+        // Round to 1 decimal place
+        val roundedRating = "%.1f".format(place.rating.coerceAtLeast(0.0))
+        // Stars based on integer part only
+        val numberOfStars = place.rating.toInt()
+        val stars = "★".repeat(numberOfStars)
+        holder.tvRating.text = "$roundedRating $stars"
 
-        if (imageFile.exists()) {
-            holder.imgPlace.setImageURI(imageFile.toUri())
-        } else {
-            // Set placeholder first
-            holder.imgPlace.setImageResource(R.drawable.placeholder_image)
+        Log.d("PlaceAdapter", "Loading image for id=${place.id}, url=${place.imageUrl()}")
 
-            // Start coroutine to download image
-            CoroutineScope(Dispatchers.Main).launch {
-                val downloadedFile = downloadImageToFile(context, place.imageUrl, fileName)
-                if (downloadedFile != null && downloadedFile.exists()) {
-                    holder.imgPlace.setImageURI(downloadedFile.toUri())
-                } else {
-                    holder.imgPlace.setImageResource(R.drawable.error_image)
-                }
-            }
-        }
+        Glide.with(holder.imgPlace.context)
+            .load(place.imageUrl())
+            .into(holder.imgPlace)
     }
 
     override fun getItemCount(): Int = places.size

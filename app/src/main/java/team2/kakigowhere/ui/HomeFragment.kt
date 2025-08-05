@@ -1,19 +1,33 @@
 package team2.kakigowhere.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import team2.kakigowhere.FakePlacesData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import team2.kakigowhere.PlaceAdapter
-import team2.kakigowhere.PlaceSuggestion
+import team2.kakigowhere.PlaceRowItem
 import team2.kakigowhere.R
+import team2.kakigowhere.data.api.MLRetrofitClient
+import team2.kakigowhere.data.api.RecommendRequest
+import team2.kakigowhere.data.api.RetrofitClient
 
 class HomeFragment : Fragment() {
+    // mock interests for now
+    private val touristInterests = listOf("Wildlife and Zoos")
+    private lateinit var adapter: PlaceAdapter
+
+    private val prefs by lazy { requireContext().getSharedPreferences("recommendation_cache", 0) }
+    private var loading = false
+    private var lastSubmittedIds: List<Long>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,16 +42,135 @@ class HomeFragment : Fragment() {
 
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerSuggestions)
         recycler.layoutManager = LinearLayoutManager(requireContext())
+        adapter = PlaceAdapter(emptyList())
+        recycler.adapter = adapter
 
-        // Convert Place to PlaceSuggestion (used by the adapter)
-        val suggestions = FakePlacesData.getPlaces().map { place ->
-            PlaceSuggestion(
-                name = place.name,
-                rating = 4.0, // You can change this if rating is available
-                category = "placeholder", // Add real category if needed
-                imageUrl = place.imagePath // Use imageUrl here!
-            )
+        if (hasLoadedOnce() && loadIds().isNotEmpty()) {
+            restoreFromIds()
+        } else {
+            loadRecommendations()
         }
-        recycler.adapter = PlaceAdapter(suggestions)
     }
+
+    private fun loadRecommendations() {
+        if (hasLoadedOnce() || loading) return
+        loading = true
+        markLoaded()
+
+        val root = view ?: return
+        val overlay = root.findViewById<View>(R.id.loadingOverlay)
+        val loadingText = root.findViewById<TextView>(R.id.loadingText)
+        overlay.visibility = View.VISIBLE
+        loadingText.text = "Loading recommendations..."
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val suggestionItems = mutableListOf<PlaceRowItem>()
+            val fetchedIds = mutableListOf<Long>()
+
+            val mlRecs = try {
+                withContext(Dispatchers.IO) {
+                    val request = RecommendRequest(interests = touristInterests)
+                    MLRetrofitClient.api.getRecommendations(request)
+                }
+            } catch (e: Exception) {
+                Log.e("HomeFragment", "recommend API failed", e)
+                fadeOutOverlay(overlay)
+                loading = false
+                return@launch
+            }
+
+            for (rec in mlRecs) {
+                val row = buildPlaceRowItem(rec.id)
+                if (row != null) {
+                    suggestionItems.add(row)
+                    fetchedIds.add(rec.id)
+                }
+            }
+
+            if (suggestionItems.isNotEmpty()) {
+                if (lastSubmittedIds != fetchedIds) {
+                    adapter.submitList(suggestionItems)
+                    lastSubmittedIds = fetchedIds.toList()
+                }
+                saveIds(fetchedIds)
+            }
+
+            fadeOutOverlay(overlay)
+            loading = false
+        }
+    }
+
+    private fun restoreFromIds() {
+        val root = view ?: return
+        val overlay = root.findViewById<View>(R.id.loadingOverlay)
+        val loadingText = root.findViewById<TextView>(R.id.loadingText)
+        overlay.visibility = View.VISIBLE
+        loadingText.text = "Loading recommendations..."
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            val ids = loadIds()
+            if (ids.isEmpty()) {
+                fadeOutOverlay(overlay)
+                return@launch
+            }
+
+            val restored = mutableListOf<PlaceRowItem>()
+            for (id in ids) {
+                val row = buildPlaceRowItem(id)
+                if (row != null) restored.add(row)
+            }
+
+            if (restored.isNotEmpty()) {
+                adapter.submitList(restored)
+                lastSubmittedIds = restored.map { it.id }
+            }
+            fadeOutOverlay(overlay)
+        }
+    }
+
+    private suspend fun buildPlaceRowItem(id: Long): PlaceRowItem? {
+        return try {
+            val placeDetail = withContext(Dispatchers.IO) {
+                RetrofitClient.api.getPlaceDetail(id).body()
+            }
+            if (placeDetail == null) return null
+            val ratingValue: Double = placeDetail.averageRating ?: 0.0
+            PlaceRowItem(
+                id = id,
+                name = placeDetail.name,
+                rating = ratingValue
+            )
+        } catch (e: Exception) {
+            Log.w("HomeFragment", "detail fetch failed id=$id", e)
+            null
+        }
+    }
+
+    private fun fadeOutOverlay(overlay: View?) {
+        overlay?.animate()
+            ?.alpha(0f)
+            ?.setDuration(200)
+            ?.withEndAction {
+                overlay.visibility = View.GONE
+                overlay.alpha = 1f
+            }
+    }
+
+    // prefs helpers
+    private fun hasLoadedOnce(): Boolean =
+        prefs.getBoolean("loaded_once", false)
+
+    private fun markLoaded() {
+        prefs.edit().putBoolean("loaded_once", true).apply()
+    }
+
+    private fun saveIds(ids: List<Long>) {
+        prefs.edit()
+            .putStringSet("cached_place_ids", ids.map { it.toString() }.toSet())
+            .apply()
+    }
+
+    private fun loadIds(): List<Long> =
+        prefs.getStringSet("cached_place_ids", emptySet())
+            ?.mapNotNull { it.toLongOrNull() } ?: emptyList()
 }
