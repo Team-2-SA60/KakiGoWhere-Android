@@ -67,6 +67,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+
     private fun addMarkersAndCenter() {
         val map = googleMap ?: return
         // Add a marker for each place
