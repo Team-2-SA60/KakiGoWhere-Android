@@ -38,3 +38,11 @@ data class InterestCategory(
     var name: String,
     var description: String
 ) : Parcelable
+
+@Parcelize
+data class LoginResponse(
+    val id: Long,
+    val email: String,
+    val name: String,
+    val role: String
+) :Parcelable

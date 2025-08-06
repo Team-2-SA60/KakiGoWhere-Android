@@ -1,74 +1,80 @@
 package team2.kakigowhere
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import team2.kakigowhere.data.auth.AuthService
-import team2.kakigowhere.databinding.ActivityLoginBinding
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import retrofit2.Response
+import team2.kakigowhere.data.api.RetrofitClient
+import team2.kakigowhere.data.model.LoginResponse
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityLoginBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_login)
 
-        setupLoginButton()
-        setupSignUpButton()
-    }
+        val emailInput = findViewById<EditText>(R.id.emailInput)
+        val passwordInput = findViewById<EditText>(R.id.passwordInput)
+        val loginButton = findViewById<Button>(R.id.loginButton)
 
-    private fun setupLoginButton() {
-        binding.loginButton.setOnClickListener {
-            val email = binding.emailEditText.text.toString().trim()
-            val password = binding.passwordEditText.text.toString().trim()
+        loginButton.setOnClickListener {
+            val email = emailInput.text.toString().trim()
+            val password = passwordInput.text.toString()
 
-            if (email.isEmpty() || password.isEmpty()) {
-                showError("Please fill in all fields")
+            if (email.isBlank() || password.isBlank()) {
+                Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            performLogin(email, password)
-        }
-    }
+            lifecycleScope.launch {
+                try {
+                    // Send credentials as JSON map { "email": "...", "password": "..." }
+                    val response: Response<LoginResponse> = RetrofitClient.api.login(
+                        mapOf(
+                            "email" to email,
+                            "password" to password
+                        )
+                    )
 
-    private fun performLogin(email: String, password: String) {
-        val result = AuthService.authenticate(email, password)
+                    if (response.isSuccessful && response.body() != null) {
+                        val user = response.body()!!
 
-        when (result) {
-            is AuthService.AuthResult.Success -> {
-                hideError()
-                // 跳转到主页面
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent)
-                finish() // 结束登录Activity，防止返回
-                Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
+                        // Save user info in SharedPreferences
+                        val prefs = getSharedPreferences("kaki_prefs", Context.MODE_PRIVATE)
+                        prefs.edit().apply {
+                            putLong("user_id", user.id)
+                            putString("user_email", user.email)
+                            putString("user_name", user.name)
+                            putString("user_role", user.role)
+                            apply()
+                        }
+
+                        Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                        finish()
+
+                    } else {
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Login failed: ${response.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                } catch (e: Exception) {
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "Network error: ${e.localizedMessage}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
-            is AuthService.AuthResult.EmailNotFound -> {
-                showError("Email cannot found")
-            }
-            is AuthService.AuthResult.WrongPassword -> {
-                showError("Password is wrong")
-            }
         }
-    }
-
-    private fun setupSignUpButton() {
-        binding.signUpButton.setOnClickListener {
-            val intent = Intent(this, RegisterPage1Activity::class.java)
-            startActivity(intent)
-        }
-    }
-
-    private fun showError(message: String) {
-        binding.errorMessageText.text = message
-        binding.errorMessageText.visibility = View.VISIBLE
-    }
-
-    private fun hideError() {
-        binding.errorMessageText.visibility = View.INVISIBLE
     }
 }

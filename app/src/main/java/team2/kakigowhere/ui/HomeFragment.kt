@@ -1,5 +1,6 @@
 package team2.kakigowhere.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,9 +29,10 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Set greeting
-        view.findViewById<TextView>(R.id.tvGreeting).text = "Hi, Adrian!"
+        // Retrieve stored user name
+        val prefs = requireContext().getSharedPreferences("kaki_prefs", Context.MODE_PRIVATE)
+        val userName = prefs.getString("user_name", "Guest") ?: "Guest"
+        view.findViewById<TextView>(R.id.tvGreeting).text = "Hi, $userName"
 
         // RecyclerView setup
         val recycler = view.findViewById<RecyclerView>(R.id.recyclerSuggestions)
