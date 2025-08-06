@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import team2.kakigowhere.PlaceAdapter
-import team2.kakigowhere.PlaceRowItem
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.PlaceDTO
 import team2.kakigowhere.databinding.FragmentExploreBinding
@@ -23,8 +22,10 @@ class ExploreFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: PlaceAdapter
-    private var originalPlaces = listOf<PlaceRowItem>()
-    private var currentFilteredPlaces = listOf<PlaceRowItem>()
+    //private var originalPlaces = listOf<PlaceRowItem>()
+    //private var currentFilteredPlaces = listOf<PlaceRowItem>()
+    private var currentFilteredPlaces = listOf<PlaceDTO>()
+    private var originalPlaces = listOf<PlaceDTO>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,23 +45,24 @@ class ExploreFragment : Fragment() {
             val resp = RetrofitClient.api.getPlaces()
             val dtoList = resp.body() ?: emptyList<PlaceDTO>()
 
-            originalPlaces = dtoList.map { dto ->
-                PlaceRowItem(dto, dto.averageRating)
-            }
-            currentFilteredPlaces = originalPlaces
+//            originalPlaces = dtoList.map { dto ->
+//                PlaceRowItem(dto, dto.averageRating)
+//            }
+//            currentFilteredPlaces = originalPlaces
+            currentFilteredPlaces = dtoList
 
             withContext(Dispatchers.Main) {
-                setupRecycler(currentFilteredPlaces.sortedBy { it.place.name })
+                setupRecycler(currentFilteredPlaces.sortedBy { it.name })
                 binding.loadingOverlay.visibility = View.GONE
             }
         }
 
         binding.sortDefault.setOnClickListener {
-            currentFilteredPlaces = currentFilteredPlaces.sortedBy { it.place.name }
+            currentFilteredPlaces = currentFilteredPlaces.sortedBy { it.name }
             setupRecycler(currentFilteredPlaces)
         }
         binding.sortRating.setOnClickListener {
-            currentFilteredPlaces = currentFilteredPlaces.sortedByDescending { it.rating }
+            currentFilteredPlaces = currentFilteredPlaces.sortedByDescending { it.averageRating }
             setupRecycler(currentFilteredPlaces)
         }
         binding.searchButton.setOnClickListener {
@@ -69,27 +71,27 @@ class ExploreFragment : Fragment() {
                 Toast.makeText(requireContext(), "Enter a search term", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            currentFilteredPlaces = originalPlaces.filter { it.place.name.contains(q, true) }
+            currentFilteredPlaces = originalPlaces.filter { it.name.contains(q, true) }
             if (currentFilteredPlaces.isEmpty()) {
                 setupRecycler(emptyList())
                 binding.tvNoResult.visibility = View.VISIBLE
             } else {
-                setupRecycler(currentFilteredPlaces.sortedBy { it.place.name })
+                setupRecycler(currentFilteredPlaces.sortedBy { it.name })
             }
         }
         binding.refreshButton.setOnClickListener {
             binding.searchInput.text?.clear()
             binding.tvNoResult.visibility = View.GONE
             currentFilteredPlaces = originalPlaces
-            setupRecycler(currentFilteredPlaces.sortedBy { it.place.name })
+            setupRecycler(currentFilteredPlaces.sortedBy { it.name })
         }
     }
 
-    private fun setupRecycler(list: List<PlaceRowItem>) {
+    private fun setupRecycler(list: List<PlaceDTO>) {
         adapter = PlaceAdapter(list) { rowItem ->
             // Navigate passing the PlaceDTO directly
             val action = ExploreFragmentDirections
-                .actionExploreFragmentToDetailFragment(rowItem.place)
+                .actionExploreFragmentToDetailFragment(rowItem.id)
             findNavController().navigate(action)
         }
 

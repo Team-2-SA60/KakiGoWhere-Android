@@ -4,32 +4,31 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import team2.kakigowhere.data.api.ApiConstants
+import team2.kakigowhere.data.model.PlaceDTO
 import team2.kakigowhere.databinding.PlaceItemBinding
 
 class PlaceAdapter(
-    private val items: List<PlaceRowItem>,
-    private val onItemClick: (PlaceRowItem) -> Unit
+    private val places: List<PlaceDTO>,
+    private val onItemClick: (PlaceDTO) -> Unit
 ) : RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
 
-    inner class PlaceViewHolder(private val binding: PlaceItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class PlaceViewHolder(private val binding: PlaceItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(place: PlaceDTO) {
+            binding.apply{
+                placeName.text = place.name
+                placeRating.text = if (place.averageRating == 0.0) "Rating Not Available" else "Rating: %.1f".format(place.averageRating)
 
-        fun bind(item: PlaceRowItem) {
-            // Display name and rating
-            binding.placeName.text = item.place.name
-            binding.placeRating.text = if (item.rating == 0.0) "Rating Not Available" else "Rating: %.1f".format(item.rating)
+                val imagePath = ApiConstants.IMAGE_URL + place.id
+                Glide.with(placeImage.context)
+                    .load(imagePath)
+                    .placeholder(R.drawable.placeholder_image)
+                    .centerCrop()
+                    .into(placeImage)
 
-            // Load image with Glide
-            Glide.with(binding.placeImage.context)
-                .load(item.imageUrl())
-                .placeholder(R.drawable.placeholder_image)
-                .error(R.drawable.error_image)
-                .centerCrop()
-                .into(binding.placeImage)
-
-            // Click callback passes the full PlaceRowItem
-            binding.root.setOnClickListener {
-                onItemClick(item)
+                root.setOnClickListener {
+                    onItemClick(place)
+                }
             }
         }
     }
@@ -44,8 +43,8 @@ class PlaceAdapter(
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(places[position])
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = places.size
 }

@@ -32,13 +32,15 @@
         android:name="team2.kakigowhere.ui.DetailFragment"
         android:label="Details"
         tools:layout="@layout/fragment_detail">
-        <argument
-            android:name="place"
-            app:argType="team2.kakigowhere.data.model.PlaceDTO" />
         <action
             android:id="@+id/action_detailFragment_to_mapFragment"
-            app:destination="@id/mapFragment">
-        </action>
+            app:destination="@id/mapFragment"/>
+        <argument
+            android:name="place_id"
+            app:argType="long"/>
+<!--        <argument-->
+<!--            android:name="place"-->
+<!--            app:argType="team2.kakigowhere.data.model.PlaceDTO" />-->
     </fragment>
 
     <!-- MapFragment -->
@@ -47,6 +49,9 @@
         android:name="team2.kakigowhere.ui.MapsFragment"
         android:label="Map"
         tools:layout="@layout/fragment_maps">
+        <action
+            android:id="@+id/action_mapFragment_to_detailFragment"
+            app:destination="@id/detailFragment"/>
         <argument
             android:name="place_id"
             app:argType="long"
@@ -66,7 +71,6 @@
         <action
             android:id="@+id/action_savedFragment_to_savedItemFragment"
             app:destination="@id/savedItemFragment"/>
-
         <action
             android:id="@+id/action_savedFragment_to_createItineraryFragment"
             app:destination="@id/createItineraryFragment"/>

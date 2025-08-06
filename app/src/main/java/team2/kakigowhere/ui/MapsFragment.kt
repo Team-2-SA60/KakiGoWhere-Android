@@ -40,9 +40,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
         places = placeViewModel.places.value!!
 
-        // notify when map is ready
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        // update map when Place live data is updated
+        placeViewModel.places.observe(viewLifecycleOwner) { places ->
+            if (places != null) {
+                // notify when map is ready
+                val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+                mapFragment.getMapAsync(this)
+            }
+        }
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -52,8 +57,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, 16f))
         googleMap.uiSettings.isZoomControlsEnabled = true
 
+        places = placeViewModel.places.value!!
+
         if (places.isNotEmpty()) {
             addPlaceMarkers(googleMap)
+            setLaunchDetailFragment(googleMap)
+
+            // below logic runs if navigated from Detail Fragment
             if (args.placeId != 0L) {
                 val place = places.find { it.id == args.placeId }!!
                 val location = LatLng(place.latitude, place.longitude)
@@ -95,7 +105,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 false
             }
         }
+    }
 
-        // TODO: map.setOnInfoWindowClickListener
+    private fun setLaunchDetailFragment(googleMap: GoogleMap) {
+        googleMap.setOnInfoWindowClickListener { marker ->
+            val place = places.find { it.id == marker.tag }
+            findNavController().navigate(
+                MapsFragmentDirections.actionMapFragmentToDetailFragment(place!!.id)
+            )
+        }
     }
 }

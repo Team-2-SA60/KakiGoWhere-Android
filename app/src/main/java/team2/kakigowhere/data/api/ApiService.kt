@@ -11,6 +11,7 @@ import team2.kakigowhere.data.model.CreateItineraryDTO
 import team2.kakigowhere.data.model.ItineraryDTO
 import team2.kakigowhere.data.model.ItineraryDetailDTO
 import team2.kakigowhere.data.model.PlaceDTO
+import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.data.model.RatingItem
 import team2.kakigowhere.data.model.RatingRequest
 import team2.kakigowhere.data.model.RatingSummary
@@ -24,7 +25,7 @@ interface ApiService {
     @GET("places/id/{placeId}")
     suspend fun getPlaceDetail(
         @Path("placeId") placeId: Long
-    ): Response<PlaceDTO>
+    ): Response<PlaceDetailDTO>
 
     @GET("ratings/{placeId}/summary")
     suspend fun getRatingSummary(
