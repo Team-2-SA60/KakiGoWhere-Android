@@ -39,18 +39,25 @@
             android:id="@+id/action_detailFragment_to_mapFragment"
             app:destination="@id/mapFragment">
             <!-- Pass coordinates and showBack -->
-            <argument
-                android:name="lat"
-                app:argType="float"
-                android:defaultValue="1.29027" />
-            <argument
-                android:name="lng"
-                app:argType="float"
-                android:defaultValue="103.85196" />
-            <argument
-                android:name="showBack"
-                app:argType="boolean"
-                android:defaultValue="false" />
+<!--            <argument-->
+<!--                android:name="lat"-->
+<!--                app:argType="float"-->
+<!--                android:defaultValue="1.29027" />-->
+<!--            <argument-->
+<!--                android:name="lng"-->
+<!--                app:argType="float"-->
+<!--                android:defaultValue="103.85196" />-->
+<!--            <argument-->
+<!--                android:name="showBack"-->
+<!--                app:argType="boolean"-->
+<!--                android:defaultValue="false" />-->
+<!--            <argument-->
+<!--                android:name="place_id"-->
+<!--                app:argType="long"/>-->
+<!--            <argument-->
+<!--                android:name="showBack"-->
+<!--                app:argType="boolean"-->
+<!--                android:defaultValue="false"/>-->
         </action>
     </fragment>
 
@@ -61,18 +68,26 @@
         android:label="Map"
         tools:layout="@layout/fragment_maps">
         <!-- Required args with defaults -->
+<!--        <argument-->
+<!--            android:name="lat"-->
+<!--            app:argType="float"-->
+<!--            android:defaultValue="1.29027" />-->
+<!--        <argument-->
+<!--            android:name="lng"-->
+<!--            app:argType="float"-->
+<!--            android:defaultValue="103.85196" />-->
+<!--        <argument-->
+<!--            android:name="showBack"-->
+<!--            app:argType="boolean"-->
+<!--            android:defaultValue="false" />-->
         <argument
-            android:name="lat"
-            app:argType="float"
-            android:defaultValue="1.29027" />
-        <argument
-            android:name="lng"
-            app:argType="float"
-            android:defaultValue="103.85196" />
+            android:name="place_id"
+            app:argType="long"
+            android:defaultValue="0L"/>
         <argument
             android:name="showBack"
             app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"/>
     </fragment>
 
     <!-- SavedFragment -->

@@ -63,8 +63,9 @@ class DetailFragment : Fragment() {
         binding.btnShowOnMap.setOnClickListener {
             val action = DetailFragmentDirections
                 .actionDetailFragmentToMapFragment(
-                    lat = place.latitude.toFloat(),
-                    lng = place.longitude.toFloat(),
+//                    lat = place.latitude.toFloat(),
+//                    lng = place.longitude.toFloat(),
+                    placeId = place.id,
                     showBack = true
                 )
             findNavController().navigate(action)

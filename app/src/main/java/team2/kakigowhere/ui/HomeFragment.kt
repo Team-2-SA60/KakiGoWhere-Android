@@ -14,11 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import team2.kakigowhere.PlaceAdapter
 import team2.kakigowhere.PlaceRowItem
 import team2.kakigowhere.R
-import team2.kakigowhere.data.model.PlacesViewModel
+import team2.kakigowhere.data.model.PlaceViewModel
 
 class HomeFragment : Fragment() {
 
-    private val viewModel: PlacesViewModel by viewModels()
+    private val viewModel: PlaceViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
