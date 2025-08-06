@@ -2,6 +2,7 @@ package team2.kakigowhere.data.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import com.google.gson.annotations.SerializedName
 
 //@Parcelize
 //// TODO: this class is not used so far, consider removing
@@ -44,5 +45,7 @@ data class LoginResponse(
     val id: Long,
     val email: String,
     val name: String,
-    val role: String
+    val role: String,
+    @SerializedName("interestCategories")
+    val interestsCategories: List<InterestCategory>? = emptyList()
 ) :Parcelable

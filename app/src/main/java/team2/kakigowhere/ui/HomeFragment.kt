@@ -30,7 +30,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // Retrieve stored user name
-        val prefs = requireContext().getSharedPreferences("kaki_prefs", Context.MODE_PRIVATE)
+        val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         val userName = prefs.getString("user_name", "Guest") ?: "Guest"
         view.findViewById<TextView>(R.id.tvGreeting).text = "Hi, $userName"
 
