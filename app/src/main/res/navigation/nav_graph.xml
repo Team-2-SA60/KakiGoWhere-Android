@@ -115,6 +115,9 @@
         android:name="team2.kakigowhere.ui.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_ratingFragment"
+            app:destination="@id/ratingFragment" />
     </fragment>
 
     <fragment

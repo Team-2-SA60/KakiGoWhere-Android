@@ -15,6 +15,7 @@ import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.data.model.RatingItem
 import team2.kakigowhere.data.model.RatingRequest
 import team2.kakigowhere.data.model.RatingSummary
+import team2.kakigowhere.data.model.LoginResponse
 
 interface ApiService {
 
@@ -32,7 +33,6 @@ interface ApiService {
         @Path("placeId") placeId: Long
     ): Response<RatingSummary>
 
-    // tourist api
     // may be empty as Tourist may not have given rating
     @GET("ratings/{placeId}/me")
     suspend fun getMyRating(
@@ -53,7 +53,6 @@ interface ApiService {
         @Body request: RatingRequest
     ): Response<RatingItem>
 
-    // itinerary api
     @GET("itinerary/{email}")
     suspend fun getItineraries(
         @Path("email") email: String
@@ -69,4 +68,9 @@ interface ApiService {
         @Header("user-email") email: String,
         @Body itinerary: Itinerary
     ): Response<Unit>
+
+    @POST("auth/login")
+    suspend fun login(
+        @Body credentials: Map<String, String>
+    ): Response<LoginResponse>
 }

@@ -55,3 +55,11 @@ data class PlaceEvent(
     val startDate: String,
     val endDate: String
 )
+
+@Parcelize
+data class LoginResponse(
+    val id: Long,
+    val email: String,
+    val name: String,
+    val role: String
+) :Parcelable

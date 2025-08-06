@@ -24,14 +24,31 @@
         <activity
             android:name=".ui.TestActivity"
             android:exported="false" />
+
+        <!-- Login Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Register Page 1 Activity -->
+        <activity
+            android:name=".RegisterPage1Activity"
+            android:exported="false" />
+
+        <!-- Register Page 2 Activity -->
+        <activity
+            android:name=".RegisterPage2Activity"
+            android:exported="false" />
+
+        <!-- Main Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
 
     </application>
 
