@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import team2.kakigowhere.PlaceAdapter
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.PlaceDTO
 import team2.kakigowhere.databinding.FragmentExploreBinding
@@ -22,8 +21,6 @@ class ExploreFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: PlaceAdapter
-    //private var originalPlaces = listOf<PlaceRowItem>()
-    //private var currentFilteredPlaces = listOf<PlaceRowItem>()
     private var currentFilteredPlaces = listOf<PlaceDTO>()
     private var originalPlaces = listOf<PlaceDTO>()
 
@@ -45,10 +42,6 @@ class ExploreFragment : Fragment() {
             val resp = RetrofitClient.api.getPlaces()
             val dtoList = resp.body() ?: emptyList<PlaceDTO>()
 
-//            originalPlaces = dtoList.map { dto ->
-//                PlaceRowItem(dto, dto.averageRating)
-//            }
-//            currentFilteredPlaces = originalPlaces
             currentFilteredPlaces = dtoList
 
             withContext(Dispatchers.Main) {

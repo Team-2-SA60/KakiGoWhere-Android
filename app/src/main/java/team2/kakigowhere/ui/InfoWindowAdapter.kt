@@ -25,6 +25,8 @@ class InfoWindowAdapter(
         val imageView = window.findViewById<ImageView>(R.id.icon)
         Glide.with(context)
             .load(imagePath)
+            .placeholder(R.drawable.placeholder_image)
+            .centerCrop()
             .into(imageView)
 
         window.findViewById<TextView>(R.id.title).text = place.name

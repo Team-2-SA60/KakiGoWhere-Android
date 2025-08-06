@@ -39,7 +39,7 @@ class ItineraryAdapter(
 
         // if itinerary does not have items
         if (itineraryItem.days == 0L) {
-            holder.image.setImageResource(R.drawable.kakigowhere)
+            holder.image.setImageResource(R.drawable.placeholder_image)
             holder.title.text = itineraryItem.title
             holder.dates.text = itineraryItem.startDate
             return
@@ -49,7 +49,7 @@ class ItineraryAdapter(
 
         Glide.with(context)
             .load(placeImagePath)
-            .placeholder(R.drawable.kakigowhere)
+            .placeholder(R.drawable.placeholder_image)
             .into(holder.image)
 
         holder.title.text = itineraryItem.title

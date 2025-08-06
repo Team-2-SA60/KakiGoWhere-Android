@@ -1,9 +1,5 @@
 package team2.kakigowhere.data.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
 data class PlaceDTO(
     val id: Long,
     val googleId: String,
@@ -15,7 +11,7 @@ data class PlaceDTO(
     val isOpen: Boolean,
     val averageRating: Double,
     val interestCategories: List<InterestCategory>
-) : Parcelable
+)
 
 data class PlaceDetailDTO(
     val id: Long,
@@ -36,12 +32,11 @@ data class PlaceDetailDTO(
     val isOpen: Boolean
 )
 
-@Parcelize
 data class InterestCategory(
     var id: Long,
     var name: String,
     var description: String
-) : Parcelable
+)
 
 data class OpeningHours(
     val id: Long,
@@ -57,6 +52,6 @@ data class PlaceEvent(
     val id: Long,
     val name: String,
     val description: String,
-    val startDate: String, // change to LocalDate
-    val endDate: String // change to LocalDate
+    val startDate: String,
+    val endDate: String
 )

@@ -11,7 +11,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import team2.kakigowhere.PlaceAdapter
 import team2.kakigowhere.R
 import team2.kakigowhere.data.model.PlaceViewModel
 

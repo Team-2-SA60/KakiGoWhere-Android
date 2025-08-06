@@ -1,9 +1,10 @@
-package team2.kakigowhere
+package team2.kakigowhere.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.model.PlaceDTO
 import team2.kakigowhere.databinding.PlaceItemBinding

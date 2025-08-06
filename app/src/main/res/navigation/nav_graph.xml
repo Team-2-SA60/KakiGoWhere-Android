@@ -5,7 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
-    <!-- fragments in main navigation bar -->
+    <!-- Home Fragment -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="team2.kakigowhere.ui.HomeFragment"
@@ -16,6 +16,7 @@
             app:destination="@id/detailFragment" />
     </fragment>
 
+    <!-- Explore Fragment -->
     <fragment
         android:id="@+id/exploreFragment"
         android:name="team2.kakigowhere.ui.ExploreFragment"
@@ -38,9 +39,6 @@
         <argument
             android:name="place_id"
             app:argType="long"/>
-<!--        <argument-->
-<!--            android:name="place"-->
-<!--            app:argType="team2.kakigowhere.data.model.PlaceDTO" />-->
     </fragment>
 
     <!-- MapFragment -->
