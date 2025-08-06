@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -36,19 +38,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         places = placeViewModel.places.value!!
 
         // notify when map is ready
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-
-        // Back button
-//        view.findViewById<Button>(R.id.backButton).apply {
-//            visibility = if (args.showBack) View.VISIBLE else GONE
-//            setOnClickListener { findNavController().navigateUp() }
-//        }
-
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -66,8 +60,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16f))
                 markersMap[args.placeId]?.showInfoWindow()
             }
-        }
 
+            val backButton = requireView().findViewById<Button>(R.id.backButton)
+            if (args.showBack) {
+                backButton.visibility = View.VISIBLE
+                backButton.setOnClickListener { findNavController().navigateUp() }
+            } else backButton.visibility = View.GONE
+        }
     }
 
     private fun addPlaceMarkers(googleMap: GoogleMap) {
