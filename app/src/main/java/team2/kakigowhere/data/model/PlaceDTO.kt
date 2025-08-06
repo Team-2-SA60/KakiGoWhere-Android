@@ -1,5 +1,8 @@
 package team2.kakigowhere.data.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
 data class PlaceDTO(
     val id: Long,
     val googleId: String,

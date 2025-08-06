@@ -42,48 +42,49 @@ class DetailFragment : Fragment() {
             val response = RetrofitClient.api.getPlaceDetail(args.placeId)
             if (response.isSuccessful) {
                 placeDetail = response.body()!!
+                // Populate text fields
+                binding.placeName.text = placeDetail.name
+                binding.placeRating.text = if (placeDetail.averageRating == 0.0) "Rating Not Available" else placeDetail.averageRating.toString()
+                binding.placeHours.text = if (placeDetail.isOpen) "Open Now" else "Closed"
+                binding.placeDescription.text = "PlaceHolder" // TODO:
+                binding.placeWebsite.text = "https://www.google.com/maps/search/?api=1&query=${Uri.encode(placeDetail.name)}"
+
+                // Clickable website
+                binding.placeWebsite.setOnClickListener {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encode(placeDetail.name)}")))
+                }
+                var imageUrl = ApiConstants.IMAGE_URL + placeDetail.id
+
+                // Load image with Glide (lifecycle-aware)
+                Glide.with(this@DetailFragment)
+                    .load(imageUrl)
+                    .placeholder(R.drawable.placeholder_image)
+                    .error(R.drawable.error_image)
+                    .centerCrop()
+                    .into(binding.placeImage)
+
+                // Back button
+                binding.backButton.setOnClickListener {
+                    findNavController().navigateUp()
+                }
+
+                // Show on Map (passing coords + showBack=true)
+                binding.btnShowOnMap.setOnClickListener {
+                    val action = DetailFragmentDirections
+                        .actionDetailFragmentToMapFragment(
+                            placeId = placeDetail.id,
+                            showBack = true
+                        )
+                    findNavController().navigate(action)
+                }
+
+                // Stubs for future logic
+                binding.btnBookmark.setOnClickListener { /* TODO: bookmark */ }
+                binding.btnAddToItinerary.setOnClickListener { /* TODO: add to itinerary */ }
             }
+
         }
 
-        // Populate text fields
-        binding.placeName.text = placeDetail.name
-        binding.placeRating.text = if (placeDetail.averageRating == 0.0) "Rating Not Available" else placeDetail.averageRating.toString()
-        binding.placeHours.text = if (placeDetail.isOpen) "Open Now" else "Closed"
-        binding.placeDescription.text = "PlaceHolder" // TODO:
-        binding.placeWebsite.text = "https://www.google.com/maps/search/?api=1&query=${Uri.encode(placeDetail.name)}"
-
-        // Clickable website
-        binding.placeWebsite.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encode(placeDetail.name)}")))
-        }
-        var imageUrl = ApiConstants.IMAGE_URL + placeDetail.id
-
-        // Load image with Glide (lifecycle-aware)
-        Glide.with(this)
-            .load(imageUrl)
-            .placeholder(R.drawable.placeholder_image)
-            .error(R.drawable.error_image)
-            .centerCrop()
-            .into(binding.placeImage)
-
-        // Back button
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        // Show on Map (passing coords + showBack=true)
-        binding.btnShowOnMap.setOnClickListener {
-            val action = DetailFragmentDirections
-                .actionDetailFragmentToMapFragment(
-                    placeId = placeDetail.id,
-                    showBack = true
-                )
-            findNavController().navigate(action)
-        }
-
-        // Stubs for future logic
-        binding.btnBookmark.setOnClickListener { /* TODO: bookmark */ }
-        binding.btnAddToItinerary.setOnClickListener { /* TODO: add to itinerary */ }
     }
 
     override fun onDestroyView() {
@@ -91,3 +92,4 @@ class DetailFragment : Fragment() {
         _binding = null
     }
 }
+
