@@ -47,11 +47,9 @@ class SavedFragment : Fragment(), View.OnClickListener {
                 recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
                 val sortedList = itineraryList.sortedBy { LocalDate.parse(it.startDate) }
-                val adapter = ItineraryAdapter(this@SavedFragment, sortedList) { item ->
+                recyclerView.adapter = ItineraryAdapter(this@SavedFragment, sortedList) { item ->
                     launchSavedItemFragment(item.id)
                 }
-
-                recyclerView.adapter = adapter
             } catch (e: Exception) {
                 Log.d("API Error", "Error fetching itineraries")
                 Log.d("API Error", e.toString())

@@ -7,14 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
+import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
+import team2.kakigowhere.data.api.RetrofitClient
+import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.databinding.FragmentDetailBinding
 
 class DetailFragment : Fragment() {
+
+    private lateinit var placeDetail: PlaceDetailDTO
 
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
@@ -31,20 +37,26 @@ class DetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val place = args.place
+
+        lifecycleScope.launch {
+            val response = RetrofitClient.api.getPlaceDetail(args.placeId)
+            if (response.isSuccessful) {
+                placeDetail = response.body()!!
+            }
+        }
 
         // Populate text fields
-        binding.placeName.text = place.name
-        binding.placeRating.text = if (place.averageRating == 0.0) "Rating Not Available" else place.averageRating.toString()
-        binding.placeHours.text = if (place.isOpen) "Open Now" else "Closed"
+        binding.placeName.text = placeDetail.name
+        binding.placeRating.text = if (placeDetail.averageRating == 0.0) "Rating Not Available" else placeDetail.averageRating.toString()
+        binding.placeHours.text = if (placeDetail.isOpen) "Open Now" else "Closed"
         binding.placeDescription.text = "PlaceHolder" // TODO:
-        binding.placeWebsite.text = "https://www.google.com/maps/search/?api=1&query=${Uri.encode(place.name)}"
+        binding.placeWebsite.text = "https://www.google.com/maps/search/?api=1&query=${Uri.encode(placeDetail.name)}"
 
         // Clickable website
         binding.placeWebsite.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encode(place.name)}")))
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encode(placeDetail.name)}")))
         }
-        var imageUrl = ApiConstants.IMAGE_URL + place.id
+        var imageUrl = ApiConstants.IMAGE_URL + placeDetail.id
 
         // Load image with Glide (lifecycle-aware)
         Glide.with(this)
@@ -63,9 +75,7 @@ class DetailFragment : Fragment() {
         binding.btnShowOnMap.setOnClickListener {
             val action = DetailFragmentDirections
                 .actionDetailFragmentToMapFragment(
-//                    lat = place.latitude.toFloat(),
-//                    lng = place.longitude.toFloat(),
-                    placeId = place.id,
+                    placeId = placeDetail.id,
                     showBack = true
                 )
             findNavController().navigate(action)

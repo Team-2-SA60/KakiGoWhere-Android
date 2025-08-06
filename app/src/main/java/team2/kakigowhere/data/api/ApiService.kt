@@ -7,10 +7,11 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
-import team2.kakigowhere.data.model.CreateItineraryDTO
+import team2.kakigowhere.data.model.Itinerary
 import team2.kakigowhere.data.model.ItineraryDTO
 import team2.kakigowhere.data.model.ItineraryDetailDTO
 import team2.kakigowhere.data.model.PlaceDTO
+import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.data.model.RatingItem
 import team2.kakigowhere.data.model.RatingRequest
 import team2.kakigowhere.data.model.RatingSummary
@@ -25,7 +26,7 @@ interface ApiService {
     @GET("places/id/{placeId}")
     suspend fun getPlaceDetail(
         @Path("placeId") placeId: Long
-    ): Response<PlaceDTO>
+    ): Response<PlaceDetailDTO>
 
     @GET("ratings/{placeId}/summary")
     suspend fun getRatingSummary(
@@ -65,7 +66,7 @@ interface ApiService {
     @POST("itinerary/create")
     suspend fun createItinerary(
         @Header("user-email") email: String,
-        @Body itinerary: CreateItineraryDTO
+        @Body itinerary: Itinerary
     ): Response<Unit>
 
     @POST("auth/login")
