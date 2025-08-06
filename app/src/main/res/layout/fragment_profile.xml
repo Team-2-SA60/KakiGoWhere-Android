@@ -1,14 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ProfileFragment">
+    android:padding="16dp">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <!-- Name Field -->
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Your Name"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnSaveName"
+        app:layout_constraintHorizontal_chainStyle="packed" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/btnSaveName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Name"
+        app:layout_constraintBaseline_toBaselineOf="@id/etName"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Interests Field -->
+    <EditText
+        android:id="@+id/etInterests"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Your Interests (comma-separated)"
+        app:layout_constraintTop_toBottomOf="@id/etName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnSaveInterests"
+        android:layout_marginTop="24dp"
+        app:layout_constraintHorizontal_chainStyle="packed" />
+
+    <Button
+        android:id="@+id/btnSaveInterests"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Interests"
+        app:layout_constraintBaseline_toBaselineOf="@id/etInterests"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- View Ratings -->
+    <Button
+        android:id="@+id/btnViewRatings"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="View My Ratings"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/etInterests"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Log Out"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/btnViewRatings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

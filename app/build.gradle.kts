@@ -9,7 +9,6 @@ plugins {
     id("org.sonatype.gradle.plugins.scan")
     id("org.jlleitschuh.gradle.ktlint")
     id("kotlin-parcelize")
-    id("androidx.navigation.safeargs.kotlin")
     alias(libs.plugins.google.android.libraries.mapsplatform.secrets.gradle.plugin)
 }
 
@@ -71,8 +70,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.navigation.fragment.ktx)
-    implementation(libs.navigation.ui.ktx)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
