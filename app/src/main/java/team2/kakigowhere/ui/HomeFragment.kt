@@ -8,18 +8,16 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import team2.kakigowhere.PlaceAdapter
-import team2.kakigowhere.PlaceRowItem
 import team2.kakigowhere.R
 import team2.kakigowhere.data.model.PlaceViewModel
 
 class HomeFragment : Fragment() {
 
-    private val viewModel: PlaceViewModel by viewModels()
+    private val placeViewModel: PlaceViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,31 +32,25 @@ class HomeFragment : Fragment() {
         val userName = prefs.getString("user_name", "Guest") ?: "Guest"
         view.findViewById<TextView>(R.id.tvGreeting).text = "Hi, $userName"
 
-        // RecyclerView setup
-        val recycler = view.findViewById<RecyclerView>(R.id.recyclerSuggestions)
-        recycler.layoutManager = LinearLayoutManager(requireContext())
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerSuggestions)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // Observe live data from ViewModel
-        viewModel.places.observe(viewLifecycleOwner) { dtoList ->
-            val items = dtoList.map { dto ->
-                PlaceRowItem(dto, dto.averageRating)
-            }
-            recycler.adapter = PlaceAdapter(items) { rowItem ->
-                val dto = rowItem.place
-                val action = HomeFragmentDirections
-                    .actionHomeFragmentToDetailFragment(dto)
-                findNavController().navigate(action)
+        // observe live data from Place view model
+        placeViewModel.places.observe(viewLifecycleOwner) { places ->
+            if (places != null) {
+                recyclerView.adapter = PlaceAdapter(places) { place ->
+                    findNavController().navigate(
+                        HomeFragmentDirections.actionHomeFragmentToDetailFragment(place.id)
+                    )
+                }
             }
         }
 
-        // Observe errors
-        viewModel.error.observe(viewLifecycleOwner) { errorMsg ->
+        // observe errors from Place view model
+        placeViewModel.error.observe(viewLifecycleOwner) { errorMsg ->
             errorMsg?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
             }
         }
-
-        // Trigger loading from backend
-        viewModel.loadPlaces()
     }
 }

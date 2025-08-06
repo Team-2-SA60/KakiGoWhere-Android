@@ -4,22 +4,6 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import com.google.gson.annotations.SerializedName
 
-//@Parcelize
-//// TODO: this class is not used so far, consider removing
-//data class Place(
-//    var id: Long,
-//    var name: String,
-//    var description: String,
-//    var imagePath: String,
-//    var url: String,
-//    var openingHour: String, // to change to LocalTime after testing api
-//    var closingHour: String, // to change to LocalTime after testing api
-//    var latitude: Double,
-//    var longitude: Double,
-//    var active: Boolean
-//)   :Parcelable
-
-@Parcelize
 data class PlaceDTO(
     val id: Long,
     val googleId: String,
@@ -31,14 +15,50 @@ data class PlaceDTO(
     val isOpen: Boolean,
     val averageRating: Double,
     val interestCategories: List<InterestCategory>
-) : Parcelable
+)
 
-@Parcelize
+data class PlaceDetailDTO(
+    val id: Long,
+    val googleId: String,
+    val name: String,
+    val address: String,
+    val description: String,
+    val imagePath: String,
+    val URL: String,
+    val openingDescription: String,
+    val latitude: Double,
+    val longitude: Double,
+    val isActive: Boolean,
+    val interestCategories: List<InterestCategory>,
+    val openingHours: List<OpeningHours>,
+    val placeEvents: List<PlaceEvent>,
+    val averageRating: Double,
+    val isOpen: Boolean
+)
+
 data class InterestCategory(
     var id: Long,
     var name: String,
     var description: String
-) : Parcelable
+)
+
+data class OpeningHours(
+    val id: Long,
+    val openDay: Int,
+    val openHour: Int,
+    val openMinute: Int,
+    val closeDay: Int,
+    val closeHour: Int,
+    val closeMinute: Int
+)
+
+data class PlaceEvent(
+    val id: Long,
+    val name: String,
+    val description: String,
+    val startDate: String,
+    val endDate: String
+)
 
 @Parcelize
 data class LoginResponse(

@@ -29,12 +29,12 @@ class ItineraryDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         var itemList = mutableListOf<ItineraryDetailDTO>()
-        var id = ItineraryDetailFragmentArgs.fromBundle(requireArguments()).itineraryId;
+        var id = ItineraryDetailFragmentArgs.fromBundle(requireArguments()).itineraryId
         Log.d("API PRINT", id.toString())
 
         lifecycleScope.launch {
             try {
-                val response = RetrofitClient.api.getItineraryDetails(id);
+                val response = RetrofitClient.api.getItineraryDetails(id)
                 if (response.isSuccessful && response.body() != null) {
                     itemList = response.body()!!.toMutableList()
                     Log.d("API PRINT", itemList.toString())
@@ -57,7 +57,7 @@ class ItineraryDetailFragment : Fragment() {
 
     private fun listToMap(list: List<ItineraryDetailDTO>): SortedMap<LocalDate, List<ItineraryDetailDTO>> {
         val sortedMapByDate: SortedMap<LocalDate, List<ItineraryDetailDTO>> = list
-            .groupBy { it.dateActual }
+            .groupBy { it.itemDate }
             .toSortedMap()
         return sortedMapByDate
     }

@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.Itinerary
-import team2.kakigowhere.data.model.toDto
 import java.time.LocalDate
 
 class ItineraryCreateFragment : Fragment() {
@@ -66,11 +65,11 @@ class ItineraryCreateFragment : Fragment() {
             if (createBtn.isEnabled) {
                 var itineraryName = name.text.toString()
                 var date = LocalDate.of(calendar.year, calendar.month + 1, calendar.dayOfMonth)
-                var itinerary = Itinerary(title = itineraryName, startDate = date)
+                var itinerary = Itinerary(title = itineraryName, startDate = date.toString())
 
                 lifecycleScope.launch {
                     try {
-                        val response = RetrofitClient.api.createItinerary(email, itinerary.toDto())
+                        val response = RetrofitClient.api.createItinerary(email, itinerary)
                         if (response.isSuccessful) {
                             findNavController().navigate(
                                 ItineraryCreateFragmentDirections.actionCreateItineraryFragmentToSavedFragment()

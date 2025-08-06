@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -36,19 +38,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         places = placeViewModel.places.value!!
 
-        // notify when map is ready
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-
-        // Back button
-//        view.findViewById<Button>(R.id.backButton).apply {
-//            visibility = if (args.showBack) View.VISIBLE else GONE
-//            setOnClickListener { findNavController().navigateUp() }
-//        }
-
+        // update map when Place live data is updated
+        placeViewModel.places.observe(viewLifecycleOwner) { places ->
+            if (places != null) {
+                // notify when map is ready
+                val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+                mapFragment.getMapAsync(this)
+            }
+        }
     }
 
     override fun onMapReady(map: GoogleMap) {
@@ -58,16 +57,26 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, 16f))
         googleMap.uiSettings.isZoomControlsEnabled = true
 
+        places = placeViewModel.places.value!!
+
         if (places.isNotEmpty()) {
             addPlaceMarkers(googleMap)
+            setLaunchDetailFragment(googleMap)
+
+            // below logic runs if navigated from Detail Fragment
             if (args.placeId != 0L) {
                 val place = places.find { it.id == args.placeId }!!
                 val location = LatLng(place.latitude, place.longitude)
                 googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16f))
                 markersMap[args.placeId]?.showInfoWindow()
             }
-        }
 
+            val backButton = requireView().findViewById<Button>(R.id.backButton)
+            if (args.showBack) {
+                backButton.visibility = View.VISIBLE
+                backButton.setOnClickListener { findNavController().navigateUp() }
+            } else backButton.visibility = View.GONE
+        }
     }
 
     private fun addPlaceMarkers(googleMap: GoogleMap) {
@@ -96,7 +105,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 false
             }
         }
+    }
 
-        // TODO: map.setOnInfoWindowClickListener
+    private fun setLaunchDetailFragment(googleMap: GoogleMap) {
+        googleMap.setOnInfoWindowClickListener { marker ->
+            val place = places.find { it.id == marker.tag }
+            findNavController().navigate(
+                MapsFragmentDirections.actionMapFragmentToDetailFragment(place!!.id)
+            )
+        }
     }
 }

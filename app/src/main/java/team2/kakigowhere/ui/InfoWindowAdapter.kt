@@ -14,7 +14,7 @@ import team2.kakigowhere.data.model.PlaceDTO
 
 class InfoWindowAdapter(
     private val context: Context,
-    private val places: List<PlaceDTO>
+    private val places: List<PlaceDTO>,
 ) : GoogleMap.InfoWindowAdapter {
     private val window: View = LayoutInflater.from(context).inflate(R.layout.info_window, null)
 
@@ -25,6 +25,8 @@ class InfoWindowAdapter(
         val imageView = window.findViewById<ImageView>(R.id.icon)
         Glide.with(context)
             .load(imagePath)
+            .placeholder(R.drawable.placeholder_image)
+            .centerCrop()
             .into(imageView)
 
         window.findViewById<TextView>(R.id.title).text = place.name

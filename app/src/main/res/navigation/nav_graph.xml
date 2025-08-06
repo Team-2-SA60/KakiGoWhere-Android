@@ -5,9 +5,7 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/homeFragment">
 
-
-
-    <!-- fragments in main navigation bar -->
+    <!-- Home Fragment -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="team2.kakigowhere.ui.HomeFragment"
@@ -18,6 +16,7 @@
             app:destination="@id/detailFragment" />
     </fragment>
 
+    <!-- Explore Fragment -->
     <fragment
         android:id="@+id/exploreFragment"
         android:name="team2.kakigowhere.ui.ExploreFragment"
@@ -34,33 +33,12 @@
         android:name="team2.kakigowhere.ui.DetailFragment"
         android:label="Details"
         tools:layout="@layout/fragment_detail">
-        <argument
-            android:name="place"
-            app:argType="team2.kakigowhere.data.model.PlaceDTO" />
         <action
             android:id="@+id/action_detailFragment_to_mapFragment"
-            app:destination="@id/mapFragment">
-            <!-- Pass coordinates and showBack -->
-<!--            <argument-->
-<!--                android:name="lat"-->
-<!--                app:argType="float"-->
-<!--                android:defaultValue="1.29027" />-->
-<!--            <argument-->
-<!--                android:name="lng"-->
-<!--                app:argType="float"-->
-<!--                android:defaultValue="103.85196" />-->
-<!--            <argument-->
-<!--                android:name="showBack"-->
-<!--                app:argType="boolean"-->
-<!--                android:defaultValue="false" />-->
-<!--            <argument-->
-<!--                android:name="place_id"-->
-<!--                app:argType="long"/>-->
-<!--            <argument-->
-<!--                android:name="showBack"-->
-<!--                app:argType="boolean"-->
-<!--                android:defaultValue="false"/>-->
-        </action>
+            app:destination="@id/mapFragment"/>
+        <argument
+            android:name="place_id"
+            app:argType="long"/>
     </fragment>
 
     <!-- MapFragment -->
@@ -69,19 +47,9 @@
         android:name="team2.kakigowhere.ui.MapsFragment"
         android:label="Map"
         tools:layout="@layout/fragment_maps">
-        <!-- Required args with defaults -->
-<!--        <argument-->
-<!--            android:name="lat"-->
-<!--            app:argType="float"-->
-<!--            android:defaultValue="1.29027" />-->
-<!--        <argument-->
-<!--            android:name="lng"-->
-<!--            app:argType="float"-->
-<!--            android:defaultValue="103.85196" />-->
-<!--        <argument-->
-<!--            android:name="showBack"-->
-<!--            app:argType="boolean"-->
-<!--            android:defaultValue="false" />-->
+        <action
+            android:id="@+id/action_mapFragment_to_detailFragment"
+            app:destination="@id/detailFragment"/>
         <argument
             android:name="place_id"
             app:argType="long"
@@ -98,11 +66,9 @@
         android:name="team2.kakigowhere.ui.SavedFragment"
         android:label="Saved"
         tools:layout="@layout/fragment_saved">
-
         <action
             android:id="@+id/action_savedFragment_to_savedItemFragment"
             app:destination="@id/savedItemFragment"/>
-
         <action
             android:id="@+id/action_savedFragment_to_createItineraryFragment"
             app:destination="@id/createItineraryFragment"/>
@@ -113,7 +79,6 @@
         android:name="team2.kakigowhere.ui.ItineraryDetailFragment"
         android:label="Saved Item"
         tools:layout="@layout/fragment_itinerary_detail">
-
         <argument
             android:name="itinerary_id"
             app:argType="long"/>
@@ -124,7 +89,6 @@
         android:name="team2.kakigowhere.ui.ItineraryCreateFragment"
         android:label="Create Itinerary"
         tools:layout="@layout/fragment_itinerary_create">
-
         <action
             android:id="@+id/action_createItineraryFragment_to_savedFragment"
             app:destination="@id/savedFragment"/>
