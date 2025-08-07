@@ -18,21 +18,22 @@ data class ItineraryDetail(
     var sequentialOrder: Int? = null
 )
 
+@Parcelize
 data class ItineraryDTO(
     var id: Long,
     var title: String,
     var startDate: String,
     var days: Long,
     var placeDisplayId: Long
-) {
+) : Parcelable {
     // convert date in String to LocalDate
     val getStartDate: LocalDate get() = LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE)
 
     // get last date of itinerary
-    fun getLastDate(): String {
+    fun getLastDate(): LocalDate {
         val firstDate = getStartDate
         val lastDate = firstDate.plusDays(days - 1)
-        return lastDate.toString()
+        return lastDate
     }
 }
 

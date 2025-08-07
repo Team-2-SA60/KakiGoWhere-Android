@@ -43,7 +43,7 @@ class SavedFragment : Fragment(), View.OnClickListener {
 
             val sortedList = itineraryList.sortedBy { LocalDate.parse(it.startDate) }
             recyclerView.adapter = ItineraryAdapter(this@SavedFragment, sortedList) { item ->
-                launchSavedItemFragment(item.id)
+                launchSavedItemFragment(item)
             }
         }
 
@@ -54,9 +54,9 @@ class SavedFragment : Fragment(), View.OnClickListener {
         fab.setOnClickListener(this)
     }
 
-    private fun launchSavedItemFragment(itineraryId: Long) {
+    private fun launchSavedItemFragment(itinerary: ItineraryDTO) {
         findNavController().navigate(
-            SavedFragmentDirections.actionSavedFragmentToSavedItemFragment(itineraryId)
+            SavedFragmentDirections.actionSavedFragmentToSavedItemFragment(itinerary)
         )
     }
 

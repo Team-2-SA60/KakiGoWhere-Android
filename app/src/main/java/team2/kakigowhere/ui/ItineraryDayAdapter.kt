@@ -34,6 +34,7 @@ class ItineraryDayAdapter(
         val dayItems = items[dayKeys[position]]!!
 
         holder.day.text = "Day ${position + 1} · ${dayItems[0].date}"
+
         holder.itemsRv.layoutManager = LinearLayoutManager(holder.itemView.context)
         holder.itemsRv.adapter = ItineraryItemAdapter(context, dayItems)
 

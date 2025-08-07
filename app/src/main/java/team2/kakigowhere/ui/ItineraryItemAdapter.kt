@@ -39,22 +39,27 @@ class ItineraryItemAdapter(
         position: Int
     ) {
         val item = items[position]
-        val placeImagePath = ApiConstants.IMAGE_URL + item.placeId.toString()
 
-        Glide.with(context)
-            .load(placeImagePath)
-            .placeholder(R.drawable.kakigowhere)
-            .centerCrop()
-            .into(holder.image)
+        if (item.placeId == 0L) {
+            holder.itemView.visibility = View.GONE
+        } else {
+            val placeImagePath = ApiConstants.IMAGE_URL + item.placeId.toString()
 
-        holder.title.text = item.placeTitle
-        holder.hours.text = if (item.placeIsOpen) "Open · " + item.placeOpenHours else "Closed"
-        holder.notes.text = "Notes: " + (item.notes ?: "none")
+            Glide.with(context)
+                .load(placeImagePath)
+                .placeholder(R.drawable.kakigowhere)
+                .centerCrop()
+                .into(holder.image)
 
-        holder.edit.setOnClickListener {
-            context.findNavController().navigate(
-                ItineraryDetailFragmentDirections.actionSavedItemFragmentToEditSavedItemFragment(item)
-            )
+            holder.title.text = item.placeTitle
+            holder.hours.text = if (item.placeIsOpen) "Open · " + item.placeOpenHours else "Closed"
+            holder.notes.text = "Notes: " + (item.notes ?: "none")
+
+            holder.edit.setOnClickListener {
+                context.findNavController().navigate(
+                    ItineraryDetailFragmentDirections.actionSavedItemFragmentToEditSavedItemFragment(item)
+                )
+            }
         }
     }
 

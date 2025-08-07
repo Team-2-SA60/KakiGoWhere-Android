@@ -73,6 +73,12 @@ interface ApiService {
         @Body itineraryDetail: ItineraryDetail
     ): Response<Unit>
 
+    @PUT("itinerary/detail/add/day/{itineraryId}")
+    suspend fun addItineraryDay(
+        @Path("itineraryId") id: Long,
+        @Body itineraryDetail: ItineraryDetail
+    ): Response<Unit>
+
     @PUT("itinerary/detail/edit/{detailId}")
     suspend fun editItineraryItem(
         @Path("detailId") id: Long,

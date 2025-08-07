@@ -83,8 +83,8 @@
             android:id="@+id/action_savedItemFragment_to_editSavedItemFragment"
             app:destination="@id/editSavedItemFragment"/>
         <argument
-            android:name="itinerary_id"
-            app:argType="long"/>
+            android:name="itinerary"
+            app:argType="team2.kakigowhere.data.model.ItineraryDTO"/>
     </fragment>
 
     <fragment
