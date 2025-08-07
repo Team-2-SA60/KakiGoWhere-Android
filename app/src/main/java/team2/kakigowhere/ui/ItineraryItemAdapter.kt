@@ -3,8 +3,10 @@ package team2.kakigowhere.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import team2.kakigowhere.R
@@ -21,6 +23,7 @@ class ItineraryItemAdapter(
         val title: TextView = itemView.findViewById<TextView>(R.id.item_title)
         val hours: TextView = itemView.findViewById<TextView>(R.id.item_hours)
         val notes: TextView = itemView.findViewById<TextView>(R.id.item_notes)
+        val edit: Button = itemView.findViewById<Button>(R.id.edit_item)
     }
 
     override fun onCreateViewHolder(
@@ -41,11 +44,18 @@ class ItineraryItemAdapter(
         Glide.with(context)
             .load(placeImagePath)
             .placeholder(R.drawable.kakigowhere)
+            .centerCrop()
             .into(holder.image)
 
         holder.title.text = item.placeTitle
         holder.hours.text = if (item.placeIsOpen) "Open · " + item.placeOpenHours else "Closed"
-        holder.notes.text = "Notes: " + item.notes
+        holder.notes.text = "Notes: " + (item.notes ?: "none")
+
+        holder.edit.setOnClickListener {
+            context.findNavController().navigate(
+                ItineraryDetailFragmentDirections.actionSavedItemFragmentToEditSavedItemFragment(item)
+            )
+        }
     }
 
     override fun getItemCount(): Int = items.size

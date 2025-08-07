@@ -79,9 +79,22 @@
         android:name="team2.kakigowhere.ui.ItineraryDetailFragment"
         android:label="Saved Item"
         tools:layout="@layout/fragment_itinerary_detail">
+        <action
+            android:id="@+id/action_savedItemFragment_to_editSavedItemFragment"
+            app:destination="@id/editSavedItemFragment"/>
         <argument
             android:name="itinerary_id"
             app:argType="long"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/editSavedItemFragment"
+        android:name="team2.kakigowhere.ui.ItineraryEditFragment"
+        android:label="Edit Saved Item"
+        tools:layout="@layout/fragment_itinerary_edit">
+        <argument
+            android:name="itinerary_detail"
+            app:argType="team2.kakigowhere.data.model.ItineraryDetailDTO"/>
     </fragment>
 
     <fragment
@@ -92,7 +105,6 @@
         <action
             android:id="@+id/action_createItineraryFragment_to_savedFragment"
             app:destination="@id/savedFragment"/>
-
         <argument
             android:name="tourist_email"
             app:argType="string"/>

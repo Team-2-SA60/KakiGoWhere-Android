@@ -9,11 +9,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import team2.kakigowhere.data.model.ItineraryViewModel
 import team2.kakigowhere.data.model.PlaceViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private val placeViewModel: PlaceViewModel by viewModels()
+    private val itineraryViewModel: ItineraryViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +27,12 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // make api call to get all places
+        // TODO: use SharedPreferences to get email.
+        val email = "cy@kaki.com"
+
+        // make api call to load information
         placeViewModel.loadPlaces()
+        itineraryViewModel.loadItineraries(email)
 
         // sets up navigation host and find navigation controller
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment

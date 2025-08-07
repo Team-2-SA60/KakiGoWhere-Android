@@ -2,20 +2,23 @@ package team2.kakigowhere.data.api
 
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import team2.kakigowhere.data.model.Itinerary
 import team2.kakigowhere.data.model.ItineraryDTO
+import team2.kakigowhere.data.model.ItineraryDetail
 import team2.kakigowhere.data.model.ItineraryDetailDTO
+import team2.kakigowhere.data.model.LoginResponse
 import team2.kakigowhere.data.model.PlaceDTO
 import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.data.model.RatingItem
 import team2.kakigowhere.data.model.RatingRequest
 import team2.kakigowhere.data.model.RatingSummary
-import team2.kakigowhere.data.model.LoginResponse
 
 interface ApiService {
 
@@ -62,6 +65,24 @@ interface ApiService {
     suspend fun getItineraryDetails(
         @Path("id") id: Long
     ): Response<List<ItineraryDetailDTO>>
+
+    @PUT("itinerary/detail/add/{itineraryId}")
+    suspend fun addItemToItinerary(
+        @Path("itineraryId") id: Long,
+        @Query("placeId") placeId: Long,
+        @Body itineraryDetail: ItineraryDetail
+    ): Response<Unit>
+
+    @PUT("itinerary/detail/edit/{detailId}")
+    suspend fun editItineraryItem(
+        @Path("detailId") id: Long,
+        @Body itineraryDetil: ItineraryDetail
+    ): Response<Unit>
+
+    @DELETE("itinerary/detail/delete/{detailId}")
+    suspend fun deleteItineraryItem(
+        @Path("detailId") id: Long
+    ): Response<Unit>
 
     @POST("itinerary/create")
     suspend fun createItinerary(

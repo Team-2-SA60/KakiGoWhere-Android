@@ -56,9 +56,8 @@ class ItineraryDetailFragment : Fragment() {
     }
 
     private fun listToMap(list: List<ItineraryDetailDTO>): SortedMap<LocalDate, List<ItineraryDetailDTO>> {
-        val sortedMapByDate: SortedMap<LocalDate, List<ItineraryDetailDTO>> = list
-            .groupBy { it.itemDate }
-            .toSortedMap()
+        var sortedListByOrder = list.sortedBy { it.sequentialOrder }
+        val sortedMapByDate = sortedListByOrder.groupBy{ it.itemDate }.toSortedMap()
         return sortedMapByDate
     }
 
