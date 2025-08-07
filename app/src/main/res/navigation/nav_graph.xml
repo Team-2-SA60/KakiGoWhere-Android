@@ -110,15 +110,30 @@
             app:destination="@id/writeRatingFragment" />
     </fragment>
 
+    <!-- ProfileFragment entry (already exists) -->
     <fragment
         android:id="@+id/profileFragment"
         android:name="team2.kakigowhere.ui.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile">
+
+        <!-- existing actions... -->
+
+        <!-- NEW: action to ChangeCategoriesFragment -->
+        <action
+            android:id="@+id/action_profileFragment_to_changeCategoriesFragment"
+            app:destination="@id/changeCategoriesFragment" />
         <action
             android:id="@+id/action_profileFragment_to_ratingFragment"
             app:destination="@id/ratingFragment" />
     </fragment>
+
+    <!-- NEW: ChangeCategoriesFragment entry -->
+    <fragment
+        android:id="@+id/changeCategoriesFragment"
+        android:name="team2.kakigowhere.ui.ChangeCategoriesFragment"
+        android:label="Change Interests"
+        tools:layout="@layout/fragment_change_categories" />
 
     <fragment
         android:id="@+id/writeRatingFragment"
