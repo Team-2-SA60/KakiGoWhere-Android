@@ -18,7 +18,7 @@ import team2.kakigowhere.data.model.TouristUpdateRequest
 import team2.kakigowhere.data.model.InterestCategoryProvider
 import team2.kakigowhere.databinding.FragmentProfileBinding
 
-class ProfileFragment<SharedPreferences> : Fragment() {
+class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private val prefsName = "shared_prefs"

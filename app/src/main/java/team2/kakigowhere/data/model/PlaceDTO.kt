@@ -3,7 +3,6 @@ package team2.kakigowhere.data.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import com.google.gson.annotations.SerializedName
-import kotlinx.parcelize.RawValue
 
 data class PlaceDTO(
     val id: Long,

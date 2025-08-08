@@ -19,10 +19,10 @@ data class InterestCategoryDto(
     val description: String
 )
 
-data class TouristResponse(
-    val id: Long,
-    val email: String,
-    val name: String,
-    val interestCategories: List<InterestCategoryDto>
-)
+//data class TouristResponse(
+//    val id: Long,
+//    val email: String,
+//    val name: String,
+//    val interestCategories: List<InterestCategoryDto>
+//)
 
