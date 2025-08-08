@@ -12,7 +12,8 @@ import team2.kakigowhere.data.model.InterestCategory
 
 class CategoryAdapter(
     private val categories: List<InterestCategory>,
-    private val selected: MutableSet<String>
+    //change selected name to selected id
+    private val selected: MutableSet<Long>
 ) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -22,13 +23,13 @@ class CategoryAdapter(
         fun bind(cat: InterestCategory) {
             // 1) Detach listener so setting isChecked doesn’t retrigger it
             checkBox.setOnCheckedChangeListener(null)
-            checkBox.isChecked = selected.contains(cat.name)
+            checkBox.isChecked = selected.contains(cat.id)
 
             // 2) Re-attach listener with max-3 logic
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
                     // If selecting a new one beyond the limit, block it
-                    if (selected.size >= 3 && !selected.contains(cat.name)) {
+                    if (selected.size >= 3 && !selected.contains(cat.id)) {
                         Toast.makeText(
                             checkBox.context,
                             "You can only select up to 3 categories",
@@ -36,11 +37,11 @@ class CategoryAdapter(
                         ).show()
                         checkBox.isChecked = false  // revert visual
                     } else {
-                        selected.add(cat.name)
+                        selected.add(cat.id)
                     }
                 } else {
                     // Always allow unchecking
-                    selected.remove(cat.name)
+                    selected.remove(cat.id)
                 }
             }
 
@@ -62,5 +63,5 @@ class CategoryAdapter(
     override fun getItemCount(): Int = categories.size
 
     /** Expose the selected set so the fragment can save it */
-    fun getSelected(): Set<String> = selected
+    fun getSelectedIds(): List<Long> = selected.toList()
 }

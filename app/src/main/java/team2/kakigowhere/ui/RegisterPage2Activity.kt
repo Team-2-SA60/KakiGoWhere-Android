@@ -5,12 +5,20 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.launch
+import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.auth.AuthService
+import team2.kakigowhere.data.model.InterestCategoryProvider
+import team2.kakigowhere.data.model.RegisterRequestDTO
 import team2.kakigowhere.databinding.ActivityRegisterPage2Binding
+import team2.kakigowhere.ui.CategoryAdapter
 
 class RegisterPage2Activity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRegisterPage2Binding
+    private lateinit var adapter: CategoryAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,7 +26,7 @@ class RegisterPage2Activity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupBackButton()
-        setupInterestSelection()
+        setupRecyclerView()
         setupSaveButton()
     }
 
@@ -28,40 +36,52 @@ class RegisterPage2Activity : AppCompatActivity() {
         }
     }
 
-    private fun setupInterestSelection() {
-        // 设置每个兴趣选项的点击事件
-        binding.foodLayout.setOnClickListener {
-            binding.foodCheckBox.isChecked = !binding.foodCheckBox.isChecked
-        }
-
-        binding.entertainmentLayout.setOnClickListener {
-            binding.entertainmentCheckBox.isChecked = !binding.entertainmentCheckBox.isChecked
-        }
-
-        binding.sceneryLayout.setOnClickListener {
-            binding.sceneryCheckBox.isChecked = !binding.sceneryCheckBox.isChecked
-        }
-
-        binding.cultureLayout.setOnClickListener {
-            binding.cultureCheckBox.isChecked = !binding.cultureCheckBox.isChecked
-        }
-
-        binding.heritageLayout.setOnClickListener {
-            binding.heritageCheckBox.isChecked = !binding.heritageCheckBox.isChecked
-        }
+    private fun setupRecyclerView() {
+        adapter = CategoryAdapter(
+            categories = InterestCategoryProvider.allCategories,
+            selected = mutableSetOf() // save selected id
+        )
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
     }
 
     private fun setupSaveButton() {
         binding.saveButton.setOnClickListener {
-            val selectedInterests = getSelectedInterests()
+            val selectedInterestIds = adapter.getSelectedIds()
 
-            if (validateInterests(selectedInterests)) {
+            if (validateInterests(selectedInterestIds)) {
                 // 获取从第一页传递过来的数据
                 val name = intent.getStringExtra("name") ?: ""
                 val email = intent.getStringExtra("email") ?: ""
                 val password = intent.getStringExtra("password") ?: ""
 
-                // 注册用户
+                val request = RegisterRequestDTO(
+                    name = name,
+                    email = email,
+                    password = password,
+                    interestCategoryIds = selectedInterestIds
+                )
+
+                lifecycleScope.launch {
+                    try {
+                        val response = RetrofitClient.api.registerTourist(request)
+                        if (response.isSuccessful) {
+                            Toast.makeText(
+                                this@RegisterPage2Activity,
+                                "Registration successful!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            startActivity(Intent(this@RegisterPage2Activity, MainActivity::class.java))
+                            finish()
+                        } else {
+                            showError("Registration failed: ${response.code()}")
+                        }
+                    } catch (e: Exception) {
+                        showError("Error: ${e.localizedMessage}")
+                    }
+                }
+
+                /*
                 val result = AuthService.registerUser(
                     name = name,
                     email = email,
@@ -83,24 +103,12 @@ class RegisterPage2Activity : AppCompatActivity() {
                     is AuthService.RegisterResult.InvalidEmail -> {
                         showError("Invalid email format")
                     }
-                }
+                }*/
             }
         }
     }
 
-    private fun getSelectedInterests(): List<String> {
-        val interests = mutableListOf<String>()
-
-        if (binding.foodCheckBox.isChecked) interests.add("Food")
-        if (binding.entertainmentCheckBox.isChecked) interests.add("Entertainment")
-        if (binding.sceneryCheckBox.isChecked) interests.add("Scenery")
-        if (binding.cultureCheckBox.isChecked) interests.add("Culture")
-        if (binding.heritageCheckBox.isChecked) interests.add("Heritage")
-
-        return interests
-    }
-
-    private fun validateInterests(interests: List<String>): Boolean {
+    private fun validateInterests(interests: List<Long>): Boolean {
         hideError()
 
         return when {
@@ -115,6 +123,7 @@ class RegisterPage2Activity : AppCompatActivity() {
             else -> true
         }
     }
+
 
     private fun showError(message: String) {
         binding.errorMessageText.text = message
