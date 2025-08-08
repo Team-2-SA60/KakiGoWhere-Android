@@ -16,6 +16,8 @@ import team2.kakigowhere.data.model.RatingItem
 import team2.kakigowhere.data.model.RatingRequest
 import team2.kakigowhere.data.model.RatingSummary
 import team2.kakigowhere.data.model.LoginResponse
+import team2.kakigowhere.data.model.RegisterRequestDTO
+import team2.kakigowhere.data.model.RegisterResponseDTO
 
 interface ApiService {
 
@@ -73,4 +75,9 @@ interface ApiService {
     suspend fun login(
         @Body credentials: Map<String, String>
     ): Response<LoginResponse>
+
+    @POST("tourist/register")
+    suspend fun registerTourist(
+        @Body request: RegisterRequestDTO
+    ): Response<RegisterResponseDTO>
 }

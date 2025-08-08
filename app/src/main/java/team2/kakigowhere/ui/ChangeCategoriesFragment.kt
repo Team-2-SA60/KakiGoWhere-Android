@@ -34,20 +34,24 @@ class ChangeCategoriesFragment : Fragment() {
         // Retrieve saved interests as a mutable set
         val savedSet = prefs.getStringSet("user_interests", emptySet())
             ?.toMutableSet() ?: mutableSetOf()
+        // Change adapter to select id so add a selectedIds in here
+        val selectedIds = savedSet.mapNotNull { it.toLongOrNull() }.toMutableSet()
 
         // Get all categories sorted by description
         val categories = InterestCategoryProvider.allCategories
             .sortedBy { it.description }
 
         // Set up RecyclerView and adapter
-        val adapter = CategoryAdapter(categories, savedSet)
+        val adapter = CategoryAdapter(categories, selectedIds)
         binding.rvCategories.layoutManager = LinearLayoutManager(requireContext())
         binding.rvCategories.adapter = adapter
 
         // Save button: persist and close fragment
         binding.btnSaveCategories.setOnClickListener {
+            // Id to string
+            val selected = adapter.getSelectedIds().map { it.toString() }.toSet()
             prefs.edit()
-                .putStringSet("user_interests", adapter.getSelected())
+                .putStringSet("user_interests", selected)
                 .apply()
             Toast.makeText(requireContext(), "Interests updated", Toast.LENGTH_SHORT).show()
             parentFragmentManager.popBackStack()
