@@ -79,6 +79,12 @@ interface ApiService {
         @Body itineraryDetail: ItineraryDetail
     ): Response<Unit>
 
+    @DELETE("itinerary/detail/delete/day/{itineraryId}")
+    suspend fun deleteItineraryDay(
+        @Path("itineraryId") id: Long,
+        @Query("lastDate") date: String
+    ): Response<Unit>
+
     @PUT("itinerary/detail/edit/{detailId}")
     suspend fun editItineraryItem(
         @Path("detailId") id: Long,

@@ -9,6 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,10 +18,13 @@ import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.ItineraryDetail
 import team2.kakigowhere.data.model.ItineraryDetailDTO
+import team2.kakigowhere.data.model.ItineraryViewModel
 import java.time.LocalDate
 import java.util.SortedMap
 
 class ItineraryDetailFragment : Fragment() {
+
+    private val itineraryViewModel: ItineraryViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +40,8 @@ class ItineraryDetailFragment : Fragment() {
         var itinerary = ItineraryDetailFragmentArgs.fromBundle(requireArguments()).itinerary
 
         view.findViewById<TextView>(R.id.title_display).text = itinerary.title
+
+        // add day to itinerary
         var addDay = view.findViewById<Button>(R.id.add_day)
         addDay.setOnClickListener {
             val addedDate = itinerary.getLastDate().plusDays(1)
@@ -45,7 +51,8 @@ class ItineraryDetailFragment : Fragment() {
                 try {
                     val response = RetrofitClient.api.addItineraryDay(itinerary.id, addedDay)
                     if (response.isSuccessful) {
-                        Toast.makeText(requireContext(), "Added day to itinerary", Toast.LENGTH_LONG)
+                        Toast.makeText(requireContext(), "Added day to itinerary", Toast.LENGTH_LONG).show()
+                        itineraryViewModel.loadItineraries("cy@kaki.com") //TODO: get from shared prefs
                         //TODO: how to refresh fragment view after adding day
                     }
                 } catch (e: Exception) {
@@ -60,17 +67,38 @@ class ItineraryDetailFragment : Fragment() {
                 val response = RetrofitClient.api.getItineraryDetails(itinerary.id)
                 if (response.isSuccessful && response.body() != null) {
                     itemList = response.body()!!.toMutableList()
-                    var sortedListByDate = listToMap(itemList)
+                    var sortedMapByDate = listToMap(itemList)
 
                     val recyclerView = view.findViewById<RecyclerView>(R.id.itinerary_days)
                     recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-                    val adapter = ItineraryDayAdapter(this@ItineraryDetailFragment, sortedListByDate)
+                    val adapter = ItineraryDayAdapter(this@ItineraryDetailFragment, sortedMapByDate)
                     recyclerView.adapter = adapter
                 }
             } catch (e: Exception) {
                 Log.d("API Error", "Error fetching itinerary details")
                 Log.d("API Error", e.toString())
+            }
+        }
+
+        // delete day from itinerary (and all items)
+        var deleteDay = view.findViewById<Button>(R.id.delete_day)
+        deleteDay.setOnClickListener {
+            var sortedListByDate = itemList.sortedBy { it.itemDate }
+            var lastDate = sortedListByDate.last().date
+
+            lifecycleScope.launch {
+                try {
+                    val response = RetrofitClient.api.deleteItineraryDay(itinerary.id, lastDate)
+                    if (response.isSuccessful) {
+                        Toast.makeText(requireContext(), "Deleted day from itinerary", Toast.LENGTH_LONG).show()
+                        itineraryViewModel.loadItineraries("cy@kaki.com") //TODO: get from shared prefs
+                        //TODO: how to refresh fragment view after adding day
+                    }
+                } catch (e: Exception) {
+                    Log.d("API Error", "Error deleting itinerary day")
+                    Log.d("API Error", e.toString())
+                }
             }
         }
 
