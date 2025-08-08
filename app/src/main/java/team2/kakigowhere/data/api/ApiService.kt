@@ -76,6 +76,11 @@ interface ApiService {
         @Body credentials: Map<String, String>
     ): Response<LoginResponse>
 
+    @GET("/api/tourist/check-email")
+    suspend fun checkEmailExists(
+        @Query("email") email: String
+    ): Response<Boolean>
+
     @POST("tourist/register")
     suspend fun registerTourist(
         @Body request: RegisterRequestDTO
