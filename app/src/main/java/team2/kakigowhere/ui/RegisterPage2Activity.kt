@@ -9,7 +9,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.auth.AuthService
 import team2.kakigowhere.data.model.InterestCategoryProvider
 import team2.kakigowhere.data.model.RegisterRequestDTO
 import team2.kakigowhere.databinding.ActivityRegisterPage2Binding
@@ -80,30 +79,6 @@ class RegisterPage2Activity : AppCompatActivity() {
                         showError("Error: ${e.localizedMessage}")
                     }
                 }
-
-                /*
-                val result = AuthService.registerUser(
-                    name = name,
-                    email = email,
-                    password = password,
-                    interests = selectedInterests
-                )
-
-                when (result) {
-                    is AuthService.RegisterResult.Success -> {
-                        Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
-                        // 注册成功后直接进入主页面
-                        val intent = Intent(this, MainActivity::class.java)
-                        startActivity(intent)
-                        finish() // 结束注册Activity
-                    }
-                    is AuthService.RegisterResult.EmailAlreadyExists -> {
-                        showError("Email already registered")
-                    }
-                    is AuthService.RegisterResult.InvalidEmail -> {
-                        showError("Invalid email format")
-                    }
-                }*/
             }
         }
     }
@@ -123,7 +98,6 @@ class RegisterPage2Activity : AppCompatActivity() {
             else -> true
         }
     }
-
 
     private fun showError(message: String) {
         binding.errorMessageText.text = message
