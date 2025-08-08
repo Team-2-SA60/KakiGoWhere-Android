@@ -35,12 +35,12 @@ data class PlaceDetailDTO(
     val averageRating: Double,
     val isOpen: Boolean
 )
-
+@Parcelize
 data class InterestCategory(
     var id: Long,
     var name: String,
     var description: String
-)
+) : Parcelable
 
 data class OpeningHours(
     val id: Long,

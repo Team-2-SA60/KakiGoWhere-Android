@@ -13,7 +13,7 @@ import retrofit2.Response
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.*
 
-class LoginActivity : AppCompatActivity() {
+class   LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,8 +57,14 @@ class LoginActivity : AppCompatActivity() {
                         val user = response.body()!!
 
                         val interests = user.interestsCategories ?: emptyList()
-                        val interestsSet = interests.map { it.name }.toSet()
-
+//                        val interestsSet = interests.map { it.name }.toSet()
+                        // Store IDs for backend sync, and names/descriptions for display fallback
+                        val interestIdSet = interests.map { it.id.toString() }.toSet()
+                        val interestNameSet = interests
+                            .flatMap { listOfNotNull(it.name, it.description) }
+                            .map { it.trim() }
+                            .filter { it.isNotEmpty() }
+                            .toSet()
 
                         // Save user info in SharedPreferences
                         val prefs = getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
@@ -68,7 +74,9 @@ class LoginActivity : AppCompatActivity() {
                             putString("user_name", user.name)
                             putString("user_role", user.role)
                             // Save interests as a string set (names of categories)
-                            putStringSet("user_interests", interestsSet)
+                            // Save interests: IDs for backend, names for display fallback
+                            putStringSet("user_interests", interestIdSet)
+                            putStringSet("user_interest_names", interestNameSet)
                             apply()
                         }
 

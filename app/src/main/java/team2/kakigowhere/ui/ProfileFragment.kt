@@ -8,9 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
 import team2.kakigowhere.LoginActivity
 import team2.kakigowhere.R
+import team2.kakigowhere.data.api.RetrofitClient
+import team2.kakigowhere.data.model.TouristUpdateRequest
+import team2.kakigowhere.data.model.InterestCategoryProvider
 import team2.kakigowhere.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
@@ -33,16 +38,63 @@ class ProfileFragment : Fragment() {
         // Load and display user name
         binding.etName.setText(prefs.getString("user_name", ""))
 
-        // Load and display interests (as comma list)
-        val interestsSet = prefs.getStringSet("user_interests", emptySet()) ?: emptySet()
-        binding.etInterests.setText(interestsSet.joinToString(", "))
+        // Load and display interests (robust: supports IDs or legacy names)
+        binding.etInterests.setText(resolveInterestDisplay(prefs))
 
-        // Save name
+        // Save name (local) and sync to backend
         binding.btnSaveName.setOnClickListener {
+            // Save locally
             prefs.edit()
                 .putString("user_name", binding.etName.text.toString())
                 .apply()
             Toast.makeText(requireContext(), "Name updated", Toast.LENGTH_SHORT).show()
+
+            // Sync to backend using existing Retrofit client
+            val userId = prefs.getLong("user_id", -1L)
+            if (userId > 0L) {
+                // Prefer IDs; if app had older name-based storage, map names -> IDs
+                val currentInterests: List<Long> = run {
+                    val idSet = prefs.getStringSet("user_interests", emptySet()) ?: emptySet()
+                    val ids = idSet.mapNotNull { it.toLongOrNull() }
+                    if (ids.isNotEmpty()) ids else {
+                        val nameSet = prefs.getStringSet("user_interest_names", emptySet()) ?: idSet
+                        val nameToId = InterestCategoryProvider.allCategories
+                            .flatMap { listOf(it.name to it.id, it.description to it.id) }
+                            .associate { (k, v) -> k.lowercase() to v }
+                        nameSet.mapNotNull { nameToId[it.lowercase()] }
+                    }
+                }
+
+                val currentName = binding.etName.text.toString()
+
+                viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        val resp = RetrofitClient.api.updateTourist(
+                            userId,
+                            TouristUpdateRequest(
+                                name = currentName,
+                                interestCategoryIds = currentInterests
+                            )
+                        )
+                        if (resp.isSuccessful) {
+                            Toast.makeText(requireContext(), "Name synced", Toast.LENGTH_SHORT).show()
+                        } else {
+                            val errBody = try { resp.errorBody()?.string() } catch (_: Exception) { null }
+                            Toast.makeText(
+                                requireContext(),
+                                "Sync failed: HTTP ${resp.code()} ${errBody?.take(200) ?: ""}",
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed to sync name: ${e.message}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
         }
 
         // Navigate to ChangeCategoriesFragment
@@ -65,12 +117,38 @@ class ProfileFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Refresh interests from SharedPreferences
+        // Refresh interests from SharedPreferences (robust)
         val prefs = requireContext().getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-        val updatedSet = prefs.getStringSet("user_interests", emptySet()) ?: emptySet()
-        binding.etInterests.setText(updatedSet.joinToString(", "))
+        binding.etInterests.setText(resolveInterestDisplay(prefs))
     }
 
+    private fun resolveInterestDisplay(prefs: android.content.SharedPreferences): String {
+        // Map category id -> user-facing label
+        val idToLabel = InterestCategoryProvider.allCategories
+            .associate { it.id to it.description }
+
+        // Map various name forms -> user-facing label (case-insensitive)
+        val nameToLabel = InterestCategoryProvider.allCategories
+            .flatMap { listOf(it.name to it.description, it.description to it.description) }
+            .associate { (k, v) -> k.lowercase() to v }
+
+        // 1) Preferred: IDs stored in user_interests
+        val idSet = prefs.getStringSet("user_interests", emptySet()) ?: emptySet()
+        val fromIds = idSet.mapNotNull { it.toLongOrNull()?.let(idToLabel::get) }
+        if (fromIds.isNotEmpty()) return fromIds.joinToString(", ")
+
+        // 2) Newer fallback: explicit names set (if present)
+        val nameSet = prefs.getStringSet("user_interest_names", emptySet()) ?: emptySet()
+        val fromNames = nameSet.mapNotNull { nameToLabel[it.lowercase()] }
+        if (fromNames.isNotEmpty()) return fromNames.joinToString(", ")
+
+        // 3) Legacy fallback: names might have been stored in user_interests
+        val legacy = idSet.mapNotNull { nameToLabel[it.lowercase()] }
+        if (legacy.isNotEmpty()) return legacy.joinToString(", ")
+
+        // Nothing to show
+        return ""
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
