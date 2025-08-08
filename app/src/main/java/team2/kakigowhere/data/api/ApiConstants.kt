@@ -10,4 +10,5 @@ object ApiConstants {
     const val RATINGS_URL = "http://206.189.43.202:8080/api/ratings/{placeId}/summary"
 
     const val LOGIN_URL = "http://206.189.43.202:8080/api/auth/login"
+
 }

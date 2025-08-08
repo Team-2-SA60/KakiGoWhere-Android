@@ -5,6 +5,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import team2.kakigowhere.data.model.Itinerary
@@ -18,6 +19,7 @@ import team2.kakigowhere.data.model.RatingSummary
 import team2.kakigowhere.data.model.LoginResponse
 import team2.kakigowhere.data.model.RegisterRequestDTO
 import team2.kakigowhere.data.model.RegisterResponseDTO
+import team2.kakigowhere.data.model.*
 
 interface ApiService {
 
@@ -80,4 +82,11 @@ interface ApiService {
     suspend fun registerTourist(
         @Body request: RegisterRequestDTO
     ): Response<RegisterResponseDTO>
+
+    @PUT("tourist/{touristId}")
+    suspend fun updateTourist(
+        @Path("touristId") touristId: Long,
+        @Body request: TouristUpdateRequest
+    ): Response<Unit>
+
 }

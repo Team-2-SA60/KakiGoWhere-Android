@@ -3,6 +3,7 @@ package team2.kakigowhere.data.model
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.RawValue
 
 data class PlaceDTO(
     val id: Long,
@@ -35,12 +36,12 @@ data class PlaceDetailDTO(
     val averageRating: Double,
     val isOpen: Boolean
 )
-
+@Parcelize
 data class InterestCategory(
     var id: Long,
     var name: String,
     var description: String
-)
+) : Parcelable
 
 data class OpeningHours(
     val id: Long,
