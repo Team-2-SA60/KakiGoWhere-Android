@@ -33,6 +33,7 @@ class   LoginActivity : AppCompatActivity() {
         val emailInput = findViewById<EditText>(R.id.emailInput)
         val passwordInput = findViewById<EditText>(R.id.passwordInput)
         val loginButton = findViewById<Button>(R.id.loginButton)
+        val signUpButton = findViewById<Button>(R.id.signUpButton)
 
         loginButton.setOnClickListener {
             val email = emailInput.text.toString().trim()
@@ -100,6 +101,11 @@ class   LoginActivity : AppCompatActivity() {
                     ).show()
                 }
             }
+        }
+
+        signUpButton.setOnClickListener {
+            val intent = Intent(this, RegisterPage1Activity::class.java)
+            startActivity(intent)
         }
     }
 }
