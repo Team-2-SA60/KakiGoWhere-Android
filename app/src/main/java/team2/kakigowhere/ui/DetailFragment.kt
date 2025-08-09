@@ -1,12 +1,11 @@
 package team2.kakigowhere.ui
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -24,6 +23,7 @@ import team2.kakigowhere.data.model.ItineraryViewModel
 import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.databinding.FragmentDetailBinding
 import java.time.LocalDate
+import java.util.Locale.*
 
 class DetailFragment : Fragment() {
 
@@ -61,15 +61,14 @@ class DetailFragment : Fragment() {
 
                     // set place details
                     placeName.text = placeDetail.name
-                    placeRating.text = if (placeDetail.averageRating == 0.0) "Rating Not Available" else placeDetail.averageRating.toString()
+                    placeRating.text =
+                        if (placeDetail.averageRating == 0.0) "Rating Not Available"
+                        else
+                            formatRating(placeDetail.averageRating)
                     placeHours.text = if (placeDetail.isOpen) "Open Now" else "Closed"
                     placeDescription.text = placeDetail.description
                     placeWebsite.text = placeDetail.URL
-
-                    placeWebsite.setOnClickListener {
-                        // TODO: open this in WebView instead
-                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encode(placeDetail.name)}")))
-                    }
+                    renderOpeningHours(placeDetail.openingDescription)
 
                     val imagePath = ApiConstants.IMAGE_URL + placeDetail.id
                     Glide.with(this@DetailFragment)
@@ -78,9 +77,27 @@ class DetailFragment : Fragment() {
                         .centerCrop()
                         .into(placeImage)
 
-                    // set up buttons
+                    // set up buttons and clickable text
                     backButton.setOnClickListener {
                         findNavController().navigateUp()
+                    }
+
+                    //                    ratingsPage.setOnClickListener {
+//                        findNavController().navigate(
+//                            DetailFragmentDirections.actionDetailFragmentToRatingsFragment(
+//                                placeId = placeDetail.id,
+//                                placeTitle = placeDetail.name
+//                            )
+//                        )
+//                    }
+
+                    placeWebsite.setOnClickListener {
+                        val url = placeDetail.URL
+                        if (url.isNotBlank()) {
+                            findNavController().navigate(
+                                DetailFragmentDirections.actionDetailFragmentToWebViewFragment(url = url)
+                            )
+                        }
                     }
 
                     btnShowOnMap.setOnClickListener {
@@ -126,6 +143,26 @@ class DetailFragment : Fragment() {
                     itineraryViewModel.loadItineraries("cy@kaki.com") // TODO: get shared prefs
                 })
         }
+    }
+
+    private fun renderOpeningHours(raw: String?) {
+        binding.openingHoursContainer.removeAllViews()
+        if (raw.isNullOrBlank()) return
+
+        val lines = raw.split('\n')
+        for (line in lines) {
+            val t = line.trim()
+            if (t.isEmpty()) continue
+            val tv = TextView(requireContext())
+            tv.text = t
+            tv.textSize = 10f
+            binding.openingHoursContainer.addView(tv)
+        }
+    }
+
+    private fun formatRating(v: Double): String {
+        val i = v.toInt()
+        return if (v == i.toDouble()) "$i / 5" else String.format(US, "%.1f / 5", v)
     }
 
     override fun onDestroyView() {
