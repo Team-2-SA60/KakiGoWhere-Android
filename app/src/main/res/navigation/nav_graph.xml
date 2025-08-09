@@ -37,6 +37,9 @@
             android:id="@+id/action_detailFragment_to_mapFragment"
             app:destination="@id/mapFragment"/>
         <action
+            android:id="@+id/action_detailFragment_to_ratingFragment"
+            app:destination="@id/ratingFragment" />
+        <action
             android:id="@+id/action_detailFragment_to_webViewFragment"
             app:destination="@id/webViewFragment" />
         <argument
@@ -114,17 +117,7 @@
     </fragment>
 
 
-    <fragment
-        android:id="@+id/ratingFragment"
-        android:name="team2.kakigowhere.ui.RatingsFragment"
-        android:label="Ratings"
-        tools:layout="@layout/fragment_ratings">
-        <action
-            android:id="@+id/action_ratings_to_writeRating"
-            app:destination="@id/writeRatingFragment" />
-    </fragment>
-
-    <!-- ProfileFragment entry (already exists) -->
+    <!-- ProfileFragment -->
     <fragment
         android:id="@+id/profileFragment"
         android:name="team2.kakigowhere.ui.ProfileFragment"
@@ -148,10 +141,34 @@
         android:label="Change Interests"
         tools:layout="@layout/fragment_change_categories" />
 
+    <!-- Rating fragment -->
+    <fragment
+        android:id="@+id/ratingFragment"
+        android:name="team2.kakigowhere.ui.RatingsFragment"
+        android:label="Ratings"
+        tools:layout="@layout/fragment_ratings">
+        <action
+            android:id="@+id/action_ratings_to_writeRating"
+            app:destination="@id/writeRatingFragment" />
+        <argument
+            android:name="place_id"
+            app:argType="long" />
+        <argument
+            android:name="place_title"
+            app:argType="string" />
+    </fragment>
+
     <fragment
         android:id="@+id/writeRatingFragment"
         android:name="team2.kakigowhere.ui.WriteRatingFragment"
-        android:label="Write/Edit Rating" />
+        android:label="Write/Edit Rating">
+        <argument
+            android:name="place_id"
+            app:argType="long" />
+        <argument
+            android:name="place_title"
+            app:argType="string" />
+    </fragment>
 
     <!-- WebView fragment -->
     <fragment

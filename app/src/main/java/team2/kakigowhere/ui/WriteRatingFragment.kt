@@ -1,5 +1,6 @@
 package team2.kakigowhere.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,9 +22,9 @@ class WriteRatingFragment : Fragment() {
     private var _binding: FragmentWriteRatingBinding? = null
     private val binding get() = _binding!!
 
-    // TODO: replace with real values when wiring Tourist and Place
-    private val placeId = 7L
-    private val touristId = 1L
+    private val args: WriteRatingFragmentArgs by navArgs()
+    private val placeId: Long get() = args.placeId
+    private val placeTitle: String? get() = args.placeTitle
 
     private var existingRatingId: Long? = null // to know if update vs create
 
@@ -35,37 +37,37 @@ class WriteRatingFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        loadPlaceTitle()
-        // fetch existing rating if any
-        loadExistingRating()
-
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
+        // Title from args; fallback to API if missing
+        if (!placeTitle.isNullOrBlank()) {
+            binding.placeTitle.text = placeTitle
+        } else {
+            loadPlaceTitle()
         }
 
-        binding.btnSubmit.setOnClickListener {
-            submitRating()
-        }
+        val userId = currentUserId()
+
+        loadExistingRating(userId)
+
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+        binding.btnSubmit.setOnClickListener { submitRating(userId) }
     }
+
+    private fun currentUserId(): Long =
+        requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+            .getLong("user_id", -1L)
 
     private fun loadPlaceTitle() {
-        lifecycleScope.launch {
-            val placeResp = withContext(Dispatchers.IO) {
-                RetrofitClient.api.getPlaceDetail(placeId)
-            }
+        viewLifecycleOwner.lifecycleScope.launch {
+            val placeResp = withContext(Dispatchers.IO) { RetrofitClient.api.getPlaceDetail(placeId) }
             if (placeResp.isSuccessful) {
-                placeResp.body()?.let { dto ->
-                    binding.placeTitle.text = dto.name
-                }
+                binding.placeTitle.text = placeResp.body()?.name ?: ""
             }
         }
     }
 
-    private fun loadExistingRating() {
-        lifecycleScope.launch {
-            val resp = withContext(Dispatchers.IO) {
-                RetrofitClient.api.getMyRating(placeId, touristId)
-            }
+    private fun loadExistingRating(userId: Long) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val resp = withContext(Dispatchers.IO) { RetrofitClient.api.getMyRating(placeId, userId) }
             if (resp.isSuccessful) {
                 val ratingItem: RatingItem? = resp.body()
                 if (ratingItem != null) {
@@ -74,11 +76,10 @@ class WriteRatingFragment : Fragment() {
                     binding.comment.setText(ratingItem.comment ?: "")
                 }
             }
-            // else ignore: no existing rating or error, user starts fresh
         }
     }
 
-    private fun submitRating() {
+    private fun submitRating(userId: Long) {
         val ratingValue = binding.ratingBar.rating.toInt().coerceIn(1, 5)
         if (binding.ratingBar.rating != ratingValue.toFloat()) {
             binding.ratingBar.rating = ratingValue.toFloat()
@@ -96,9 +97,9 @@ class WriteRatingFragment : Fragment() {
             comment = commentText
         )
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val resp = withContext(Dispatchers.IO) {
-                RetrofitClient.api.submitOrUpdateRating(placeId, touristId, request)
+                RetrofitClient.api.submitOrUpdateRating(placeId, userId, request)
             }
             if (resp.isSuccessful) {
                 parentFragmentManager.setFragmentResult("rating_updated", Bundle.EMPTY)
