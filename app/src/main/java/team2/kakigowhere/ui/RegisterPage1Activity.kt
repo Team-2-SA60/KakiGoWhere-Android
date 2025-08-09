@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import team2.kakigowhere.data.auth.AuthService
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.databinding.ActivityRegisterPage1Binding
 
 class RegisterPage1Activity : AppCompatActivity() {
@@ -33,18 +35,20 @@ class RegisterPage1Activity : AppCompatActivity() {
             val password = binding.passwordEditText.text.toString().trim()
             val confirmPassword = binding.confirmPasswordEditText.text.toString().trim()
 
-            if (validateInputs(name, email, password, confirmPassword)) {
-                // 跳转到注册第二页，传递数据
-                val intent = Intent(this, RegisterPage2Activity::class.java)
-                intent.putExtra("name", name)
-                intent.putExtra("email", email)
-                intent.putExtra("password", password)
-                startActivity(intent)
+            lifecycleScope.launch {
+                if (validateInputs(name, email, password, confirmPassword)) {
+                    val intent = Intent(this@RegisterPage1Activity, RegisterPage2Activity::class.java).apply {
+                        putExtra("name", name)
+                        putExtra("email", email)
+                        putExtra("password", password)
+                    }
+                    startActivity(intent)
+                }
             }
         }
     }
 
-    private fun validateInputs(name: String, email: String, password: String, confirmPassword: String): Boolean {
+    private suspend fun validateInputs(name: String, email: String, password: String, confirmPassword: String): Boolean {
         var isValid = true
 
         // 清除之前的错误信息
@@ -63,8 +67,9 @@ class RegisterPage1Activity : AppCompatActivity() {
             isValid = false
         }
 
-        // 检查邮箱是否已存在
-        if (AuthService.isEmailExists(email)) {
+        // use backend 检查邮箱是否已存在
+        val response = RetrofitClient.api.checkEmailExists(email)
+        if (response.isSuccessful && response.body() == true) {
             showEmailError("Email already registered")
             isValid = false
         }

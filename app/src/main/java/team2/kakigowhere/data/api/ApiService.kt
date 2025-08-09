@@ -19,6 +19,9 @@ import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.data.model.RatingItem
 import team2.kakigowhere.data.model.RatingRequest
 import team2.kakigowhere.data.model.RatingSummary
+import team2.kakigowhere.data.model.RegisterRequestDTO
+import team2.kakigowhere.data.model.RegisterResponseDTO
+import team2.kakigowhere.data.model.*
 
 interface ApiService {
 
@@ -106,4 +109,21 @@ interface ApiService {
     suspend fun login(
         @Body credentials: Map<String, String>
     ): Response<LoginResponse>
+
+    @GET("/api/tourist/check-email")
+    suspend fun checkEmailExists(
+        @Query("email") email: String
+    ): Response<Boolean>
+
+    @POST("tourist/register")
+    suspend fun registerTourist(
+        @Body request: RegisterRequestDTO
+    ): Response<RegisterResponseDTO>
+
+    @PUT("tourist/{touristId}")
+    suspend fun updateTourist(
+        @Path("touristId") touristId: Long,
+        @Body request: TouristUpdateRequest
+    ): Response<Unit>
+
 }

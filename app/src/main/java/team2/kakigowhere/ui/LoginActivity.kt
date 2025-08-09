@@ -11,12 +11,23 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.model.LoginResponse
+import team2.kakigowhere.data.model.*
 
-class LoginActivity : AppCompatActivity() {
+class   LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+        // If already logged in, skip login screen
+        val prefs = getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        if (prefs.contains("user_id")) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
+
+
         setContentView(R.layout.activity_login)
 
         val emailInput = findViewById<EditText>(R.id.emailInput)
@@ -45,13 +56,27 @@ class LoginActivity : AppCompatActivity() {
                     if (response.isSuccessful && response.body() != null) {
                         val user = response.body()!!
 
+                        val interests = user.interestsCategories ?: emptyList()
+//                        val interestsSet = interests.map { it.name }.toSet()
+                        // Store IDs for backend sync, and names/descriptions for display fallback
+                        val interestIdSet = interests.map { it.id.toString() }.toSet()
+                        val interestNameSet = interests
+                            .flatMap { listOfNotNull(it.name, it.description) }
+                            .map { it.trim() }
+                            .filter { it.isNotEmpty() }
+                            .toSet()
+
                         // Save user info in SharedPreferences
-                        val prefs = getSharedPreferences("kaki_prefs", Context.MODE_PRIVATE)
+                        val prefs = getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
                         prefs.edit().apply {
                             putLong("user_id", user.id)
                             putString("user_email", user.email)
                             putString("user_name", user.name)
                             putString("user_role", user.role)
+                            // Save interests as a string set (names of categories)
+                            // Save interests: IDs for backend, names for display fallback
+                            putStringSet("user_interests", interestIdSet)
+                            putStringSet("user_interest_names", interestNameSet)
                             apply()
                         }
 
