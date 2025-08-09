@@ -82,14 +82,14 @@ class DetailFragment : Fragment() {
                         findNavController().navigateUp()
                     }
 
-                    //                    ratingsPage.setOnClickListener {
-//                        findNavController().navigate(
-//                            DetailFragmentDirections.actionDetailFragmentToRatingsFragment(
-//                                placeId = placeDetail.id,
-//                                placeTitle = placeDetail.name
-//                            )
-//                        )
-//                    }
+                    ratingsPage.setOnClickListener {
+                        findNavController().navigate(
+                            DetailFragmentDirections.actionDetailFragmentToRatingFragment(
+                                placeId = placeDetail.id,
+                                placeTitle = placeDetail.name
+                            )
+                        )
+                    }
 
                     placeWebsite.setOnClickListener {
                         val url = placeDetail.URL
