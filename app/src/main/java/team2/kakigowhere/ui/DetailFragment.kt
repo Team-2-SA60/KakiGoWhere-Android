@@ -23,7 +23,7 @@ import team2.kakigowhere.data.model.ItineraryViewModel
 import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.databinding.FragmentDetailBinding
 import java.time.LocalDate
-import java.util.Locale
+import java.util.Locale.*
 
 class DetailFragment : Fragment() {
 
@@ -162,7 +162,7 @@ class DetailFragment : Fragment() {
 
     private fun formatRating(v: Double): String {
         val i = v.toInt()
-        return if (v == i.toDouble()) "$i / 5" else String.format(java.util.Locale.US, "%.1f / 5", v)
+        return if (v == i.toDouble()) "$i / 5" else String.format(US, "%.1f / 5", v)
     }
 
     override fun onDestroyView() {
