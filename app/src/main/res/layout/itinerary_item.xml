@@ -2,25 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@drawable/rounded_corners"
     android:orientation="horizontal"
-    android:padding="10dp"
-    android:background="@drawable/rounded_corners">
-    
+    android:padding="10dp">
+
     <ImageView
         android:id="@+id/item_image"
-        android:layout_width="90dp"
+        android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_gravity="center_vertical"/>
+        android:layout_gravity="center_vertical" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
         android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:padding="6dp"
-        android:layout_marginLeft="14dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/item_title"
@@ -28,19 +28,29 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="bold"
-            tools:text="Title - Date Planned"/>
+            tools:text="Title - Date Planned" />
 
         <TextView
             android:id="@+id/item_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="opening hour today - is open?"/>
+            tools:text="opening hour today - is open?" />
 
         <TextView
             android:id="@+id/item_notes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="my notes here"/>
+            tools:text="my notes here" />
+
+        <Button
+            android:id="@+id/edit_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:minWidth="60dp"
+            android:minHeight="40dp"
+            android:padding="0dp"
+            android:text="Edit" />
 
     </LinearLayout>
 

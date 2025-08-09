@@ -12,15 +12,20 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.Itinerary
+import team2.kakigowhere.data.model.ItineraryViewModel
 import java.time.LocalDate
 
 class ItineraryCreateFragment : Fragment() {
+
+    private lateinit var email: String
+    private val itineraryViewModel: ItineraryViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,7 +48,7 @@ class ItineraryCreateFragment : Fragment() {
         datePicker.minDate = setCalendar.timeInMillis
 
         // get user email from fragment args
-        val email = ItineraryCreateFragmentArgs.fromBundle(requireArguments()).touristEmail
+        email = ItineraryCreateFragmentArgs.fromBundle(requireArguments()).touristEmail
 
         // enable button to create itinerary only if it has a name
         val createBtn = view.findViewById<Button>(R.id.create_itinerary)
@@ -71,6 +76,7 @@ class ItineraryCreateFragment : Fragment() {
                     try {
                         val response = RetrofitClient.api.createItinerary(email, itinerary)
                         if (response.isSuccessful) {
+                            itineraryViewModel.loadItineraries(email)
                             findNavController().navigate(
                                 ItineraryCreateFragmentDirections.actionCreateItineraryFragmentToSavedFragment()
                             )

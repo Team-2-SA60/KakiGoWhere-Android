@@ -36,6 +36,7 @@ class ItineraryAdapter(
         position: Int
     ) {
         val itineraryItem = itineraryList[position]
+        holder.itemView.setOnClickListener { onItemClick(itineraryItem) }
 
         // if itinerary does not have items
         if (itineraryItem.days == 0L) {
@@ -53,8 +54,8 @@ class ItineraryAdapter(
             .into(holder.image)
 
         holder.title.text = itineraryItem.title
-        holder.dates.text = itineraryItem.startDate + " ~ " + itineraryItem.getLastDate() + " · " + itineraryItem.days.toString() + " days"
-        holder.itemView.setOnClickListener { onItemClick(itineraryItem) }
+        holder.dates.text = itineraryItem.startDate + " ~ " + itineraryItem.getLastDate().toString() + " · " + itineraryItem.days.toString() + " days"
+        //holder.itemView.setOnClickListener { onItemClick(itineraryItem) }
     }
 
     override fun getItemCount(): Int = itineraryList.size

@@ -3,8 +3,10 @@ package team2.kakigowhere.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import team2.kakigowhere.R
@@ -21,6 +23,7 @@ class ItineraryItemAdapter(
         val title: TextView = itemView.findViewById<TextView>(R.id.item_title)
         val hours: TextView = itemView.findViewById<TextView>(R.id.item_hours)
         val notes: TextView = itemView.findViewById<TextView>(R.id.item_notes)
+        val edit: Button = itemView.findViewById<Button>(R.id.edit_item)
     }
 
     override fun onCreateViewHolder(
@@ -36,16 +39,28 @@ class ItineraryItemAdapter(
         position: Int
     ) {
         val item = items[position]
-        val placeImagePath = ApiConstants.IMAGE_URL + item.placeId.toString()
 
-        Glide.with(context)
-            .load(placeImagePath)
-            .placeholder(R.drawable.kakigowhere)
-            .into(holder.image)
+        if (item.placeId == 0L) {
+            holder.itemView.visibility = View.GONE
+        } else {
+            val placeImagePath = ApiConstants.IMAGE_URL + item.placeId.toString()
 
-        holder.title.text = item.placeTitle
-        holder.hours.text = if (item.placeIsOpen) "Open · " + item.placeOpenHours else "Closed"
-        holder.notes.text = "Notes: " + item.notes
+            Glide.with(context)
+                .load(placeImagePath)
+                .placeholder(R.drawable.kakigowhere)
+                .centerCrop()
+                .into(holder.image)
+
+            holder.title.text = item.placeTitle
+            holder.hours.text = if (item.placeIsOpen) "Open · " + item.placeOpenHours else "Closed"
+            holder.notes.text = "Notes: " + (item.notes ?: "none")
+
+            holder.edit.setOnClickListener {
+                context.findNavController().navigate(
+                    ItineraryDetailFragmentDirections.actionSavedItemFragmentToEditSavedItemFragment(item)
+                )
+            }
+        }
     }
 
     override fun getItemCount(): Int = items.size
