@@ -88,6 +88,15 @@
             android:background="#000"
             android:layout_marginBottom="8dp" />
 
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No recommendations available"
+            android:gravity="center"
+            android:visibility="gone"
+            android:padding="16dp"/>
+
         <!-- Recycler + overlay -->
         <FrameLayout
             android:layout_width="match_parent"
