@@ -24,7 +24,7 @@ data class PlaceDetailDTO(
     val address: String,
     val description: String,
     val imagePath: String,
-    val URL: String,
+    @SerializedName("url") val URL: String,
     val openingDescription: String,
     val latitude: Double,
     val longitude: Double,
