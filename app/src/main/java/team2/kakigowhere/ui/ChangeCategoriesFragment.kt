@@ -2,7 +2,6 @@ package team2.kakigowhere.ui
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log.e
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
