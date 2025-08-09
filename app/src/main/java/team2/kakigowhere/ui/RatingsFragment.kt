@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.adapters.RatingsAdapter
 import team2.kakigowhere.databinding.FragmentRatingsBinding
