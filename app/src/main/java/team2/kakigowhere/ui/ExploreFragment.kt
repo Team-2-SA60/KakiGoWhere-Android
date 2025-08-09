@@ -40,9 +40,9 @@ class ExploreFragment : Fragment() {
         // Fetch PlaceDTOs
         lifecycleScope.launch {
             val resp = RetrofitClient.api.getPlaces()
-            val dtoList = resp.body() ?: emptyList<PlaceDTO>()
+            originalPlaces = resp.body() ?: emptyList<PlaceDTO>()
 
-            currentFilteredPlaces = dtoList
+            currentFilteredPlaces = originalPlaces
 
             withContext(Dispatchers.Main) {
                 setupRecycler(currentFilteredPlaces.sortedBy { it.name })

@@ -110,7 +110,7 @@ interface ApiService {
         @Body credentials: Map<String, String>
     ): Response<LoginResponse>
 
-    @GET("/api/tourist/check-email")
+    @GET("tourist/check-email")
     suspend fun checkEmailExists(
         @Query("email") email: String
     ): Response<Boolean>
