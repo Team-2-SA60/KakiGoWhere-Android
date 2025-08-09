@@ -10,9 +10,14 @@ import team2.kakigowhere.data.model.PlaceDTO
 import team2.kakigowhere.databinding.PlaceItemBinding
 
 class PlaceAdapter(
-    private val places: List<PlaceDTO>,
+    private var places: List<PlaceDTO>,
     private val onItemClick: (PlaceDTO) -> Unit
 ) : RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
+
+    fun update(newItems: List<PlaceDTO>) {
+        places = newItems
+        notifyDataSetChanged()
+    }
 
     inner class PlaceViewHolder(private val binding: PlaceItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(place: PlaceDTO) {

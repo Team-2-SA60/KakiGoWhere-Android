@@ -102,11 +102,6 @@ class ProfileFragment : Fragment() {
             findNavController().navigate(R.id.action_profileFragment_to_changeCategoriesFragment)
         }
 
-        // Navigate to RatingsFragment
-        binding.btnViewRatings.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_ratingFragment)
-        }
-
         // Log out
         binding.btnLogout.setOnClickListener {
             prefs.edit().clear().apply()

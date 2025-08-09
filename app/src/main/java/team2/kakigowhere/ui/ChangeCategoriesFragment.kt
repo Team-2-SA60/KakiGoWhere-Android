@@ -2,6 +2,7 @@ package team2.kakigowhere.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log.e
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -71,7 +72,19 @@ class ChangeCategoriesFragment : Fragment() {
                     )
                     if (resp.isSuccessful) {
                         // Persist locally after successful update
-                        prefsEditor.putStringSet("user_interests", chosenStr).apply()
+
+                        val chosenNames = categories
+                            .filter { it.id in chosenIds }
+                            .map { it.description } // use the label ML expects (e.g., "Museums")
+                            .toSet()
+
+                        prefs.edit()
+                            .putStringSet("user_interests", chosenStr)
+                            .putStringSet("user_interest_names", chosenNames)
+                            .remove("reco_interests_key") // invalidate recomms cache
+                            .remove("reco_ids_json")
+                            .apply()
+
                         Toast.makeText(requireContext(), "Interests synced", Toast.LENGTH_SHORT).show()
                         parentFragmentManager.popBackStack()
                     } else {
