@@ -24,7 +24,7 @@ class RegisterPage1Activity : AppCompatActivity() {
 
     private fun setupBackButton() {
         binding.backButton.setOnClickListener {
-            finish() // 返回上一页
+            finish()
         }
     }
 
@@ -51,36 +51,36 @@ class RegisterPage1Activity : AppCompatActivity() {
     private suspend fun validateInputs(name: String, email: String, password: String, confirmPassword: String): Boolean {
         var isValid = true
 
-        // 清除之前的错误信息
+        // delete wrong info
         hideEmailError()
         hidePasswordError()
 
-        // 检查空字段
+        // check empty
         if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
             showEmailError("Please fill in all fields")
             return false
         }
 
-        // 检查邮箱格式
+        // check email format
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             showEmailError("Invalid email format")
             isValid = false
         }
 
-        // use backend 检查邮箱是否已存在
+        // use backend to check duplicate email
         val response = RetrofitClient.api.checkEmailExists(email)
         if (response.isSuccessful && response.body() == true) {
             showEmailError("Email already registered")
             isValid = false
         }
 
-        // 检查密码长度
+        // check password length
         if (password.length < 6) {
             showPasswordError("Password must be at least 6 characters")
             isValid = false
         }
 
-        // 检查密码匹配
+        // check password match
         if (password != confirmPassword) {
             showPasswordError("Passwords do not match")
             isValid = false
