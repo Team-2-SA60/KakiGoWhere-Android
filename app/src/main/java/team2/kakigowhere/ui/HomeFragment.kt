@@ -183,7 +183,7 @@ class HomeFragment : Fragment() {
 
                         card.isClickable = true
                         card.setOnClickListener {
-                            val action = HomeFragmentDirections.actionHomeFragmentToSavedItemFragment(itinerary.id)
+                            val action = HomeFragmentDirections.actionHomeFragmentToSavedItemFragment(itinerary)
                             findNavController().navigate(action)
                         }
                     } else {
