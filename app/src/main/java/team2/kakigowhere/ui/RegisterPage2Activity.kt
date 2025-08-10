@@ -31,7 +31,7 @@ class RegisterPage2Activity : AppCompatActivity() {
 
     private fun setupBackButton() {
         binding.backButton.setOnClickListener {
-            finish() // 返回上一页
+            finish()
         }
     }
 
@@ -49,7 +49,7 @@ class RegisterPage2Activity : AppCompatActivity() {
             val selectedInterestIds = adapter.getSelectedIds()
 
             if (validateInterests(selectedInterestIds)) {
-                // 获取从第一页传递过来的数据
+                // retrieve data from last page
                 val name = intent.getStringExtra("name") ?: ""
                 val email = intent.getStringExtra("email") ?: ""
                 val password = intent.getStringExtra("password") ?: ""
@@ -70,7 +70,7 @@ class RegisterPage2Activity : AppCompatActivity() {
                                 "Registration successful!",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            startActivity(Intent(this@RegisterPage2Activity, MainActivity::class.java))
+                            startActivity(Intent(this@RegisterPage2Activity, LoginActivity::class.java))
                             finish()
                         } else {
                             showError("Registration failed: ${response.code()}")
