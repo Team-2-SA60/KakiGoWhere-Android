@@ -65,7 +65,7 @@ class DetailFragment : Fragment() {
                         if (placeDetail.averageRating == 0.0) "Rating Not Available"
                         else
                             formatRating(placeDetail.averageRating)
-                    placeHours.text = if (placeDetail.open) "Open Now" else "closed"
+                    placeHours.text = if (placeDetail.open) "Open Now" else "Closed"
                     placeDescription.text = placeDetail.description
                     placeWebsite.text = placeDetail.url
                     renderOpeningHours(placeDetail.openingDescription)
