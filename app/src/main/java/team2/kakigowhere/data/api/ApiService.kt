@@ -21,7 +21,7 @@ import team2.kakigowhere.data.model.RatingRequest
 import team2.kakigowhere.data.model.RatingSummary
 import team2.kakigowhere.data.model.RegisterRequestDTO
 import team2.kakigowhere.data.model.RegisterResponseDTO
-import team2.kakigowhere.data.model.*
+import team2.kakigowhere.data.model.TouristUpdateRequest
 
 interface ApiService {
 
@@ -103,6 +103,11 @@ interface ApiService {
     suspend fun createItinerary(
         @Header("user-email") email: String,
         @Body itinerary: Itinerary
+    ): Response<Unit>
+
+    @DELETE("itinerary/delete/{itineraryId}")
+    suspend fun deleteItinerary(
+        @Path("itineraryId") id: Long
     ): Response<Unit>
 
     @POST("auth/login")
