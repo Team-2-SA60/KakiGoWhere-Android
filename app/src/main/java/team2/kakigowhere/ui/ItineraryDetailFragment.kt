@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
@@ -41,6 +42,23 @@ class ItineraryDetailFragment : Fragment() {
 
         view.findViewById<TextView>(R.id.title_display).text = itinerary.title
 
+        // delete itinerary
+        var deleteBtn = view.findViewById<Button>(R.id.delete_itinerary)
+        deleteBtn.setOnClickListener {
+            lifecycleScope.launch {
+                try {
+                    val response = RetrofitClient.api.deleteItinerary(itinerary.id)
+                    if (response.isSuccessful) {
+                        Toast.makeText(requireContext(), "Deleted itinerary", Toast.LENGTH_LONG).show()
+                        itineraryViewModel.loadItineraries("cy@kaki.com")
+                        findNavController().navigateUp()
+                    }
+                } catch (e: Exception) {
+                    Log.d("API Error", e.toString())
+                }
+            }
+        }
+
         // add day to itinerary
         var addDay = view.findViewById<Button>(R.id.add_day)
         addDay.setOnClickListener {
@@ -53,7 +71,7 @@ class ItineraryDetailFragment : Fragment() {
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Added day to itinerary", Toast.LENGTH_LONG).show()
                         itineraryViewModel.loadItineraries("cy@kaki.com") //TODO: get from shared prefs
-                        //TODO: how to refresh fragment view after adding day
+                        findNavController().navigateUp() // TODO: how to refresh fragment view after adding day
                     }
                 } catch (e: Exception) {
                     Log.d("API Error", e.printStackTrace().toString())
@@ -93,7 +111,7 @@ class ItineraryDetailFragment : Fragment() {
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Deleted day from itinerary", Toast.LENGTH_LONG).show()
                         itineraryViewModel.loadItineraries("cy@kaki.com") //TODO: get from shared prefs
-                        //TODO: how to refresh fragment view after adding day
+                        findNavController().navigateUp() //TODO: how to refresh fragment view after adding day
                     }
                 } catch (e: Exception) {
                     Log.d("API Error", "Error deleting itinerary day")
