@@ -1,5 +1,7 @@
 package team2.kakigowhere.ui
 
+import android.content.Context
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -140,7 +142,9 @@ class DetailFragment : Fragment() {
                 placeDetail.id,
                 itineraryList,
                 onItineraryUpdate = {
-                    itineraryViewModel.loadItineraries("cy@kaki.com") // TODO: get shared prefs
+                    val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+                    val email = prefs.getString("user_email", "") ?: ""
+                    itineraryViewModel.loadItineraries(email)
                 })
         }
     }
