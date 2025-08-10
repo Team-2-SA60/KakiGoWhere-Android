@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.model.PlaceDTO
+import team2.kakigowhere.data.model.PlaceDetailDTO
 
 class TestActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +42,7 @@ class TestActivity : AppCompatActivity(), View.OnClickListener {
                         val response = RetrofitClient.api.getPlaces()
 
                         if (response.isSuccessful && (response.body() != null)) {
-                            var places: List<PlaceDTO> = response.body()!!
+                            var places: List<PlaceDetailDTO> = response.body()!!
                             val layoutContainer = findViewById<ViewGroup>(R.id.main)
 
                             places.forEach { place ->

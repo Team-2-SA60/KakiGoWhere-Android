@@ -17,14 +17,14 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import team2.kakigowhere.R
-import team2.kakigowhere.data.model.PlaceDTO
+import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.data.model.PlaceViewModel
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private val placeViewModel: PlaceViewModel by activityViewModels()
 
-    private lateinit var places: List<PlaceDTO>
+    private lateinit var places: List<PlaceDetailDTO>
     private lateinit var googleMap: GoogleMap
 
     private val markersMap = mutableMapOf<Long, Marker>()

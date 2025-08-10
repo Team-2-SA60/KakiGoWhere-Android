@@ -8,8 +8,8 @@ import kotlinx.coroutines.launch
 import team2.kakigowhere.data.api.RetrofitClient
 
 class PlaceViewModel : ViewModel() {
-    private val _places = MutableLiveData<List<PlaceDTO>>()
-    val places: LiveData<List<PlaceDTO>> = _places
+    private val _places = MutableLiveData<List<PlaceDetailDTO>>()
+    val places: LiveData<List<PlaceDetailDTO>> = _places
 
     private val _error = MutableLiveData<String?>(null)
     val error: LiveData<String?> = _error

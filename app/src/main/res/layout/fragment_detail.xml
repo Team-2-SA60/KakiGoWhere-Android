@@ -88,7 +88,7 @@
                         android:id="@+id/placeHours"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Closed now"
+                        android:text="Placeholder"
                         android:textStyle="bold" />
 
                     <LinearLayout
