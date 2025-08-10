@@ -28,7 +28,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         // TODO: use SharedPreferences to get email.
-        val email = "cy@kaki.com"
+        val prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE)
+        val email = prefs.getString("user_email", "") ?: ""
 
         // make api call to load information
         placeViewModel.loadPlaces()

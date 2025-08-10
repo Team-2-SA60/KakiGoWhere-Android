@@ -1,5 +1,7 @@
 package team2.kakigowhere.ui
 
+import android.content.Context
+
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -50,7 +52,11 @@ class ItineraryDetailFragment : Fragment() {
                     val response = RetrofitClient.api.deleteItinerary(itinerary.id)
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Deleted itinerary", Toast.LENGTH_LONG).show()
-                        itineraryViewModel.loadItineraries("cy@kaki.com")
+                        run {
+                            val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+                            val email = prefs.getString("user_email", "") ?: ""
+                            itineraryViewModel.loadItineraries(email)
+                        }
                         findNavController().navigateUp()
                     }
                 } catch (e: Exception) {
@@ -70,7 +76,11 @@ class ItineraryDetailFragment : Fragment() {
                     val response = RetrofitClient.api.addItineraryDay(itinerary.id, addedDay)
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Added day to itinerary", Toast.LENGTH_LONG).show()
-                        itineraryViewModel.loadItineraries("cy@kaki.com") //TODO: get from shared prefs
+                        run {
+                            val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+                            val email = prefs.getString("user_email", "") ?: ""
+                            itineraryViewModel.loadItineraries(email)
+                        }
                         findNavController().navigateUp() // TODO: how to refresh fragment view after adding day
                     }
                 } catch (e: Exception) {
@@ -110,7 +120,11 @@ class ItineraryDetailFragment : Fragment() {
                     val response = RetrofitClient.api.deleteItineraryDay(itinerary.id, lastDate)
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Deleted day from itinerary", Toast.LENGTH_LONG).show()
-                        itineraryViewModel.loadItineraries("cy@kaki.com") //TODO: get from shared prefs
+                        run {
+                            val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+                            val email = prefs.getString("user_email", "") ?: ""
+                            itineraryViewModel.loadItineraries(email)
+                        }
                         findNavController().navigateUp() //TODO: how to refresh fragment view after adding day
                     }
                 } catch (e: Exception) {
