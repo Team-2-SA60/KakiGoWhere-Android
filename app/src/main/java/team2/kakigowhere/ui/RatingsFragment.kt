@@ -1,29 +1,30 @@
 package team2.kakigowhere.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.adapters.RatingsAdapter
 import team2.kakigowhere.databinding.FragmentRatingsBinding
+import android.content.Context
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.navArgs
+import java.util.Locale.*
 
 class RatingsFragment : Fragment() {
     private var _binding: FragmentRatingsBinding? = null
     private val binding get() = _binding!!
 
-    // hardcoded values for testing
-    private val placeId = 7L
-    private val touristId = 1L
+    private val args: RatingsFragmentArgs by navArgs()
+    private val placeId: Long get() = args.placeId
+    private val placeTitle: String get() = args.placeTitle
 
     private lateinit var ratingsAdapter: RatingsAdapter
     private var alreadyLoaded = false // prevents re-fetching when view is recreated quickly
@@ -38,91 +39,95 @@ class RatingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         ratingsAdapter = RatingsAdapter(emptyList())
+
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+        binding.placeTitle.text = placeTitle
+
         binding.rvOtherRatings.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = ratingsAdapter
         }
 
-        if (!alreadyLoaded) {
-            loadRatings()
-        }
+        if (!alreadyLoaded) loadRatings()
 
         binding.btnWriteEdit.setOnClickListener {
             // navigate to write/edit screen
-            findNavController().navigate(R.id.action_ratings_to_writeRating)
+            findNavController().navigate(
+                RatingsFragmentDirections.actionRatingsToWriteRating(
+                    placeId = placeId,
+                    placeTitle = placeTitle
+                )
+            )
         }
 
         // handle result from fragment
-        parentFragmentManager.setFragmentResultListener("rating_updated", this) { _, _ ->
+        parentFragmentManager.setFragmentResultListener("rating_updated", viewLifecycleOwner) { _, _ ->
             alreadyLoaded = false
             loadRatings()
         }
     }
 
+    private fun currentUserId(): Long =
+        requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+            .getLong("user_id", -1L)
+
     // api calls to load ratings
     private fun loadRatings() {
         alreadyLoaded = true
 
-        lifecycleScope.launch {
-            // run parallel and wait for all
-            val summaryDeferred = async(Dispatchers.IO) { RetrofitClient.api.getRatingSummary(placeId) }
-            val myDeferred = async(Dispatchers.IO) { RetrofitClient.api.getMyRating(placeId, touristId) }
-            val othersDeferred = async(Dispatchers.IO) { RetrofitClient.api.getOtherRatings(placeId, touristId) }
-            val placeDetailDeferred = async(Dispatchers.IO) { RetrofitClient.api.getPlaceDetail(placeId) }
+        val userId = currentUserId() // defaults to -1 if not logged in
 
-            // place title
-            val placeResp = placeDetailDeferred.await()
-            if (placeResp.isSuccessful) {
-                placeResp.body()?.let { dto ->
-                    binding.placeTitle.text = dto.name
-                    Log.d("RatingsFragment", "Loaded place title: ${dto.name}")
-                }
-            } else {
-                Log.w("RatingsFragment", "Place detail failed: ${placeResp.code()}")
+        viewLifecycleOwner.lifecycleScope.launch {
+            val summaryDeferred = async(Dispatchers.IO) {
+                RetrofitClient.api.getRatingSummary(placeId)
+            }
+            val myDeferred = if (userId > 0) {
+                async(Dispatchers.IO) { RetrofitClient.api.getMyRating(placeId, userId) }
+            } else null
+            val othersDeferred = async(Dispatchers.IO) {
+                RetrofitClient.api.getOtherRatings(placeId, if (userId > 0) userId else 0L)
             }
 
-            // summary
+            // ratings summary
             val summaryResp = summaryDeferred.await()
             if (summaryResp.isSuccessful) {
                 summaryResp.body()?.let { summary ->
-                    binding.averageRating.text = String.format("%.1f / 5", summary.averageRating)
+                    binding.averageRating.text = formatRating(summary.averageRating)
                     binding.ratingCount.text = "${summary.ratingCount} rating(s)"
-                    Log.d("RatingsFragment", "Summary loaded: avg=${summary.averageRating}, count=${summary.ratingCount}")
                 }
-            } else {
-                Log.w("RatingsFragment", "Summary failed: ${summaryResp.code()}")
             }
 
-            // my rating
-            val myResp = myDeferred.await()
-            if (myResp.isSuccessful) {
-                val my = myResp.body()
-                if (my != null) {
-                    binding.tvMyName.text = my.touristName
-                    binding.tvMyRating.text = "${my.rating} / 5"
-                    binding.tvMyComment.text = my.comment ?: ""
-                    binding.myRating.visibility = View.VISIBLE
-                    Log.d("RatingsFragment", "My rating: id=${my.ratingId}, rating=${my.rating}, comment=${my.comment}")
+            // load my rating (only if logged in)
+            if (myDeferred != null) {
+                val myResp = myDeferred.await()
+                if (myResp.isSuccessful) {
+                    val my = myResp.body()
+                    if (my != null) {
+                        binding.tvMyName.text = my.touristName
+                        binding.tvMyRating.text = formatRating(my.rating.toDouble())
+                        binding.tvMyComment.text = my.comment ?: ""
+                        binding.myRating.visibility = View.VISIBLE
+                    } else {
+                        binding.myRating.visibility = View.GONE
+                    }
                 } else {
                     binding.myRating.visibility = View.GONE
-                    Log.d("RatingsFragment", "No personal rating found")
                 }
             } else {
                 binding.myRating.visibility = View.GONE
-                Log.w("RatingsFragment", "My rating request failed: ${myResp.code()}")
             }
 
-            // others
+            // load other ratings
             val othersResp = othersDeferred.await()
             if (othersResp.isSuccessful) {
-                othersResp.body()?.let { list ->
-                    ratingsAdapter.submitList(list)
-                    Log.d("RatingsFragment", "Other ratings loaded count=${list.size}")
-                }
-            } else {
-                Log.w("RatingsFragment", "Other ratings failed: ${othersResp.code()}")
+                ratingsAdapter.submitList(othersResp.body().orEmpty())
             }
         }
+    }
+
+    private fun formatRating(v: Double): String {
+        val i = v.toInt()
+        return if (v == i.toDouble()) "$i / 5" else String.format(US, "%.1f / 5", v)
     }
 
     override fun onDestroyView() {

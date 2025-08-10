@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">KakiGoWhere-Android</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="place_image">placeholder for place?</string>
+    <string name="description_title">Description</string>
+    <string name="website_title">Official Website</string>
+    <string name="view_ratings"><u>Click to give/ view ratings</u>></string>
+    <string name="back">Back</string>
 </resources>
