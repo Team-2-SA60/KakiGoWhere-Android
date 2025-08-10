@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_homeFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_savedItemFragment"
+            app:destination="@id/savedItemFragment" />
     </fragment>
 
     <!-- Explore Fragment -->
