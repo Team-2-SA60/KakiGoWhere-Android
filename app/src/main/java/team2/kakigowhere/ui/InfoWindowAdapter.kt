@@ -10,11 +10,11 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
-import team2.kakigowhere.data.model.PlaceDTO
+import team2.kakigowhere.data.model.PlaceDetailDTO
 
 class InfoWindowAdapter(
     private val context: Context,
-    private val places: List<PlaceDTO>,
+    private val places: List<PlaceDetailDTO>,
 ) : GoogleMap.InfoWindowAdapter {
     private val window: View = LayoutInflater.from(context).inflate(R.layout.info_window, null)
 

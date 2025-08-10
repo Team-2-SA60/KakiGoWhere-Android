@@ -4,18 +4,18 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import com.google.gson.annotations.SerializedName
 
-data class PlaceDTO(
-    val id: Long,
-    val googleId: String,
-    val name: String,
-    val address: String,
-    val latitude: Double,
-    val longitude: Double,
-    val isActive: Boolean,
-    val isOpen: Boolean,
-    val averageRating: Double,
-    val interestCategories: List<InterestCategory>
-)
+//data class PlaceDTO(
+//    val id: Long,
+//    val googleId: String,
+//    val name: String,
+//    val address: String,
+//    val latitude: Double,
+//    val longitude: Double,
+//    val isActive: Boolean,
+//    val isOpen: Boolean,
+//    val averageRating: Double,
+//    val interestCategories: List<InterestCategory>
+//)
 
 data class PlaceDetailDTO(
     val id: Long,
@@ -24,16 +24,17 @@ data class PlaceDetailDTO(
     val address: String,
     val description: String,
     val imagePath: String,
-    @SerializedName("url") val URL: String,
     val openingDescription: String,
     val latitude: Double,
     val longitude: Double,
-    val isActive: Boolean,
     val interestCategories: List<InterestCategory>,
     val openingHours: List<OpeningHours>,
     val placeEvents: List<PlaceEvent>,
     val averageRating: Double,
-    val isOpen: Boolean
+    val open: Boolean,
+    val active: Boolean,
+    @SerializedName("url")
+    val url: String
 )
 @Parcelize
 data class InterestCategory(

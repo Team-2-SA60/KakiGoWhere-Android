@@ -65,9 +65,9 @@ class DetailFragment : Fragment() {
                         if (placeDetail.averageRating == 0.0) "Rating Not Available"
                         else
                             formatRating(placeDetail.averageRating)
-                    placeHours.text = if (placeDetail.isOpen) "Open Now" else "Closed"
+                    placeHours.text = if (placeDetail.open) "Open Now" else "closed"
                     placeDescription.text = placeDetail.description
-                    placeWebsite.text = placeDetail.URL
+                    placeWebsite.text = placeDetail.url
                     renderOpeningHours(placeDetail.openingDescription)
 
                     val imagePath = ApiConstants.IMAGE_URL + placeDetail.id
@@ -92,7 +92,7 @@ class DetailFragment : Fragment() {
                     }
 
                     placeWebsite.setOnClickListener {
-                        val url = placeDetail.URL
+                        val url = placeDetail.url
                         if (url.isNotBlank()) {
                             findNavController().navigate(
                                 DetailFragmentDirections.actionDetailFragmentToWebViewFragment(url = url)

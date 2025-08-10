@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.model.PlaceDTO
+import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.databinding.FragmentExploreBinding
 
 class ExploreFragment : Fragment() {
@@ -21,8 +21,8 @@ class ExploreFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: PlaceAdapter
-    private var currentFilteredPlaces = listOf<PlaceDTO>()
-    private var originalPlaces = listOf<PlaceDTO>()
+    private var currentFilteredPlaces = listOf<PlaceDetailDTO>()
+    private var originalPlaces = listOf<PlaceDetailDTO>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +40,7 @@ class ExploreFragment : Fragment() {
         // Fetch PlaceDTOs
         lifecycleScope.launch {
             val resp = RetrofitClient.api.getPlaces()
-            originalPlaces = resp.body() ?: emptyList<PlaceDTO>()
+            originalPlaces = resp.body() ?: emptyList<PlaceDetailDTO>()
 
             currentFilteredPlaces = originalPlaces
 
@@ -80,7 +80,7 @@ class ExploreFragment : Fragment() {
         }
     }
 
-    private fun setupRecycler(list: List<PlaceDTO>) {
+    private fun setupRecycler(list: List<PlaceDetailDTO>) {
         adapter = PlaceAdapter(list) { rowItem ->
             // Navigate passing the PlaceDTO directly
             val action = ExploreFragmentDirections
