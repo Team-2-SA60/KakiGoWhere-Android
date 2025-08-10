@@ -111,7 +111,7 @@ class RatingsFragment : Fragment() {
                     val my = myResp.body()
                     if (my != null) {
                         binding.tvMyName.text = my.touristName
-                        binding.tvMyRating.text = formatRating(my.rating?.toDouble())
+                        binding.tvMyRating.text = formatRating(my.rating.toDouble())
                         binding.tvMyComment.text = my.comment.orEmpty()
                         binding.myRating.visibility = View.VISIBLE
                     } else {
@@ -127,7 +127,7 @@ class RatingsFragment : Fragment() {
                 } else {
                     ratingsAdapter.submitList(emptyList())
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 if (_binding == null) return@launch
                 // defaults to prevent UI crash
                 binding.averageRating.text = formatRating(null)
