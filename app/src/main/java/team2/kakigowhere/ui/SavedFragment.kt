@@ -1,5 +1,6 @@
 package team2.kakigowhere.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +20,7 @@ class SavedFragment : Fragment(), View.OnClickListener {
 
     private lateinit var touristEmail: String
     private val itineraryViewModel: ItineraryViewModel by activityViewModels()
+    private val prefsName = "shared_prefs"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,9 +31,9 @@ class SavedFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val prefs = requireContext().getSharedPreferences(prefsName, Context.MODE_PRIVATE)
         // TODO: get email from shared prefs
-        touristEmail = "cy@kaki.com"
+        touristEmail = prefs.getString("user_email", "") ?: ""
 
         var itineraryList = listOf<ItineraryDTO>()
 
