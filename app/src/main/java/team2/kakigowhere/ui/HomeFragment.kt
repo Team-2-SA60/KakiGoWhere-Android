@@ -28,6 +28,10 @@ import org.json.JSONArray
 import team2.kakigowhere.data.api.MLRetrofitClient
 import team2.kakigowhere.data.api.RecommendRequest
 import team2.kakigowhere.data.model.PlaceViewModel
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import team2.kakigowhere.data.api.ApiConstants
+
 import team2.kakigowhere.ui.HomeFragmentDirections
 
 class HomeFragment : Fragment() {
@@ -146,14 +150,16 @@ class HomeFragment : Fragment() {
         val card = root.findViewById<CardView>(R.id.home_upcoming_card)
         val tvTitle = root.findViewById<TextView>(R.id.itinerary_title)
         val tvDates = root.findViewById<TextView>(R.id.itinerary_dates)
+        val image = root.findViewById<ImageView>(R.id.itinerary_image)
 
         // Default state while loading
         tvTitle.text = "Fetching upcoming itinerary..."
         tvDates.text = ""
         card.isClickable = false
+        image.setImageResource(R.drawable.placeholder_image)
 
         val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
-        val email = prefs.getString("user_email", null) ?: "cy@kaki.com"
+        val email = prefs.getString("user_email", "") ?: ""
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -180,6 +186,18 @@ class HomeFragment : Fragment() {
                         val fmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
                         tvTitle.text = "Trip starting ${start.format(fmt)}"
                         tvDates.text = "Tap to view day-by-day plan"
+                        // Load itinerary hero image (follow SavedFragment logic)
+                        runCatching {
+                            val imageUrl = ApiConstants.IMAGE_URL + itinerary.placeDisplayId.toString()
+                            Glide.with(this@HomeFragment)
+                                .load(imageUrl)
+                                .placeholder(R.drawable.placeholder_image)
+                                .error(R.drawable.error_image)
+                                .into(image)
+                        }.onFailure {
+                            image.setImageResource(R.drawable.placeholder_image)
+                        }
+
 
                         card.isClickable = true
                         card.setOnClickListener {
