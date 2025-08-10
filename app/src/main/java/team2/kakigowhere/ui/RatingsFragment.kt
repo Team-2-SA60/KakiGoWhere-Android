@@ -78,34 +78,35 @@ class RatingsFragment : Fragment() {
         val userId = currentUserId() // defaults to -1 if not logged in
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val summaryDeferred = async(Dispatchers.IO) {
-                RetrofitClient.api.getRatingSummary(placeId)
-            }
-            val myDeferred = if (userId > 0) {
-                async(Dispatchers.IO) { RetrofitClient.api.getMyRating(placeId, userId) }
-            } else null
-            val othersDeferred = async(Dispatchers.IO) {
-                RetrofitClient.api.getOtherRatings(placeId, if (userId > 0) userId else 0L)
-            }
+            try {
+                val summaryDeferred = async(Dispatchers.IO) { RetrofitClient.api.getRatingSummary(placeId) }
+                val myDeferred = if (userId > 0) async(Dispatchers.IO) { RetrofitClient.api.getMyRating(placeId, userId) } else null
+                val othersDeferred = async(Dispatchers.IO) { RetrofitClient.api.getOtherRatings(placeId, if (userId > 0) userId else 0L) }
 
-            // ratings summary
-            val summaryResp = summaryDeferred.await()
-            if (summaryResp.isSuccessful) {
-                summaryResp.body()?.let { summary ->
-                    binding.averageRating.text = formatRating(summary.averageRating)
-                    binding.ratingCount.text = "${summary.ratingCount} rating(s)"
+                val summaryResp = summaryDeferred.await()
+                val myResp = myDeferred?.await()
+                val othersResp = othersDeferred.await()
+
+                // guard against view that may be destroyed while awaiting
+                if (_binding == null) return@launch
+
+                // ratings summary
+                if (summaryResp.isSuccessful) {
+                    val summary = summaryResp.body()
+                    binding.averageRating.text = formatRating(summary?.averageRating)
+                    binding.ratingCount.text = "${summary?.ratingCount ?: 0} rating(s)"
+                } else {
+                    binding.averageRating.text = formatRating(null)
+                    binding.ratingCount.text = "0 rating(s)"
                 }
-            }
 
-            // load my rating (only if logged in)
-            if (myDeferred != null) {
-                val myResp = myDeferred.await()
-                if (myResp.isSuccessful) {
+                // my rating
+                if (myResp != null && myResp.isSuccessful) {
                     val my = myResp.body()
                     if (my != null) {
-                        binding.tvMyName.text = my.touristName
-                        binding.tvMyRating.text = formatRating(my.rating.toDouble())
-                        binding.tvMyComment.text = my.comment ?: ""
+                        binding.tvMyName.text = my.touristName.orEmpty()
+                        binding.tvMyRating.text = formatRating(my.rating?.toDouble())
+                        binding.tvMyComment.text = my.comment.orEmpty()
                         binding.myRating.visibility = View.VISIBLE
                     } else {
                         binding.myRating.visibility = View.GONE
@@ -113,19 +114,26 @@ class RatingsFragment : Fragment() {
                 } else {
                     binding.myRating.visibility = View.GONE
                 }
-            } else {
-                binding.myRating.visibility = View.GONE
-            }
 
-            // load other ratings
-            val othersResp = othersDeferred.await()
-            if (othersResp.isSuccessful) {
-                ratingsAdapter.submitList(othersResp.body().orEmpty())
+                // other ratings
+                if (othersResp.isSuccessful) {
+                    ratingsAdapter.submitList(othersResp.body().orEmpty())
+                } else {
+                    ratingsAdapter.submitList(emptyList())
+                }
+            } catch (e: Exception) {
+                if (_binding == null) return@launch
+                // defaults to prevent UI crash
+                binding.averageRating.text = formatRating(null)
+                binding.ratingCount.text = "0 rating(s)"
+                binding.myRating.visibility = View.GONE
+                ratingsAdapter.submitList(emptyList())
             }
         }
     }
 
-    private fun formatRating(v: Double): String {
+    private fun formatRating(v: Double?): String {
+        v ?: return "— / 5"
         val i = v.toInt()
         return if (v == i.toDouble()) "$i / 5" else String.format(US, "%.1f / 5", v)
     }
@@ -133,5 +141,6 @@ class RatingsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        alreadyLoaded = false // force reload
     }
 }
