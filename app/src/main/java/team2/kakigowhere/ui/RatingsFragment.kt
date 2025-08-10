@@ -93,8 +93,14 @@ class RatingsFragment : Fragment() {
                 // ratings summary
                 if (summaryResp.isSuccessful) {
                     val summary = summaryResp.body()
-                    binding.averageRating.text = formatRating(summary?.averageRating)
-                    binding.ratingCount.text = "${summary?.ratingCount ?: 0} rating(s)"
+                    val count = summary?.ratingCount ?: 0
+                    if (count == 0) {
+                        binding.averageRating.text = "N/A"
+                        binding.ratingCount.text = "0 rating(s)"
+                    } else {
+                        binding.averageRating.text = formatRating(summary?.averageRating)
+                        binding.ratingCount.text = "$count rating(s)"
+                    }
                 } else {
                     binding.averageRating.text = formatRating(null)
                     binding.ratingCount.text = "0 rating(s)"
@@ -104,7 +110,7 @@ class RatingsFragment : Fragment() {
                 if (myResp != null && myResp.isSuccessful) {
                     val my = myResp.body()
                     if (my != null) {
-                        binding.tvMyName.text = my.touristName.orEmpty()
+                        binding.tvMyName.text = my.touristName
                         binding.tvMyRating.text = formatRating(my.rating?.toDouble())
                         binding.tvMyComment.text = my.comment.orEmpty()
                         binding.myRating.visibility = View.VISIBLE
