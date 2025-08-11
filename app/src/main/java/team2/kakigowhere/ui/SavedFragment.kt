@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -35,10 +36,18 @@ class SavedFragment : Fragment(), View.OnClickListener {
         // TODO: get email from shared prefs
         touristEmail = prefs.getString("user_email", "") ?: ""
 
+        val emptyText = view.findViewById<TextView>(R.id.empty_text)
+
         var itineraryList = listOf<ItineraryDTO>()
 
         itineraryViewModel.itineraries.observe(viewLifecycleOwner) { itineraries ->
             itineraryList = itineraries
+
+            if (itineraries.isEmpty()) {
+                emptyText.visibility = View.VISIBLE
+            } else {
+                emptyText.visibility = View.GONE
+            }
 
             val recyclerView = view.findViewById<RecyclerView>(R.id.itinerary_list)
             recyclerView.layoutManager = LinearLayoutManager(requireContext())

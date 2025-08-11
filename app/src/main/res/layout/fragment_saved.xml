@@ -19,6 +19,16 @@
             android:textSize="22sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/empty_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="You don't seem to have an itinerary. \n Click to create an itinerary!"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="16dp"
+            android:visibility="gone" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/itinerary_list"
             android:layout_width="match_parent"
