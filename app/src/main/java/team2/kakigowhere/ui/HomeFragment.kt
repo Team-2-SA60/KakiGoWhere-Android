@@ -70,6 +70,8 @@ class HomeFragment : Fragment() {
 
             viewLifecycleOwner.lifecycleScope.launch {
                 // interests from SharedPrefs (what ML expects)
+
+
                 val interests = prefs.getStringSet("user_interest_names", emptySet())
                     ?.toList()
                     .orEmpty()
@@ -192,7 +194,7 @@ class HomeFragment : Fragment() {
                             Glide.with(this@HomeFragment)
                                 .load(imageUrl)
                                 .placeholder(R.drawable.placeholder_image)
-                                .error(R.drawable.error_image)
+                                .error(R.drawable.placeholder_image)
                                 .into(image)
                         }.onFailure {
                             image.setImageResource(R.drawable.placeholder_image)
