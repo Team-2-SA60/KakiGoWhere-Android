@@ -75,17 +75,19 @@ class ItineraryCreateFragment : Fragment() {
                 lifecycleScope.launch {
                     try {
                         val response = RetrofitClient.api.createItinerary(email, itinerary)
+
                         if (response.isSuccessful) {
                             itineraryViewModel.loadItineraries(email)
                             findNavController().navigate(
                                 ItineraryCreateFragmentDirections.actionCreateItineraryFragmentToSavedFragment()
                             )
                         } else {
-                            Toast.makeText(requireContext(), "Error making itinerary", Toast.LENGTH_SHORT).show()
+                            val error = response.errorBody()?.string()?.substringAfter("title: ")
+                            Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
                         }
                     } catch (e: Exception) {
-                        Log.d("API Error", "Create itinerary unsuccessful")
-                        Log.d("API Error", e.toString())
+                        Toast.makeText(requireContext(), "Could not create itinerary", Toast.LENGTH_SHORT).show()
+                        Log.e("API Error", "Network error: creating itinerary", e)
                     }
                 }
             }
