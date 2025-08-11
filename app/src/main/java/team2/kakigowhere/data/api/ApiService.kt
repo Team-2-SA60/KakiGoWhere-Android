@@ -38,7 +38,6 @@ interface ApiService {
         @Path("placeId") placeId: Long
     ): Response<RatingSummary>
 
-    // may be empty as Tourist may not have given rating
     @GET("ratings/{placeId}/me")
     suspend fun getMyRating(
         @Path("placeId") placeId: Long,
@@ -58,45 +57,15 @@ interface ApiService {
         @Body request: RatingRequest
     ): Response<RatingItem>
 
-    @GET("itinerary/{email}")
+    @GET("itinerary")
     suspend fun getItineraries(
-        @Path("email") email: String
+        @Header("user-email") email: String
     ): Response<List<ItineraryDTO>>
 
-    @GET("itinerary/detail/{id}")
+    @GET("itinerary/detail/{itineraryId}")
     suspend fun getItineraryDetails(
-        @Path("id") id: Long
+        @Path("itineraryId") itineraryId: Long
     ): Response<List<ItineraryDetailDTO>>
-
-    @PUT("itinerary/detail/add/{itineraryId}")
-    suspend fun addItemToItinerary(
-        @Path("itineraryId") id: Long,
-        @Query("placeId") placeId: Long,
-        @Body itineraryDetail: ItineraryDetail
-    ): Response<Unit>
-
-    @PUT("itinerary/detail/add/day/{itineraryId}")
-    suspend fun addItineraryDay(
-        @Path("itineraryId") id: Long,
-        @Body itineraryDetail: ItineraryDetail
-    ): Response<Unit>
-
-    @DELETE("itinerary/detail/delete/day/{itineraryId}")
-    suspend fun deleteItineraryDay(
-        @Path("itineraryId") id: Long,
-        @Query("lastDate") date: String
-    ): Response<Unit>
-
-    @PUT("itinerary/detail/edit/{detailId}")
-    suspend fun editItineraryItem(
-        @Path("detailId") id: Long,
-        @Body itineraryDetil: ItineraryDetail
-    ): Response<Unit>
-
-    @DELETE("itinerary/detail/delete/{detailId}")
-    suspend fun deleteItineraryItem(
-        @Path("detailId") id: Long
-    ): Response<Unit>
 
     @POST("itinerary/create")
     suspend fun createItinerary(
@@ -106,7 +75,37 @@ interface ApiService {
 
     @DELETE("itinerary/delete/{itineraryId}")
     suspend fun deleteItinerary(
-        @Path("itineraryId") id: Long
+        @Path("itineraryId") itineraryId: Long
+    ): Response<Unit>
+
+    @PUT("itinerary/detail/add/day/{itineraryId}")
+    suspend fun addItineraryDay(
+        @Path("itineraryId") itineraryId: Long,
+        @Body itineraryDetail: ItineraryDetail
+    ): Response<Unit>
+
+    @DELETE("itinerary/detail/delete/day/{itineraryId}")
+    suspend fun deleteItineraryDay(
+        @Path("itineraryId") itineraryId: Long,
+        @Query("lastDate") date: String
+    ): Response<Unit>
+
+    @PUT("itinerary/detail/add/{itineraryId}")
+    suspend fun addItemToItinerary(
+        @Path("itineraryId") itineraryId: Long,
+        @Query("placeId") placeId: Long,
+        @Body itineraryDetail: ItineraryDetail
+    ): Response<Unit>
+
+    @PUT("itinerary/detail/edit/{detailId}")
+    suspend fun editItineraryItem(
+        @Path("detailId") detailId: Long,
+        @Body itineraryDetail: ItineraryDetail
+    ): Response<Unit>
+
+    @DELETE("itinerary/detail/delete/{detailId}")
+    suspend fun deleteItineraryItem(
+        @Path("detailId") detailId: Long
     ): Response<Unit>
 
     @POST("auth/login")
