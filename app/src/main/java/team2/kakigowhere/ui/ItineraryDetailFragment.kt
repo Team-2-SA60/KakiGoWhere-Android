@@ -1,5 +1,6 @@
 package team2.kakigowhere.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -50,7 +51,11 @@ class ItineraryDetailFragment : Fragment() {
                     val response = RetrofitClient.api.deleteItinerary(itinerary.id)
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Deleted itinerary", Toast.LENGTH_LONG).show()
-                        itineraryViewModel.loadItineraries("cy@kaki.com")
+                        run {
+                            val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+                            val email = prefs.getString("user_email", "") ?: ""
+                            itineraryViewModel.loadItineraries(email)
+                        }
                         findNavController().navigateUp()
                     }
                 } catch (e: Exception) {
@@ -70,7 +75,11 @@ class ItineraryDetailFragment : Fragment() {
                     val response = RetrofitClient.api.addItineraryDay(itinerary.id, addedDay)
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Added day to itinerary", Toast.LENGTH_LONG).show()
-                        itineraryViewModel.loadItineraries("cy@kaki.com") //TODO: get from shared prefs
+                        run {
+                            val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+                            val email = prefs.getString("user_email", "") ?: ""
+                            itineraryViewModel.loadItineraries(email)
+                        }
                         findNavController().navigateUp() // TODO: how to refresh fragment view after adding day
                     }
                 } catch (e: Exception) {
@@ -92,6 +101,9 @@ class ItineraryDetailFragment : Fragment() {
 
                     val adapter = ItineraryDayAdapter(this@ItineraryDetailFragment, sortedMapByDate)
                     recyclerView.adapter = adapter
+
+                    // Disable delete day button if no days
+                    view.findViewById<Button>(R.id.delete_day).isEnabled = itemList.isNotEmpty()
                 }
             } catch (e: Exception) {
                 Log.d("API Error", "Error fetching itinerary details")
@@ -102,6 +114,11 @@ class ItineraryDetailFragment : Fragment() {
         // delete day from itinerary (and all items)
         var deleteDay = view.findViewById<Button>(R.id.delete_day)
         deleteDay.setOnClickListener {
+            if (itemList.isEmpty()) {
+                // No days to delete; do nothing
+                return@setOnClickListener
+            }
+
             var sortedListByDate = itemList.sortedBy { it.itemDate }
             var lastDate = sortedListByDate.last().date
 
@@ -110,7 +127,11 @@ class ItineraryDetailFragment : Fragment() {
                     val response = RetrofitClient.api.deleteItineraryDay(itinerary.id, lastDate)
                     if (response.isSuccessful) {
                         Toast.makeText(requireContext(), "Deleted day from itinerary", Toast.LENGTH_LONG).show()
-                        itineraryViewModel.loadItineraries("cy@kaki.com") //TODO: get from shared prefs
+                        run {
+                            val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+                            val email = prefs.getString("user_email", "") ?: ""
+                            itineraryViewModel.loadItineraries(email)
+                        }
                         findNavController().navigateUp() //TODO: how to refresh fragment view after adding day
                     }
                 } catch (e: Exception) {
@@ -126,8 +147,7 @@ class ItineraryDetailFragment : Fragment() {
 
     private fun listToMap(list: List<ItineraryDetailDTO>): SortedMap<LocalDate, List<ItineraryDetailDTO>> {
         var sortedListByOrder = list.sortedBy { it.sequentialOrder }
-        val sortedMapByDate = sortedListByOrder.groupBy{ it.itemDate }.toSortedMap()
+        val sortedMapByDate = sortedListByOrder.groupBy { it.itemDate }.toSortedMap()
         return sortedMapByDate
     }
-
 }
