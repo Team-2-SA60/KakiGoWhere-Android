@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -26,9 +27,25 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var places: List<PlaceDetailDTO>
     private lateinit var googleMap: GoogleMap
+    private lateinit var locationHelper: LocationHelper
 
     private val markersMap = mutableMapOf<Long, Marker>()
     private val args: MapsFragmentArgs by navArgs()
+    private var isMapReady = false
+
+    // permission launcher
+    private val locationPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            locationHelper.checkLocationSettings(
+                onEnabled = { locationHelper.centerToCurrentLocation(googleMap) },
+                onFallback = { locationHelper.centerToDefaultLocation(googleMap) }
+            )
+        } else {
+            locationHelper.centerToDefaultLocation(googleMap)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,6 +56,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         places = placeViewModel.places.value!!
+        locationHelper = LocationHelper(this)
 
         // update map when Place live data is updated
         placeViewModel.places.observe(viewLifecycleOwner) { places ->
@@ -51,14 +69,20 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(map: GoogleMap) {
-        val singapore = LatLng(1.290270, 103.851959)
-
+        isMapReady = true
         googleMap = map
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(singapore, 16f))
         googleMap.uiSettings.isZoomControlsEnabled = true
 
-        places = placeViewModel.places.value!!
+        if (locationHelper.hasPermission()) {
+            locationHelper.checkLocationSettings(
+                onEnabled = { locationHelper.centerToCurrentLocation(googleMap) },
+                onFallback = { locationHelper.centerToDefaultLocation(googleMap) }
+            )
+        } else {
+            locationHelper.requestPermission(locationPermissionLauncher)
+        }
 
+        places = placeViewModel.places.value!!
         if (places.isNotEmpty()) {
             addPlaceMarkers(googleMap)
             setLaunchDetailFragment(googleMap)
@@ -112,6 +136,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             val place = places.find { it.id == marker.tag }
             findNavController().navigate(
                 MapsFragmentDirections.actionMapFragmentToDetailFragment(place!!.id)
+            )
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isMapReady && locationHelper.hasPermission()) {
+            locationHelper.checkLocationSettings(
+                onEnabled = { locationHelper.centerToCurrentLocation(googleMap) },
+                onFallback = { locationHelper.centerToDefaultLocation(googleMap) }
             )
         }
     }
