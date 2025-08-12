@@ -20,11 +20,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="${GOOGLE_API_KEY}" />
 
-        <!-- to test api. to remove in prod -->
-        <activity
-            android:name=".ui.TestActivity"
-            android:exported="false" />
-
         <!-- Login Activity -->
         <activity
             android:name=".LoginActivity"
