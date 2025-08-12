@@ -21,6 +21,39 @@ class ItineraryDayAdapter(
         val itemsRv: RecyclerView = dayView.findViewById<RecyclerView>(R.id.itinerary_details)
     }
 
+    // --- Helpers / placeholder for empty days ---
+    private fun isEmptyDay(list: List<ItineraryDetailDTO>): Boolean {
+        return list.isEmpty() || list.all { it.placeId == 0L || it.placeTitle.isBlank() }
+    }
+
+    private inner class PlaceholderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val text: TextView = view.findViewById(android.R.id.text1)
+    }
+
+    private inner class PlaceholderAdapter(private val message: String) :
+        RecyclerView.Adapter<PlaceholderViewHolder>() {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceholderViewHolder {
+            val v = LayoutInflater.from(parent.context)
+                .inflate(android.R.layout.simple_list_item_1, parent, false)
+            return PlaceholderViewHolder(v)
+        }
+
+        override fun getItemCount(): Int = 1
+
+        override fun onBindViewHolder(holder: PlaceholderViewHolder, position: Int) {
+            holder.text.text = message
+            holder.text.textAlignment = View.TEXT_ALIGNMENT_CENTER
+            holder.text.setPadding(
+                holder.text.paddingLeft,
+                holder.text.paddingTop + 16,
+                holder.text.paddingRight,
+                holder.text.paddingBottom + 16
+            )
+            holder.text.setTextColor(android.graphics.Color.GRAY) // Greyed-out hint style
+            holder.text.setTypeface(null, android.graphics.Typeface.ITALIC)
+        }
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -31,16 +64,21 @@ class ItineraryDayAdapter(
 
     override fun onBindViewHolder(holder: DayViewHolder, position: Int) {
         val dayKeys = items.keys.toList()
-        val dayItems = items[dayKeys[position]]!!
+        val dateKey = dayKeys[position]
+        val dayItems = items[dateKey] ?: emptyList()
 
-        holder.day.text = "Day ${position + 1} · ${dayItems[0].date}"
+        // Use the date directly from the key instead of indexing into possibly empty dayItems
+        holder.day.text = "Day ${position + 1} · ${dateKey}"
 
         holder.itemsRv.layoutManager = LinearLayoutManager(holder.itemView.context)
-        holder.itemsRv.adapter = ItineraryItemAdapter(context, dayItems)
-
         holder.itemsRv.isNestedScrollingEnabled = false
+
+        if (isEmptyDay(dayItems)) {
+            holder.itemsRv.adapter = PlaceholderAdapter("No items added yet")
+        } else {
+            holder.itemsRv.adapter = ItineraryItemAdapter(context, dayItems)
+        }
     }
 
     override fun getItemCount(): Int = items.size
-
 }
