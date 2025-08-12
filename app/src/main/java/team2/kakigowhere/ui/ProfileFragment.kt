@@ -43,9 +43,16 @@ class ProfileFragment : Fragment() {
 
         // Save name (local) and sync to backend
         binding.btnSaveName.setOnClickListener {
+            // Validate name
+            val inputName = binding.etName.text.toString().trim()
+            if (inputName.isEmpty() || !inputName.matches(Regex(".*[a-zA-Z].*"))) {
+                Toast.makeText(requireContext(), "Please enter a valid name with letters", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             // Save locally
             prefs.edit()
-                .putString("user_name", binding.etName.text.toString())
+                .putString("user_name", inputName)
                 .apply()
             Toast.makeText(requireContext(), "Name updated", Toast.LENGTH_SHORT).show()
 
@@ -65,7 +72,7 @@ class ProfileFragment : Fragment() {
                     }
                 }
 
-                val currentName = binding.etName.text.toString()
+                val currentName = inputName
 
                 viewLifecycleOwner.lifecycleScope.launch {
                     try {
