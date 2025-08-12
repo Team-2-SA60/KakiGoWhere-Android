@@ -3,22 +3,25 @@ package team2.kakigowhere.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.widget.Toast
+import android.os.Looper
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
+import team2.kakigowhere.data.model.LocationViewModel
 
 class LocationHelper(
     private val fragment: MapsFragment,
-    private val defaultLocation: LatLng = LatLng(1.290270, 103.851959),
-    private val defaultZoom: Float = 16f
+    private val locationViewModel: LocationViewModel
 ) {
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(fragment.requireActivity())
     private val settingsClient = LocationServices.getSettingsClient(fragment.requireActivity())
@@ -54,8 +57,10 @@ class LocationHelper(
             .addOnFailureListener { e ->
                 if (e is ResolvableApiException) {
                     try {
+                        if (locationViewModel.userDeniedLocation) return@addOnFailureListener
                         // shows dialog box to prompt user to enable location
-                        e.startResolutionForResult(fragment.requireActivity(), 1001)
+                        val intentSenderRequest = IntentSenderRequest.Builder(e.resolution).build()
+                        fragment.locationSettingsLauncher.launch(intentSenderRequest)
                     } catch (ex: Exception) {
                         onFallback()
                     }
@@ -65,41 +70,22 @@ class LocationHelper(
             }
     }
 
-    // specify centering to current location or default location
+    // specify centering to current location if location enabled
 
     @SuppressLint("MissingPermission")
     fun centerToCurrentLocation(googleMap: GoogleMap) {
-        if (!hasPermission()) return
-
         googleMap.isMyLocationEnabled = true
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                location?.let {
-                    val userLocation = LatLng(it.latitude, it.longitude)
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, defaultZoom))
-                } ?: run {
-                    fusedLocationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                        .addOnSuccessListener { freshLocation ->
-                            freshLocation?.let {
-                                val userLocation = LatLng(freshLocation.latitude, freshLocation.longitude)
-                                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, defaultZoom))
-                            } ?: run {
-                                centerToDefaultLocation(googleMap)
-                            }
-                        }
-                        .addOnFailureListener {
-                            centerToDefaultLocation(googleMap)
-                        }
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            object : LocationCallback() {
+                override fun onLocationResult(result: LocationResult) {
+                    var location = result.lastLocation!!
+                    var latlng = LatLng(location.latitude, location.longitude)
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 16f))
                 }
-            }
-            .addOnFailureListener {
-                centerToDefaultLocation(googleMap)
-            }
-    }
-
-    fun centerToDefaultLocation(googleMap: GoogleMap) {
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, defaultZoom))
-        Toast.makeText(fragment.requireContext(), "Unable to get current location", Toast.LENGTH_SHORT).show()
+            },
+            Looper.getMainLooper()
+        )
     }
 
 }
