@@ -17,7 +17,7 @@ import team2.kakigowhere.data.model.ItineraryDTO
 import team2.kakigowhere.data.model.ItineraryViewModel
 import java.time.LocalDate
 
-class SavedFragment : Fragment(), View.OnClickListener {
+class ItineraryFragment : Fragment(), View.OnClickListener {
 
     private lateinit var touristEmail: String
     private val itineraryViewModel: ItineraryViewModel by activityViewModels()
@@ -53,7 +53,7 @@ class SavedFragment : Fragment(), View.OnClickListener {
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
             val sortedList = itineraryList.sortedBy { LocalDate.parse(it.startDate) }
-            recyclerView.adapter = ItineraryAdapter(this@SavedFragment, sortedList) { item ->
+            recyclerView.adapter = ItineraryAdapter(this@ItineraryFragment, sortedList) { item ->
                 launchSavedItemFragment(item)
             }
         }
@@ -67,7 +67,7 @@ class SavedFragment : Fragment(), View.OnClickListener {
 
     private fun launchSavedItemFragment(itinerary: ItineraryDTO) {
         findNavController().navigate(
-            SavedFragmentDirections.actionSavedFragmentToSavedItemFragment(itinerary)
+            ItineraryFragmentDirections.actionSavedFragmentToSavedItemFragment(itinerary)
         )
     }
 
@@ -75,7 +75,7 @@ class SavedFragment : Fragment(), View.OnClickListener {
         when(v?.id) {
             R.id.create_itinerary -> {
                 findNavController().navigate(
-                    SavedFragmentDirections.actionSavedFragmentToCreateItineraryFragment(touristEmail)
+                    ItineraryFragmentDirections.actionSavedFragmentToCreateItineraryFragment(touristEmail)
                 )
             }
         }

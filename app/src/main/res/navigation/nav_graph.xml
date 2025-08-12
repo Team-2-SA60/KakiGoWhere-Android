@@ -72,7 +72,7 @@
     <!-- SavedFragment -->
     <fragment
         android:id="@+id/savedFragment"
-        android:name="team2.kakigowhere.ui.SavedFragment"
+        android:name="team2.kakigowhere.ui.ItineraryFragment"
         android:label="Saved"
         tools:layout="@layout/fragment_saved">
         <action
