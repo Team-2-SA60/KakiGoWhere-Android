@@ -86,9 +86,14 @@ class   LoginActivity : AppCompatActivity() {
                         finish()
 
                     } else {
+                        val errorMessage = when (response.code()) {
+                            400 -> "User does not exist."
+                            401 -> "Password is incorrect."
+                            else -> "Login failed: ${response.code()}"
+                        }
                         Toast.makeText(
                             this@LoginActivity,
-                            "Login failed: ${response.code()}",
+                            errorMessage,
                             Toast.LENGTH_SHORT
                         ).show()
                     }
