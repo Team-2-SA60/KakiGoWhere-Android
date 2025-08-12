@@ -12,7 +12,7 @@ import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.model.ItineraryDTO
 
 class ItineraryAdapter(
-    private val context: SavedFragment,
+    private val context: ItineraryFragment,
     private val itineraryList: List<ItineraryDTO>,
     private val onItemClick: (ItineraryDTO) -> Unit
 ) : RecyclerView.Adapter<ItineraryAdapter.ItineraryViewHolder>() {
