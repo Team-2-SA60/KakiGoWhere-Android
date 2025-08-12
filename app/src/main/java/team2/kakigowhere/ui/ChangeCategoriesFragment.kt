@@ -52,6 +52,10 @@ class ChangeCategoriesFragment : Fragment() {
         // Save: call backend via RetrofitClient, then persist locally on success
         binding.btnSaveCategories.setOnClickListener {
             val chosenIds = adapter.getSelectedIds().toList()
+            if (chosenIds.isEmpty()) {
+                Toast.makeText(requireContext(), "Please choose at least 1 category", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
             val chosenStr = chosenIds.map { it.toString() }.toSet()
 
             val prefsEditor = prefs.edit()
