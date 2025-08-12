@@ -1,5 +1,6 @@
 package team2.kakigowhere.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,14 +11,18 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.ItineraryDetail
+import team2.kakigowhere.data.model.ItineraryViewModel
 
 class ItineraryEditFragment : Fragment() {
+
+    private val itineraryViewModel: ItineraryViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,6 +33,8 @@ class ItineraryEditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        val email = prefs.getString("user_email", "") ?: ""
 
         // get itinerary detail from fragment args
         val detail = ItineraryEditFragmentArgs.fromBundle(requireArguments()).itineraryDetail
@@ -66,6 +73,7 @@ class ItineraryEditFragment : Fragment() {
                 try {
                     val response = RetrofitClient.api.deleteItineraryItem(detail.id)
                     if (response.isSuccessful) {
+                        itineraryViewModel.loadItineraries(email)
                         Toast.makeText(requireContext(), "Deleted itinerary item", Toast.LENGTH_SHORT).show()
                         findNavController().navigateUp()
                     }
