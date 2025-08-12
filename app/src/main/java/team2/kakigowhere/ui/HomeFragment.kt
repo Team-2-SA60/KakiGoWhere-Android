@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.time.temporal.ChronoUnit
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +30,6 @@ import team2.kakigowhere.data.model.PlaceViewModel
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import team2.kakigowhere.data.api.ApiConstants
-
 import team2.kakigowhere.ui.HomeFragmentDirections
 
 class HomeFragment : Fragment() {
@@ -70,8 +68,7 @@ class HomeFragment : Fragment() {
 
             viewLifecycleOwner.lifecycleScope.launch {
                 // interests from SharedPrefs (what ML expects)
-
-
+                val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
                 val interests = prefs.getStringSet("user_interest_names", emptySet())
                     ?.toList()
                     .orEmpty()
@@ -146,7 +143,6 @@ class HomeFragment : Fragment() {
         }
         return ids
     }
-    // (Remove any placeholder example loadUpcomingItinerary function)
 
     private fun loadUpcomingItinerary(root: View) {
         val card = root.findViewById<CardView>(R.id.home_upcoming_card)
@@ -170,24 +166,35 @@ class HomeFragment : Fragment() {
                     val list = resp.body().orEmpty()
                     val today = LocalDate.now()
 
-                    // Map to parsed dates (assumes ISO-8601 yyyy-MM-dd)
+                    // Map to parsed start + computed end (via ItineraryDTO.getLastDate()).
+                    // Ongoing means: today ∈ [startDate, endDate]. Otherwise allow upcoming only (start >= today).
                     val parsed = list.mapNotNull { dto ->
-                        runCatching { LocalDate.parse(dto.startDate) }
-                            .getOrNull()
-                            ?.let { date -> dto to date }
+                        val start = runCatching { LocalDate.parse(dto.startDate) }.getOrNull()
+                            ?: return@mapNotNull null
+                        val end = runCatching { dto.getLastDate() }.getOrElse { start }
+                        Triple(dto, start, end)
                     }
 
-                    // Choose closest future date; if none, choose closest overall
-                    val upcoming = parsed
-                        .filter { (_, d) -> !d.isBefore(today) }
-                        .minByOrNull { (_, d) -> d }
-                        ?: parsed.minByOrNull { (_, d) -> kotlin.math.abs(ChronoUnit.DAYS.between(today, d)) }
+                    // Prefer ongoing (earliest start). If none, choose the soonest upcoming.
+                    val ongoingPick = parsed
+                        .filter { (_, start, end) -> !today.isBefore(start) && !today.isAfter(end) }
+                        .minByOrNull { it.second }
+                    val upcomingPick = parsed
+                        .filter { (_, start, _) -> !start.isBefore(today) }
+                        .minByOrNull { it.second }
+                    val upcoming = ongoingPick ?: upcomingPick
 
                     if (upcoming != null) {
-                        val (itinerary, start) = upcoming
+                        val (itinerary, start, end) = upcoming
                         val fmt = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                        tvTitle.text = "Trip starting ${start.format(fmt)}"
+                        val ongoing = !today.isBefore(start) && !today.isAfter(end)
+                        tvTitle.text = if (ongoing)
+                            "Trip in progress — started ${start.format(fmt)}"
+                        else
+                            "Trip starting ${start.format(fmt)}"
+
                         tvDates.text = "Tap to view day-by-day plan"
+
                         // Load itinerary hero image (follow SavedFragment logic)
                         runCatching {
                             val imageUrl = ApiConstants.IMAGE_URL + itinerary.placeDisplayId.toString()
@@ -200,14 +207,14 @@ class HomeFragment : Fragment() {
                             image.setImageResource(R.drawable.placeholder_image)
                         }
 
-
                         card.isClickable = true
                         card.setOnClickListener {
-                            val action = HomeFragmentDirections.actionHomeFragmentToSavedItemFragment(itinerary)
+                            val action = HomeFragmentDirections
+                                .actionHomeFragmentToSavedItemFragment(itinerary)
                             findNavController().navigate(action)
                         }
                     } else {
-                        tvTitle.text = "No itineraries yet"
+                        tvTitle.text = "No Upcoming itineraries"
                         tvDates.text = "Create one from the Saved tab"
                         card.isClickable = false
                     }
@@ -224,6 +231,3 @@ class HomeFragment : Fragment() {
         }
     }
 }
-
-
-
