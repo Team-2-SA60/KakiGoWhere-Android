@@ -54,9 +54,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:minWidth="60dp"
-            android:minHeight="40dp"
+            android:minHeight="35dp"
             android:padding="0dp"
-            android:text="Edit" />
+            android:text="Edit"
+            android:textColor="#6200EA"
+            android:background="@drawable/btn_transparent"/>
 
     </LinearLayout>
 
