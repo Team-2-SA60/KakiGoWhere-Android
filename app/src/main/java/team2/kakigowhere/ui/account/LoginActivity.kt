@@ -17,7 +17,6 @@ class   LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         // If already logged in, skip login screen
         val prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE)
         if (prefs.contains("user_id")) {
@@ -25,7 +24,6 @@ class   LoginActivity : AppCompatActivity() {
             finish()
             return
         }
-
 
         setContentView(R.layout.activity_login)
 
@@ -55,9 +53,8 @@ class   LoginActivity : AppCompatActivity() {
 
                     if (response.isSuccessful && response.body() != null) {
                         val user = response.body()!!
-
                         val interests = user.interestCategories ?: emptyList()
-//                        val interestsSet = interests.map { it.name }.toSet()
+
                         // Store IDs for backend sync, and names/descriptions for display fallback
                         val interestIdSet = interests.map { it.id.toString() }.toSet()
                         val interestNameSet = interests
@@ -83,7 +80,6 @@ class   LoginActivity : AppCompatActivity() {
                         Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT).show()
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                         finish()
-
                     } else {
                         val errorMessage = when (response.code()) {
                             400 -> "User does not exist."

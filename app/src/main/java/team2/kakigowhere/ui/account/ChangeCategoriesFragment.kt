@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -74,18 +75,17 @@ class ChangeCategoriesFragment : Fragment() {
                     )
                     if (resp.isSuccessful) {
                         // Persist locally after successful update
-
                         val chosenNames = categories
                             .filter { it.id in chosenIds }
                             .map { it.description } // use the label ML expects (e.g., "Museums")
                             .toSet()
 
-                        prefs.edit()
-                            .putStringSet("user_interests", chosenStr)
-                            .putStringSet("user_interest_names", chosenNames)
-                            .remove("reco_interests_key") // invalidate recomms cache
-                            .remove("reco_ids_json")
-                            .apply()
+                        prefs.edit {
+                            putStringSet("user_interests", chosenStr)
+                                .putStringSet("user_interest_names", chosenNames)
+                                .remove("reco_interests_key") // invalidate recomms cache
+                                .remove("reco_ids_json")
+                        }
 
                         Toast.makeText(requireContext(), "Interests synced", Toast.LENGTH_SHORT).show()
                         parentFragmentManager.popBackStack()

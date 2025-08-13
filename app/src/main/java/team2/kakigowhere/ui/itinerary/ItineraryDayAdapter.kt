@@ -34,7 +34,6 @@ class ItineraryDayAdapter(
         val dateKey = dayKeys[position]
         val dayItems = items[dateKey] ?: emptyList()
 
-        // Use the date directly from the key instead of indexing into possibly empty dayItems
         holder.day.text = "Day ${position + 1} · ${dateKey}"
 
         holder.itemsRv.layoutManager = LinearLayoutManager(holder.itemView.context)

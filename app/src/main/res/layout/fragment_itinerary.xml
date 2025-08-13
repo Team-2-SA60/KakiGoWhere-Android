@@ -20,14 +20,15 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/empty_text"
+            android:id="@+id/empty_itineraries"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="You don't seem to have an itinerary. \n Click to create an itinerary!"
             android:gravity="center"
-            android:layout_gravity="center"
-            android:padding="16dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:text="You don't seem to have any itineraries. \n Click to create an itinerary!"
+            android:textColor="@color/unselected_color"
+            android:textSize="20sp"
+            android:textStyle="italic" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/itinerary_list"

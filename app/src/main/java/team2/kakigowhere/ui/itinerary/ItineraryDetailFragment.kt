@@ -18,15 +18,19 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.launch
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
+import team2.kakigowhere.data.model.ItineraryDTO
 import team2.kakigowhere.data.model.ItineraryDetail
 import team2.kakigowhere.data.model.ItineraryDetailDTO
 import team2.kakigowhere.data.model.ItineraryViewModel
 import java.time.LocalDate
 import java.util.SortedMap
 
-class ItineraryDetailFragment : Fragment() {
+class ItineraryDetailFragment : Fragment(), View.OnClickListener {
 
     private val itineraryViewModel: ItineraryViewModel by activityViewModels()
+    private lateinit var touristItinerary: ItineraryDTO
+    private lateinit var itemList: MutableList<ItineraryDetailDTO>
+    private lateinit var email: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,112 +42,107 @@ class ItineraryDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var itemList = mutableListOf<ItineraryDetailDTO>()
-        var itinerary = ItineraryDetailFragmentArgs.fromBundle(requireArguments()).itinerary
+        val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        email = prefs.getString("user_email", "") ?: ""
 
-        view.findViewById<TextView>(R.id.title_display).text = itinerary.title
+        touristItinerary = ItineraryDetailFragmentArgs.fromBundle(requireArguments()).itinerary
+        view.findViewById<TextView>(R.id.title_display).text = touristItinerary.title
 
-        // delete itinerary
         var deleteBtn = view.findViewById<Button>(R.id.delete_itinerary)
-        deleteBtn.setOnClickListener {
-            lifecycleScope.launch {
-                try {
-                    val response = RetrofitClient.api.deleteItinerary(itinerary.id)
-                    if (response.isSuccessful) {
-                        Toast.makeText(requireContext(), "Deleted itinerary", Toast.LENGTH_LONG).show()
-                        run {
-                            val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
-                            val email = prefs.getString("user_email", "") ?: ""
-                            itineraryViewModel.loadItineraries(email)
-                        }
-                        findNavController().navigateUp()
-                    }
-                } catch (e: Exception) {
-                    Log.d("API Error", e.toString())
-                }
-            }
-        }
+        var addDayBtn = view.findViewById<Button>(R.id.add_day)
+        var deleteDayBtn = view.findViewById<Button>(R.id.delete_day)
 
-        // add day to itinerary
-        var addDay = view.findViewById<Button>(R.id.add_day)
-        addDay.setOnClickListener {
-            val addedDate = itinerary.getLastDate().plusDays(1)
-            val addedDay = ItineraryDetail(date = addedDate.toString())
-
-            lifecycleScope.launch {
-                try {
-                    val response = RetrofitClient.api.addItineraryDay(itinerary.id, addedDay)
-                    if (response.isSuccessful) {
-                        Toast.makeText(requireContext(), "Added day to itinerary", Toast.LENGTH_LONG).show()
-                        run {
-                            val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
-                            val email = prefs.getString("user_email", "") ?: ""
-                            itineraryViewModel.loadItineraries(email)
-                        }
-                        findNavController().navigateUp() // TODO: how to refresh fragment view after adding day
-                    }
-                } catch (e: Exception) {
-                    Log.d("API Error", e.printStackTrace().toString())
-                }
-            }
-        }
+        deleteBtn.setOnClickListener(this)
+        addDayBtn.setOnClickListener(this)
+        deleteDayBtn.setOnClickListener(this)
 
         // set up display of itinerary items
         lifecycleScope.launch {
             try {
-                val response = RetrofitClient.api.getItineraryDetails(itinerary.id)
+                val response = RetrofitClient.api.getItineraryDetails(touristItinerary.id)
                 if (response.isSuccessful && response.body() != null) {
                     itemList = response.body()!!.toMutableList()
-                    var sortedMapByDate = listToMap(itemList)
 
+                    // if empty list of itinerary
+                    val emptyText = view.findViewById<TextView>(R.id.empty_itinerary)
+                    if (itemList.isEmpty()) emptyText.visibility = View.VISIBLE
+                    else emptyText.visibility = View.GONE
+
+                    // render items if itinerary list not empty
+                    var sortedMapByDate = listToMap(itemList)
                     val recyclerView = view.findViewById<RecyclerView>(R.id.itinerary_days)
                     recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
                     val adapter = ItineraryDayAdapter(this@ItineraryDetailFragment, sortedMapByDate)
                     recyclerView.adapter = adapter
 
-                    // Disable delete day button if no days
-                    view.findViewById<Button>(R.id.delete_day).isEnabled = itemList.isNotEmpty()
+                    // disable delete day button if no days
+                    deleteDayBtn.isEnabled = itemList.isNotEmpty()
                 }
             } catch (e: Exception) {
-                Log.d("API Error", "Error fetching itinerary details")
+                Toast.makeText(requireContext(), "Error displaying itinerary", Toast.LENGTH_SHORT).show()
                 Log.d("API Error", e.toString())
             }
         }
+    }
 
-        // delete day from itinerary (and all items)
-        var deleteDay = view.findViewById<Button>(R.id.delete_day)
-        deleteDay.setOnClickListener {
-            if (itemList.isEmpty()) {
-                // No days to delete; do nothing
-                return@setOnClickListener
-            }
-
-            var sortedListByDate = itemList.sortedBy { it.itemDate }
-            var lastDate = sortedListByDate.last().date
-
-            lifecycleScope.launch {
-                try {
-                    val response = RetrofitClient.api.deleteItineraryDay(itinerary.id, lastDate)
-                    if (response.isSuccessful) {
-                        Toast.makeText(requireContext(), "Deleted day from itinerary", Toast.LENGTH_LONG).show()
-                        run {
-                            val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
-                            val email = prefs.getString("user_email", "") ?: ""
+    override fun onClick(v: View?) {
+        when(v?.id) {
+            R.id.delete_itinerary -> {
+                lifecycleScope.launch {
+                    try {
+                        val response = RetrofitClient.api.deleteItinerary(touristItinerary.id)
+                        if (response.isSuccessful) {
+                            Toast.makeText(requireContext(), "Deleted itinerary", Toast.LENGTH_LONG).show()
                             itineraryViewModel.loadItineraries(email)
+                            findNavController().navigateUp()
                         }
-                        findNavController().navigateUp() //TODO: how to refresh fragment view after adding day
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "Error deleting itinerary", Toast.LENGTH_SHORT).show()
+                        Log.d("API Error", e.toString())
                     }
-                } catch (e: Exception) {
-                    Log.d("API Error", "Error deleting itinerary day")
-                    Log.d("API Error", e.toString())
+                }
+            }
+            R.id.delete_day -> {
+                var sortedListByDate = itemList.sortedBy { it.itemDate }
+                var lastDate = sortedListByDate.last().date
+
+                lifecycleScope.launch {
+                    try {
+                        val response = RetrofitClient.api.deleteItineraryDay(touristItinerary.id, lastDate)
+                        if (response.isSuccessful) {
+                            Toast.makeText(requireContext(), "Deleted day from itinerary", Toast.LENGTH_LONG).show()
+                            itineraryViewModel.loadItineraries(email)
+                            findNavController().navigateUp()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "Error deleting day from itinerary", Toast.LENGTH_SHORT).show()
+                        Log.d("API Error", e.toString())
+                    }
+                }
+            }
+            R.id.add_day -> {
+                val addedDate = touristItinerary.getLastDate().plusDays(1)
+                val addedDay = ItineraryDetail(date = addedDate.toString())
+
+                lifecycleScope.launch {
+                    try {
+                        val response = RetrofitClient.api.addItineraryDay(touristItinerary.id, addedDay)
+                        if (response.isSuccessful) {
+                            Toast.makeText(requireContext(), "Added day to itinerary", Toast.LENGTH_LONG).show()
+                            itineraryViewModel.loadItineraries(email)
+                            findNavController().navigateUp()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "Error adding day to itinerary", Toast.LENGTH_SHORT).show()
+                        Log.d("API Error", e.toString())
+                    }
                 }
             }
         }
-
-        // set up view if itinerary has no items
-        //TODO
     }
+
+    // helper method to sort list of itinerary items into map by days
 
     private fun listToMap(list: List<ItineraryDetailDTO>): SortedMap<LocalDate, List<ItineraryDetailDTO>> {
         var sortedListByOrder = list.sortedBy { it.sequentialOrder }

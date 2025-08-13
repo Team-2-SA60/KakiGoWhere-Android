@@ -17,9 +17,9 @@ import team2.kakigowhere.data.model.ItineraryDTO
 import team2.kakigowhere.data.model.ItineraryViewModel
 import java.time.LocalDate
 
-class ItineraryFragment : Fragment(), View.OnClickListener {
+class ItineraryFragment : Fragment() {
 
-    private lateinit var touristEmail: String
+    private lateinit var email: String
     private val itineraryViewModel: ItineraryViewModel by activityViewModels()
     private val prefsName = "shared_prefs"
 
@@ -32,22 +32,17 @@ class ItineraryFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val prefs = requireContext().getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-        // TODO: get email from shared prefs
-        touristEmail = prefs.getString("user_email", "") ?: ""
-
-        val emptyText = view.findViewById<TextView>(R.id.empty_text)
-
+        email = prefs.getString("user_email", "") ?: ""
         var itineraryList = listOf<ItineraryDTO>()
 
         itineraryViewModel.itineraries.observe(viewLifecycleOwner) { itineraries ->
             itineraryList = itineraries
 
-            if (itineraries.isEmpty()) {
-                emptyText.visibility = View.VISIBLE
-            } else {
-                emptyText.visibility = View.GONE
-            }
+            val emptyText = view.findViewById<TextView>(R.id.empty_itineraries)
+            if (itineraries.isEmpty()) emptyText.visibility = View.VISIBLE
+            else emptyText.visibility = View.GONE
 
             val recyclerView = view.findViewById<RecyclerView>(R.id.itinerary_list)
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -58,26 +53,17 @@ class ItineraryFragment : Fragment(), View.OnClickListener {
             }
         }
 
-        // TODO: able to open empty itinerary
-        // TODO: add day to itinerary?
-
         val fab = view.findViewById<FloatingActionButton>(R.id.create_itinerary)
-        fab.setOnClickListener(this)
+        fab.setOnClickListener {
+            findNavController().navigate(
+                ItineraryFragmentDirections.actionItineraryFragmentToCreateItineraryFragment(email)
+            )
+        }
     }
 
     private fun launchSavedItemFragment(itinerary: ItineraryDTO) {
         findNavController().navigate(
             ItineraryFragmentDirections.actionItineraryFragmentToItineraryItemFragment(itinerary)
         )
-    }
-
-    override fun onClick(v: View?) {
-        when(v?.id) {
-            R.id.create_itinerary -> {
-                findNavController().navigate(
-                    ItineraryFragmentDirections.actionItineraryFragmentToCreateItineraryFragment(touristEmail)
-                )
-            }
-        }
     }
 }

@@ -33,6 +33,7 @@ class ItineraryEditFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
         val email = prefs.getString("user_email", "") ?: ""
 
@@ -63,7 +64,8 @@ class ItineraryEditFragment : Fragment() {
                         findNavController().navigateUp()
                     }
                 } catch (e: Exception) {
-                    Log.d("API Error", e.printStackTrace().toString())
+                    Toast.makeText(requireContext(), "Error updating itinerary details", Toast.LENGTH_SHORT).show()
+                    Log.d("API Error", e.toString())
                 }
             }
         }
@@ -78,7 +80,8 @@ class ItineraryEditFragment : Fragment() {
                         findNavController().navigateUp()
                     }
                 } catch (e: Exception) {
-                    Log.d("API Error", e.printStackTrace().toString())
+                    Toast.makeText(requireContext(), "Error deleting itinerary item", Toast.LENGTH_SHORT).show()
+                    Log.d("API Error", e.toString())
                 }
             }
         }

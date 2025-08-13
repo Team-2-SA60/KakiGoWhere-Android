@@ -87,7 +87,7 @@ class ItineraryCreateFragment : Fragment() {
                         }
                     } catch (e: Exception) {
                         Toast.makeText(requireContext(), "Could not create itinerary", Toast.LENGTH_SHORT).show()
-                        Log.e("API Error", "Network error: creating itinerary", e)
+                        Log.e("API Error", e.toString())
                     }
                 }
             }

@@ -48,7 +48,7 @@ class ItineraryItemAdapter(
         if (item.placeId == 0L) {
             holder.row.removeAllViews()
             holder.row.addView(TextView(holder.row.context).apply {
-                text = "No itinerary items on this day"
+                text = "No itinerary items on this day."
                 setTextColor(ContextCompat.getColor(context, R.color.unselected_color))
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
