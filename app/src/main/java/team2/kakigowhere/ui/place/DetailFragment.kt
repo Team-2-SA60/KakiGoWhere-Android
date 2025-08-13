@@ -24,6 +24,7 @@ import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.ItineraryViewModel
 import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.databinding.FragmentDetailBinding
+import team2.kakigowhere.ui.ItinerarySheetAdapter
 import java.time.LocalDate
 import java.util.Locale.US
 

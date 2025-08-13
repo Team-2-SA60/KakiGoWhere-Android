@@ -21,6 +21,7 @@ import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.ItineraryDTO
 import team2.kakigowhere.data.model.ItineraryDetail
+import team2.kakigowhere.ui.place.DetailFragment
 
 class ItinerarySheetAdapter(
     private val context: DetailFragment,
@@ -49,12 +50,9 @@ class ItinerarySheetAdapter(
     ) {
         val itinerary = itineraryList[position]
 
-        //holder.container.removeAllViews()
-
         val imagePath = ApiConstants.IMAGE_URL + itinerary.placeDisplayId
         Glide.with(context)
             .load(imagePath)
-            .error(R.drawable.kakigowhere)
             .placeholder(R.drawable.placeholder_image)
             .centerCrop()
             .into(holder.image)
@@ -86,7 +84,7 @@ class ItinerarySheetAdapter(
             }
         } else {
             val text = TextView(context.requireContext()).apply {
-                text = "No days set for itinerary"
+                text = "No days set for itinerary."
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
