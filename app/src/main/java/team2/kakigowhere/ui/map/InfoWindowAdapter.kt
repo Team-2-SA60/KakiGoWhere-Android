@@ -2,6 +2,7 @@ package team2.kakigowhere.ui.map
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
@@ -39,7 +40,10 @@ class InfoWindowAdapter(
     // Tiny in-memory cache for bitmaps keyed by placeId
     private val bitmapCache = object : LruCache<Long, Bitmap>(50) {}
 
-    override fun getInfoWindow(marker: Marker): View? = null
+    override fun getInfoWindow(marker: Marker): View? {
+        window.setBackgroundColor(Color.TRANSPARENT)
+        return null
+    }
 
     override fun getInfoContents(marker: Marker): View {
         val place = places.find { it.id == marker.tag } ?: return window

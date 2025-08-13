@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,14 +9,14 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="12dp">
+        android:padding="16dp">
 
-        <!-- Greeting -->
         <TextView
             android:id="@+id/tvGreeting"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hi, Name!"
+            android:paddingBottom="16dp"
+            android:text="Hi, User!"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -27,7 +26,6 @@
             android:layout_height="wrap_content"
             android:text="My Upcoming Itinerary"
             android:textStyle="bold"
-            android:paddingTop="16dp"
             android:textSize="18sp" />
 
         <View
@@ -35,14 +33,15 @@
             android:layout_height="2dp"
             android:background="#000"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"/>
+            android:layout_marginBottom="16dp"/>
 
         <!-- Itinerary Card -->
         <include
             android:id="@+id/home_upcoming_card"
             layout="@layout/itinerary_card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"/>
 
         <!-- Suggestions Heading -->
         <TextView
@@ -50,14 +49,13 @@
             android:layout_height="wrap_content"
             android:text="You might like..."
             android:textStyle="bold"
-            android:textSize="18sp"
-            android:paddingTop="24dp" />
+            android:textSize="18sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="#000"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="16dp" />
 
         <TextView
             android:id="@+id/tvEmpty"
@@ -106,5 +104,7 @@
                     android:layout_height="wrap_content"/>
             </LinearLayout>
         </FrameLayout>
+
     </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

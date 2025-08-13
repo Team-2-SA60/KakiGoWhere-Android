@@ -53,8 +53,8 @@ class ItineraryCreateFragment : Fragment() {
         // enable button to create itinerary only if it has a name
         val createBtn = view.findViewById<Button>(R.id.create_itinerary)
         val name = view.findViewById<EditText>(R.id.itinerary_name)
-        name.doOnTextChanged { _, _, _, count ->
-            createBtn.isEnabled = count > 0
+        name.doOnTextChanged { text, _, _, _ ->
+            createBtn.isEnabled = text!!.length > 0
         }
 
         initCreateItinerary(createBtn, name, datePicker, email)
@@ -77,6 +77,7 @@ class ItineraryCreateFragment : Fragment() {
                         val response = RetrofitClient.api.createItinerary(email, itinerary)
 
                         if (response.isSuccessful) {
+                            Toast.makeText(requireContext(), "Itinerary created", Toast.LENGTH_SHORT).show()
                             itineraryViewModel.loadItineraries(email)
                             findNavController().navigate(
                                 ItineraryCreateFragmentDirections.actionCreateItineraryFragmentToItineraryFragment()

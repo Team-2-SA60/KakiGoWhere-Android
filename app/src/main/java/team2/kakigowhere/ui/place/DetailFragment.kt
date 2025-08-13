@@ -115,15 +115,7 @@ class DetailFragment : Fragment() {
                         bottomSheet.visibility = View.VISIBLE
                         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                     }
-
-                    root.setOnClickListener {
-                        // TODO: change button click to be a cross out
-                        //bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                    }
                 }
-
-                // Stubs for future logic
-                // TODO: change bookmark btn to open in google Maps or WebView?
             }
         }
 
