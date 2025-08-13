@@ -1,10 +1,14 @@
 package team2.kakigowhere.ui
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,16 +22,19 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import team2.kakigowhere.R
+import team2.kakigowhere.data.model.LocationViewModel
 import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.data.model.PlaceViewModel
 
 class MapsFragment : Fragment(), OnMapReadyCallback {
 
     private val placeViewModel: PlaceViewModel by activityViewModels()
+    private val locationViewModel: LocationViewModel by activityViewModels()
 
     private lateinit var places: List<PlaceDetailDTO>
     private lateinit var googleMap: GoogleMap
     private lateinit var locationHelper: LocationHelper
+    lateinit var locationSettingsLauncher: ActivityResultLauncher<IntentSenderRequest>
 
     private val markersMap = mutableMapOf<Long, Marker>()
     private val args: MapsFragmentArgs by navArgs()
@@ -36,14 +43,21 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     // permission launcher
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            locationHelper.checkLocationSettings(
-                onEnabled = { locationHelper.centerToCurrentLocation(googleMap) },
-                onFallback = { locationHelper.centerToDefaultLocation(googleMap) }
-            )
-        } else {
-            locationHelper.centerToDefaultLocation(googleMap)
+    ) { isGranted -> if (isGranted) handleLocation() }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        locationSettingsLauncher = registerForActivityResult(
+            ActivityResultContracts.StartIntentSenderForResult()
+        ) { result ->
+            if (result.resultCode != Activity.RESULT_OK) {
+                locationViewModel.userDeniedLocation = true
+                Toast.makeText(
+                    requireContext(),
+                    "Enable location to view places near you",
+                    Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -55,8 +69,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         places = placeViewModel.places.value!!
-        locationHelper = LocationHelper(this)
+        locationHelper = LocationHelper(this, locationViewModel)
 
         // update map when Place live data is updated
         placeViewModel.places.observe(viewLifecycleOwner) { places ->
@@ -73,21 +88,22 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
         googleMap.uiSettings.isZoomControlsEnabled = true
 
-        if (locationHelper.hasPermission()) {
-            locationHelper.checkLocationSettings(
-                onEnabled = { locationHelper.centerToCurrentLocation(googleMap) },
-                onFallback = { locationHelper.centerToDefaultLocation(googleMap) }
-            )
-        } else {
-            locationHelper.requestPermission(locationPermissionLauncher)
+        val singapore = LatLng(1.290270, 103.851959)
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(singapore, 16f))
+
+        // check if location permissions and settings enabled
+        if (args.placeId == 0L) {
+            if (locationHelper.hasPermission()) handleLocation()
+            else locationHelper.requestPermission(locationPermissionLauncher)
         }
 
+        // initialise map of places
         places = placeViewModel.places.value!!
         if (places.isNotEmpty()) {
             addPlaceMarkers(googleMap)
             setLaunchDetailFragment(googleMap)
 
-            // below logic runs if navigated from Detail Fragment
+            // below logics run if navigated from Detail Fragment
             if (args.placeId != 0L) {
                 val place = places.find { it.id == args.placeId }!!
                 val location = LatLng(place.latitude, place.longitude)
@@ -101,6 +117,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 backButton.setOnClickListener { findNavController().navigateUp() }
             } else backButton.visibility = View.GONE
         }
+    }
+
+    private fun handleLocation() {
+        locationHelper.checkLocationSettings(
+            onEnabled = { locationHelper.centerToCurrentLocation(googleMap) },
+            onFallback = { Toast.makeText(
+                requireContext(),
+                "Enable location to view places near you",
+                Toast.LENGTH_SHORT).show() }
+        )
     }
 
     private fun addPlaceMarkers(googleMap: GoogleMap) {
@@ -142,11 +168,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
     override fun onResume() {
         super.onResume()
-        if (isMapReady && locationHelper.hasPermission()) {
-            locationHelper.checkLocationSettings(
-                onEnabled = { locationHelper.centerToCurrentLocation(googleMap) },
-                onFallback = { locationHelper.centerToDefaultLocation(googleMap) }
-            )
-        }
+        if (isMapReady && locationHelper.hasPermission()) handleLocation()
     }
 }
