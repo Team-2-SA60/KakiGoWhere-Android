@@ -25,6 +25,7 @@ import team2.kakigowhere.data.model.TouristUpdateRequest
 interface ApiService {
 
     // places api
+
     @GET("places")
     suspend fun getPlaces(): Response<List<PlaceDetailDTO>>
 
@@ -32,6 +33,8 @@ interface ApiService {
     suspend fun getPlaceDetail(
         @Path("placeId") placeId: Long
     ): Response<PlaceDetailDTO>
+
+    // ratings api
 
     @GET("ratings/{placeId}/summary")
     suspend fun getRatingSummary(
@@ -56,6 +59,8 @@ interface ApiService {
         @Query("touristId") touristId: Long,
         @Body request: RatingRequest
     ): Response<RatingItem>
+
+    // itinerary api
 
     @GET("itinerary")
     suspend fun getItineraries(
@@ -107,6 +112,8 @@ interface ApiService {
     suspend fun deleteItineraryItem(
         @Path("detailId") detailId: Long
     ): Response<Unit>
+
+    // account api
 
     @POST("auth/login")
     suspend fun login(
