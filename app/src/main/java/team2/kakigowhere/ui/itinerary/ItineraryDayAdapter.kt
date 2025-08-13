@@ -1,5 +1,7 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.itinerary
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,8 +51,8 @@ class ItineraryDayAdapter(
                 holder.text.paddingRight,
                 holder.text.paddingBottom + 16
             )
-            holder.text.setTextColor(android.graphics.Color.GRAY) // Greyed-out hint style
-            holder.text.setTypeface(null, android.graphics.Typeface.ITALIC)
+            holder.text.setTextColor(Color.GRAY) // Greyed-out hint style
+            holder.text.setTypeface(null, Typeface.ITALIC)
         }
     }
 

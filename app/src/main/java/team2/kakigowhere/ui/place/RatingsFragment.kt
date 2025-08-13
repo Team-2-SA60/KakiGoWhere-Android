@@ -1,22 +1,21 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.place
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.adapters.RatingsAdapter
 import team2.kakigowhere.databinding.FragmentRatingsBinding
-import android.content.Context
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
-import java.util.Locale.*
+import java.util.Locale
 
 class RatingsFragment : Fragment() {
     private var _binding: FragmentRatingsBinding? = null
@@ -141,7 +140,7 @@ class RatingsFragment : Fragment() {
     private fun formatRating(v: Double?): String {
         v ?: return "— / 5"
         val i = v.toInt()
-        return if (v == i.toDouble()) "$i / 5" else String.format(US, "%.1f / 5", v)
+        return if (v == i.toDouble()) "$i / 5" else String.Companion.format(Locale.US, "%.1f / 5", v)
     }
 
     override fun onDestroyView() {

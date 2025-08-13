@@ -1,12 +1,12 @@
-package team2.kakigowhere.adapters
+package team2.kakigowhere.ui.place
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import team2.kakigowhere.data.model.RatingItem
 import team2.kakigowhere.R
+import team2.kakigowhere.data.model.RatingItem
 
 class RatingsAdapter(private var items: List<RatingItem>) :
     RecyclerView.Adapter<RatingsAdapter.RatingViewHolder>() {

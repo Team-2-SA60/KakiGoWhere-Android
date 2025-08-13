@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.itinerary
 
 import android.view.LayoutInflater
 import android.view.View
@@ -53,11 +53,11 @@ class ItineraryItemAdapter(
 
             holder.title.text = item.placeTitle
             holder.hours.text = if (item.placeIsOpen) "Open · " + item.placeOpenHours else "Closed"
-            holder.notes.text = "Notes: " + (item.notes ?: "none")
+            holder.notes.text = "Notes: " + item.notes
 
             holder.edit.setOnClickListener {
                 context.findNavController().navigate(
-                    ItineraryDetailFragmentDirections.actionSavedItemFragmentToEditSavedItemFragment(item)
+                    ItineraryDetailFragmentDirections.actionItineraryItemFragmentToEditItineraryItemFragment(item)
                 )
             }
         }

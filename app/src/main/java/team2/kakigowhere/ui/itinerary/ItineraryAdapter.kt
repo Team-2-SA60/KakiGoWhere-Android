@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.itinerary
 
 import android.view.LayoutInflater
 import android.view.View

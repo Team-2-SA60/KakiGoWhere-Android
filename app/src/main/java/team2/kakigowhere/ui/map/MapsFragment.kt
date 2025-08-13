@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.map
 
 import android.app.Activity
 import android.os.Bundle

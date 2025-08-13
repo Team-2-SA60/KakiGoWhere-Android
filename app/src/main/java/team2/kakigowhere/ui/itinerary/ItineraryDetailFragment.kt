@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.itinerary
 
 import android.content.Context
 import android.os.Bundle

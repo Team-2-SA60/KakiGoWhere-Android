@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.place
 
 import android.os.Bundle
 import android.view.View

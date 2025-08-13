@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.place
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,7 +7,7 @@ import com.bumptech.glide.Glide
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.model.PlaceDetailDTO
-import team2.kakigowhere.databinding.PlaceItemBinding
+import team2.kakigowhere.databinding.ItemPlaceBinding
 
 class PlaceAdapter(
     private var places: List<PlaceDetailDTO>,
@@ -19,7 +19,7 @@ class PlaceAdapter(
         notifyDataSetChanged()
     }
 
-    inner class PlaceViewHolder(private val binding: PlaceItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class PlaceViewHolder(private val binding: ItemPlaceBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(place: PlaceDetailDTO) {
             binding.apply{
                 placeName.text = place.name
@@ -40,7 +40,7 @@ class PlaceAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
-        val binding = PlaceItemBinding.inflate(
+        val binding = ItemPlaceBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false

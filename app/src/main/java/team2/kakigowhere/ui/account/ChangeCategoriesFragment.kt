@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.account
 
 import android.content.Context
 import android.os.Bundle
@@ -11,8 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.launch
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.model.TouristUpdateRequest
 import team2.kakigowhere.data.model.InterestCategoryProvider
+import team2.kakigowhere.data.model.TouristUpdateRequest
 import team2.kakigowhere.databinding.FragmentChangeCategoriesBinding
 
 class ChangeCategoriesFragment : Fragment() {
@@ -58,7 +58,6 @@ class ChangeCategoriesFragment : Fragment() {
             }
             val chosenStr = chosenIds.map { it.toString() }.toSet()
 
-            val prefsEditor = prefs.edit()
             val userId = prefs.getLong("user_id", -1L)
             val name = prefs.getString("user_name", "") ?: ""
 

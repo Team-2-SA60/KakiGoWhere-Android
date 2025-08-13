@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.itinerary
 
 import android.icu.util.Calendar
 import android.os.Bundle
@@ -79,7 +79,7 @@ class ItineraryCreateFragment : Fragment() {
                         if (response.isSuccessful) {
                             itineraryViewModel.loadItineraries(email)
                             findNavController().navigate(
-                                ItineraryCreateFragmentDirections.actionCreateItineraryFragmentToSavedFragment()
+                                ItineraryCreateFragmentDirections.actionCreateItineraryFragmentToItineraryFragment()
                             )
                         } else {
                             val error = response.errorBody()?.string()?.substringAfter("title: ")

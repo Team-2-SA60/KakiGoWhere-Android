@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.place
 
 import android.content.Context
 import android.os.Bundle
@@ -58,7 +58,8 @@ class WriteRatingFragment : Fragment() {
 
     private fun loadPlaceTitle() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val placeResp = withContext(Dispatchers.IO) { RetrofitClient.api.getPlaceDetail(placeId) }
+            val placeResp =
+                withContext(Dispatchers.IO) { RetrofitClient.api.getPlaceDetail(placeId) }
             if (placeResp.isSuccessful) {
                 binding.placeTitle.text = placeResp.body()?.name ?: ""
             }
@@ -67,7 +68,8 @@ class WriteRatingFragment : Fragment() {
 
     private fun loadExistingRating(userId: Long) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val resp = withContext(Dispatchers.IO) { RetrofitClient.api.getMyRating(placeId, userId) }
+            val resp =
+                withContext(Dispatchers.IO) { RetrofitClient.api.getMyRating(placeId, userId) }
             if (resp.isSuccessful) {
                 val ratingItem: RatingItem? = resp.body()
                 if (ratingItem != null) {

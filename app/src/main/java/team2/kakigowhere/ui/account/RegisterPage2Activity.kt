@@ -12,7 +12,7 @@ import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.InterestCategoryProvider
 import team2.kakigowhere.data.model.RegisterRequestDTO
 import team2.kakigowhere.databinding.ActivityRegisterPage2Binding
-import team2.kakigowhere.ui.CategoryAdapter
+import team2.kakigowhere.ui.account.CategoryAdapter
 
 class RegisterPage2Activity : AppCompatActivity() {
 

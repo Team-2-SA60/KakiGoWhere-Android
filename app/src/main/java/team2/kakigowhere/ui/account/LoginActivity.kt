@@ -1,6 +1,5 @@
 package team2.kakigowhere
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -11,7 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.model.*
+import team2.kakigowhere.data.model.LoginResponse
 
 class   LoginActivity : AppCompatActivity() {
 
@@ -20,7 +19,7 @@ class   LoginActivity : AppCompatActivity() {
 
 
         // If already logged in, skip login screen
-        val prefs = getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        val prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE)
         if (prefs.contains("user_id")) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
@@ -68,7 +67,7 @@ class   LoginActivity : AppCompatActivity() {
                             .toSet()
 
                         // Save user info in SharedPreferences
-                        val prefs = getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+                        val prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE)
                         prefs.edit().apply {
                             putLong("user_id", user.id)
                             putString("user_email", user.email)

@@ -1,7 +1,8 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.account
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,8 +15,8 @@ import kotlinx.coroutines.launch
 import team2.kakigowhere.LoginActivity
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.RetrofitClient
-import team2.kakigowhere.data.model.TouristUpdateRequest
 import team2.kakigowhere.data.model.InterestCategoryProvider
+import team2.kakigowhere.data.model.TouristUpdateRequest
 import team2.kakigowhere.databinding.FragmentProfileBinding
 
 class ProfileFragment : Fragment() {
@@ -124,7 +125,7 @@ class ProfileFragment : Fragment() {
         binding.etInterests.setText(resolveInterestDisplay(prefs))
     }
 
-    private fun resolveInterestDisplay(prefs: android.content.SharedPreferences): String {
+    private fun resolveInterestDisplay(prefs: SharedPreferences): String {
         // Map category id -> user-facing label
         val idToLabel = InterestCategoryProvider.allCategories
             .associate { it.id to it.description }

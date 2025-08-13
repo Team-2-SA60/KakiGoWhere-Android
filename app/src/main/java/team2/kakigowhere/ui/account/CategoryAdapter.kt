@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.account
 
 import android.view.LayoutInflater
 import android.view.View

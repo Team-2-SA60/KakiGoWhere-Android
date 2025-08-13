@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.map
 
 import android.Manifest
 import android.annotation.SuppressLint

@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.itinerary
 
 import android.content.Context
 import android.os.Bundle
@@ -27,7 +27,7 @@ class ItineraryFragment : Fragment(), View.OnClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_saved, container, false)
+        return inflater.inflate(R.layout.fragment_itinerary, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,7 +67,7 @@ class ItineraryFragment : Fragment(), View.OnClickListener {
 
     private fun launchSavedItemFragment(itinerary: ItineraryDTO) {
         findNavController().navigate(
-            ItineraryFragmentDirections.actionSavedFragmentToSavedItemFragment(itinerary)
+            ItineraryFragmentDirections.actionItineraryFragmentToItineraryItemFragment(itinerary)
         )
     }
 
@@ -75,7 +75,7 @@ class ItineraryFragment : Fragment(), View.OnClickListener {
         when(v?.id) {
             R.id.create_itinerary -> {
                 findNavController().navigate(
-                    ItineraryFragmentDirections.actionSavedFragmentToCreateItineraryFragment(touristEmail)
+                    ItineraryFragmentDirections.actionItineraryFragmentToCreateItineraryFragment(touristEmail)
                 )
             }
         }

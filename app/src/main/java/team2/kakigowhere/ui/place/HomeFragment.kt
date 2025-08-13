@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui
+package team2.kakigowhere.ui.place
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
@@ -15,22 +16,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import team2.kakigowhere.R
-import team2.kakigowhere.data.api.RetrofitClient
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
+import team2.kakigowhere.R
+import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.api.MLRetrofitClient
 import team2.kakigowhere.data.api.RecommendRequest
+import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.PlaceViewModel
-import android.widget.ImageView
-import com.bumptech.glide.Glide
-import team2.kakigowhere.data.api.ApiConstants
-import team2.kakigowhere.ui.HomeFragmentDirections
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 class HomeFragment : Fragment() {
 
@@ -209,8 +208,7 @@ class HomeFragment : Fragment() {
 
                         card.isClickable = true
                         card.setOnClickListener {
-                            val action = HomeFragmentDirections
-                                .actionHomeFragmentToSavedItemFragment(itinerary)
+                            val action = HomeFragmentDirections.actionHomeFragmentToItineraryItemFragment(itinerary)
                             findNavController().navigate(action)
                         }
                     } else {
