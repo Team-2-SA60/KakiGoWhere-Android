@@ -24,6 +24,7 @@ import team2.kakigowhere.data.model.PlaceDetailDTO
  * - Downscales to view size to avoid decoding huge images.
  * - LruCache keeps a few already-opened images hot.
  */
+
 class InfoWindowAdapter(
     private val context: Context,
     private val places: List<PlaceDetailDTO>,
@@ -62,7 +63,6 @@ class InfoWindowAdapter(
             .asBitmap()
             .load(imagePath)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .thumbnail(0.25f)
             // Match info_window.xml ImageView size to avoid huge decodes
             .override(100, 80)
             .into(object : CustomTarget<Bitmap>() {

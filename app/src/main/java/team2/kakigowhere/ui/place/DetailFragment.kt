@@ -1,11 +1,11 @@
 package team2.kakigowhere.ui.place
 
 import android.content.Context
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -25,7 +25,7 @@ import team2.kakigowhere.data.model.ItineraryViewModel
 import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.databinding.FragmentDetailBinding
 import java.time.LocalDate
-import java.util.Locale.*
+import java.util.Locale.US
 
 class DetailFragment : Fragment() {
 
@@ -118,7 +118,7 @@ class DetailFragment : Fragment() {
 
                     root.setOnClickListener {
                         // TODO: change button click to be a cross out
-                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        //bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                     }
                 }
 
@@ -136,6 +136,11 @@ class DetailFragment : Fragment() {
         itineraryViewModel.itineraries.observe(viewLifecycleOwner) { itineraries ->
             val itineraryList = itineraries.sortedBy { LocalDate.parse(it.startDate) }
             val recyclerView = bottomSheet.findViewById<RecyclerView>(R.id.itinerary_view)
+
+            val emptySheet = bottomSheet.findViewById<TextView>(R.id.empty_sheet)
+            if (itineraryList.isEmpty()) emptySheet.visibility = View.VISIBLE
+            else emptySheet.visibility = View.GONE
+
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             recyclerView.adapter = ItinerarySheetAdapter(
                 this@DetailFragment,
@@ -146,6 +151,10 @@ class DetailFragment : Fragment() {
                     val email = prefs.getString("user_email", "") ?: ""
                     itineraryViewModel.loadItineraries(email)
                 })
+        }
+
+        bottomSheet.findViewById<Button>(R.id.close_sheet).setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
     }
 

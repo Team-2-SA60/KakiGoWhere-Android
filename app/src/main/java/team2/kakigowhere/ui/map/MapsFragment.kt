@@ -39,6 +39,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private val markersMap = mutableMapOf<Long, Marker>()
     private val args: MapsFragmentArgs by navArgs()
     private var isMapReady = false
+    private var userHasInteracted = false
 
     // permission launcher
     private val locationPermissionLauncher = registerForActivityResult(
@@ -88,6 +89,12 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         googleMap = map
         googleMap.uiSettings.isZoomControlsEnabled = true
 
+        googleMap.setOnCameraMoveStartedListener { reason ->
+            if (reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE) {
+                userHasInteracted = true
+            }
+        }
+
         val singapore = LatLng(1.290270, 103.851959)
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(singapore, 16f))
 
@@ -120,6 +127,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun handleLocation() {
+        if (userHasInteracted) return
         locationHelper.checkLocationSettings(
             onEnabled = { locationHelper.centerToCurrentLocation(googleMap) },
             onFallback = { Toast.makeText(
