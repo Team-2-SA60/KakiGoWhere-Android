@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="480dp"
     android:orientation="vertical"
-    android:background="#E3F2FD"
+    android:background="@drawable/rounded_corners"
     android:visibility="gone"
     app:behavior_peekHeight="0dp"
     app:behavior_hideable="true"

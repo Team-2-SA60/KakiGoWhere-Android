@@ -119,16 +119,12 @@
             app:argType="string"/>
     </fragment>
 
-
     <!-- Profile Fragment -->
     <fragment
         android:id="@+id/profileFragment"
         android:name="team2.kakigowhere.ui.account.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile">
-
-
-        <!-- NEW: action to ChangeCategoriesFragment -->
         <action
             android:id="@+id/action_profileFragment_to_changeCategoriesFragment"
             app:destination="@id/changeCategoriesFragment" />
@@ -137,7 +133,6 @@
             app:destination="@id/ratingFragment" />
     </fragment>
 
-    <!-- NEW: ChangeCategoriesFragment entry -->
     <fragment
         android:id="@+id/changeCategoriesFragment"
         android:name="team2.kakigowhere.ui.account.ChangeCategoriesFragment"
@@ -173,7 +168,7 @@
             app:argType="string" />
     </fragment>
 
-    <!-- WebView fragment -->
+    <!-- WebView Fragment -->
     <fragment
         android:id="@+id/webViewFragment"
         android:name="team2.kakigowhere.ui.place.WebViewFragment"

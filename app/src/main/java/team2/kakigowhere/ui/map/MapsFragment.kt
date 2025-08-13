@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.ImageButton
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -118,7 +118,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
                 markersMap[args.placeId]?.showInfoWindow()
             }
 
-            val backButton = requireView().findViewById<Button>(R.id.backButton)
+            val backButton = requireView().findViewById<ImageButton>(R.id.backButton)
             if (args.showBack) {
                 backButton.visibility = View.VISIBLE
                 backButton.setOnClickListener { findNavController().navigateUp() }

@@ -1,38 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:fitsSystemWindows="true">
+
+    <TextView
+        android:id="@+id/tvGreeting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="Hi, User!"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="16dp">
-
-        <TextView
-            android:id="@+id/tvGreeting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:text="Hi, User!"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp">
 
         <!-- Itinerary Heading -->
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="My Upcoming Itinerary"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:text=" My Upcoming Itinerary"
             android:textStyle="bold"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:background="#EDE7F6"/>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="#000"
-            android:layout_marginTop="4dp"
             android:layout_marginBottom="16dp"/>
 
         <!-- Itinerary Card -->
@@ -41,14 +44,24 @@
             layout="@layout/itinerary_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
-            android:layout_marginBottom="32dp"/>
+            android:layout_margin="10dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="16dp">
 
         <!-- Suggestions Heading -->
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="You might like..."
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:background="#E3F2FD"
+            android:text=" You might like..."
             android:textStyle="bold"
             android:textSize="18sp" />
 
@@ -109,4 +122,4 @@
 
     </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>
