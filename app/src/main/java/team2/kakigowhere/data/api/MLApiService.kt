@@ -8,5 +8,7 @@ data class RecommendResponse(val id: Long, val name: String)
 
 interface MLApiService {
     @POST ("recommend")
-    suspend fun getRecommendations(@Body request: RecommendRequest): List<RecommendResponse>
+    suspend fun getRecommendations(
+        @Body request: RecommendRequest
+    ): List<RecommendResponse>
 }

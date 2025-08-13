@@ -56,7 +56,7 @@ class   LoginActivity : AppCompatActivity() {
                     if (response.isSuccessful && response.body() != null) {
                         val user = response.body()!!
 
-                        val interests = user.interestsCategories ?: emptyList()
+                        val interests = user.interestCategories ?: emptyList()
 //                        val interestsSet = interests.map { it.name }.toSet()
                         // Store IDs for backend sync, and names/descriptions for display fallback
                         val interestIdSet = interests.map { it.id.toString() }.toSet()
