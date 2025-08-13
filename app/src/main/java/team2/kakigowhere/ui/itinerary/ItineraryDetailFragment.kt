@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -51,10 +52,12 @@ class ItineraryDetailFragment : Fragment(), View.OnClickListener {
         var deleteBtn = view.findViewById<Button>(R.id.delete_itinerary)
         var addDayBtn = view.findViewById<Button>(R.id.add_day)
         var deleteDayBtn = view.findViewById<Button>(R.id.delete_day)
+        var backBtn = view.findViewById<ImageButton>(R.id.detail_back)
 
         deleteBtn.setOnClickListener(this)
         addDayBtn.setOnClickListener(this)
         deleteDayBtn.setOnClickListener(this)
+        backBtn.setOnClickListener(this)
 
         // set up display of itinerary items
         lifecycleScope.launch {
@@ -138,6 +141,9 @@ class ItineraryDetailFragment : Fragment(), View.OnClickListener {
                         Log.d("API Error", e.toString())
                     }
                 }
+            }
+            R.id.detail_back -> {
+                findNavController().navigateUp()
             }
         }
     }

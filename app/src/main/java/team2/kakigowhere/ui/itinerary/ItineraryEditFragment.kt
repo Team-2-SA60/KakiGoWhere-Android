@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -48,7 +49,9 @@ class ItineraryEditFragment : Fragment() {
 
         val update = view.findViewById<Button>(R.id.update)
         val delete = view.findViewById<Button>(R.id.delete)
+        val back = view.findViewById<ImageButton>(R.id.edit_back)
 
+        // button events
         update.setOnClickListener {
             val updatedDetail = ItineraryDetail(
                 id = detail.id,
@@ -84,6 +87,10 @@ class ItineraryEditFragment : Fragment() {
                     Log.d("API Error", e.toString())
                 }
             }
+        }
+
+        back.setOnClickListener {
+            findNavController().navigateUp()
         }
     }
 }
