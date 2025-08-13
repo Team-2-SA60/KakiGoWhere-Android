@@ -1,4 +1,4 @@
-package team2.kakigowhere.ui.place
+package team2.kakigowhere.ui
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -49,9 +49,12 @@ class ItinerarySheetAdapter(
     ) {
         val itinerary = itineraryList[position]
 
+        //holder.container.removeAllViews()
+
         val imagePath = ApiConstants.IMAGE_URL + itinerary.placeDisplayId
         Glide.with(context)
             .load(imagePath)
+            .error(R.drawable.kakigowhere)
             .placeholder(R.drawable.placeholder_image)
             .centerCrop()
             .into(holder.image)
