@@ -1,11 +1,14 @@
 package team2.kakigowhere.ui.itinerary
 
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -19,6 +22,7 @@ class ItineraryItemAdapter(
 ) : RecyclerView.Adapter<ItineraryItemAdapter.ItemViewHolder>() {
 
     inner class ItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val row: LinearLayout = itemView.findViewById<LinearLayout>(R.id.row_item)
         val image: ImageView = itemView.findViewById<ImageView>(R.id.item_image)
         val title: TextView = itemView.findViewById<TextView>(R.id.item_title)
         val hours: TextView = itemView.findViewById<TextView>(R.id.item_hours)
@@ -40,9 +44,23 @@ class ItineraryItemAdapter(
     ) {
         val item = items[position]
 
+        // if no place, no items are in the list: render "no items" text
         if (item.placeId == 0L) {
-            holder.itemView.visibility = View.GONE
-        } else {
+            holder.row.removeAllViews()
+            holder.row.addView(TextView(holder.row.context).apply {
+                text = "No itinerary items on this day"
+                setTextColor(ContextCompat.getColor(context, R.color.unselected_color))
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    gravity = Gravity.CENTER
+                }
+            })
+        }
+
+        // else render itinerary items as usual
+        else {
             val placeImagePath = ApiConstants.IMAGE_URL + item.placeId.toString()
 
             Glide.with(context)

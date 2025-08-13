@@ -54,8 +54,9 @@ class ItineraryAdapter(
             .into(holder.image)
 
         holder.title.text = itineraryItem.title
-        holder.dates.text = itineraryItem.startDate + " ~ " + itineraryItem.getLastDate().toString() + " · " + itineraryItem.days.toString() + " days"
-        //holder.itemView.setOnClickListener { onItemClick(itineraryItem) }
+        holder.dates.text = itineraryItem.startDate + " ~ " +
+                itineraryItem.getLastDate().toString() + " · " +
+                itineraryItem.days.toString() + " days"
     }
 
     override fun getItemCount(): Int = itineraryList.size

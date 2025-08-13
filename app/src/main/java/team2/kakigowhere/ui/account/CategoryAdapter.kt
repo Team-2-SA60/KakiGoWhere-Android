@@ -12,7 +12,6 @@ import team2.kakigowhere.data.model.InterestCategory
 
 class CategoryAdapter(
     private val categories: List<InterestCategory>,
-    //change selected name to selected id
     private val selected: MutableSet<Long>
 ) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
 
@@ -62,6 +61,6 @@ class CategoryAdapter(
 
     override fun getItemCount(): Int = categories.size
 
-    /** Expose the selected set so the fragment can save it */
+    // Expose the selected set so the fragment can save it
     fun getSelectedIds(): List<Long> = selected.toList()
 }
