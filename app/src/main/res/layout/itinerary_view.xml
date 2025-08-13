@@ -23,17 +23,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginTop="4dp">
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="displayed text"/>
+                android:layout_marginBottom="4dp"
+                android:textStyle="bold"
+                tools:text="Itinerary details"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:text="Add to:"/>
 
             <LinearLayout

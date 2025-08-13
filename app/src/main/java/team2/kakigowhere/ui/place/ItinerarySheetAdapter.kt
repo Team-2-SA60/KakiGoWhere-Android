@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -50,7 +52,6 @@ class ItinerarySheetAdapter(
         val imagePath = ApiConstants.IMAGE_URL + itinerary.placeDisplayId
         Glide.with(context)
             .load(imagePath)
-            .error(R.drawable.kakigowhere)
             .placeholder(R.drawable.placeholder_image)
             .centerCrop()
             .into(holder.image)
@@ -61,10 +62,17 @@ class ItinerarySheetAdapter(
         if (itinerary.days > 0L) {
             for (dayNumber in 1..itinerary.days) {
                 val add = Button(context.requireContext()).apply {
+                    // set layout parameters for the button
                     text = "Day $dayNumber"
                     textSize = 10f
-                    layoutParams = LinearLayout.LayoutParams(120, 100)
+                    setTextColor("#6200EA".toColorInt())
+                    layoutParams = LinearLayout.LayoutParams(120, 80).apply {
+                        setMargins(10, 0, 10, 0)
+                    }
                     setPadding(0, 0, 0, 0)
+                    background = ContextCompat.getDrawable(context, R.drawable.btn_transparent_positive)
+                    backgroundTintList = null
+                    transformationMethod = null
 
                     // save item to itinerary on that day
                     setOnClickListener {

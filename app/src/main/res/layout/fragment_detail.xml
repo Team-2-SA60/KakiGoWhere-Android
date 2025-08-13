@@ -3,12 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/detailScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="16dp"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -17,216 +18,201 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- Back Button -->
-        <Button
-            android:id="@+id/backButton"
-            android:text="Back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp" />
+            <!-- Back Button -->
+            <ImageButton
+                android:src="@drawable/back_arrow"
+                android:id="@+id/backButton"
+                android:text="Back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="0dp"
+                android:backgroundTint="#00000000" />
 
-        <!-- Place Name -->
-        <TextView
-            android:id="@+id/placeName"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            <!-- Place Name -->
+            <TextView
+                android:id="@+id/placeName"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Place name"/>
 
-        <!-- Image and Place Details -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:orientation="horizontal">
-            <ImageView
-                android:id="@+id/placeImage"
-                android:background="@drawable/kakigowhere"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:scaleType="centerCrop" />
+            <!-- Image and Place Details -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:orientation="horizontal">
 
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/ratingsHoursScroll"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/other_rating_border"
-                android:padding="7dp"
-                android:fillViewport="true"
-                android:scrollbars="vertical"
-                android:overScrollMode="ifContentScrolls">
+                <ImageView
+                    android:id="@+id/placeImage"
+                    android:background="@drawable/placeholder_image"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:scaleType="centerCrop" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <!-- Rating & Hours -->
-                    <TextView
-                        android:id="@+id/placeRating"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="4.5 / 5"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/ratingsPage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/view_ratings"
-                        android:textSize="13sp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:textColor="@android:color/holo_blue_dark"
-                        android:layout_marginBottom="3dp" />
-
-                    <TextView
-                        android:id="@+id/placeHours"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Placeholder"
-                        android:textStyle="bold" />
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/ratingsHoursScroll"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/other_rating_border"
+                    android:padding="7dp"
+                    android:fillViewport="true"
+                    android:scrollbars="vertical"
+                    android:overScrollMode="ifContentScrolls">
 
                     <LinearLayout
-                        android:id="@+id/openingHoursContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        />
+                        android:orientation="vertical">
+
+                        <!-- Rating & Hours -->
+                        <TextView
+                            android:id="@+id/placeRating"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="4.5 / 5"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/ratingsPage"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/view_ratings"
+                            android:textSize="13sp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:textColor="@android:color/holo_blue_dark"
+                            android:layout_marginBottom="3dp" />
+
+                        <TextView
+                            android:id="@+id/placeHours"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textStyle="bold"
+                            tools:text="Open status"/>
+
+                        <LinearLayout
+                            android:id="@+id/openingHoursContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"/>
+
+                    </LinearLayout>
+                </androidx.core.widget.NestedScrollView>
+
+            </LinearLayout>
+
+            <!-- Action Buttons Row -->
+            <LinearLayout
+                android:id="@+id/actionButtonsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_margin="10dp">
+
+                <!-- Show on Map -->
+                <LinearLayout
+                    android:id="@+id/btnShowOnMap"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:padding="8dp">
+
+                    <ImageView
+                        android:src="@drawable/ic_map"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp" />
+
+                    <TextView
+                        android:text="Show on Map"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"/>
                 </LinearLayout>
-            </androidx.core.widget.NestedScrollView>
 
-        </LinearLayout>
-
-        <!-- Action Buttons Row -->
-        <LinearLayout
-            android:id="@+id/actionButtonsLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_margin="5dp">
-
-            <!-- Show on Map -->
-            <LinearLayout
-                android:id="@+id/btnShowOnMap"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:clickable="true"
-                android:padding="8dp">
-
-                <ImageView
-                    android:src="@drawable/ic_map"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp" />
-
-                <TextView
-                    android:text="Show on Map"
-                    android:layout_width="wrap_content"
+                <!-- Add to Itinerary -->
+                <LinearLayout
+                    android:id="@+id/btnAddToItinerary"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"/>
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:padding="8dp">
+                    <ImageView
+                        android:src="@drawable/ic_add"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp" />
+                    <TextView
+                        android:text="Add to Itinerary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
             </LinearLayout>
 
-            <!-- Bookmark -->
-<!--            <LinearLayout-->
-<!--                android:id="@+id/btnBookmark"-->
-<!--                android:layout_width="0dp"-->
-<!--                android:layout_weight="1"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="vertical"-->
-<!--                android:gravity="center"-->
-<!--                android:clickable="true"-->
-<!--                android:padding="8dp">-->
-
-<!--                <ImageView-->
-<!--                    android:src="@drawable/ic_bookmark"-->
-<!--                    android:layout_width="32dp"-->
-<!--                    android:layout_height="32dp" />-->
-
-<!--                <TextView-->
-<!--                    android:text="Bookmark"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_marginTop="4dp"/>-->
-<!--            </LinearLayout>-->
-
-            <!-- Add to Itinerary -->
+            <!-- Description -->
             <LinearLayout
-                android:id="@+id/btnAddToItinerary"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center"
-                android:clickable="true"
+                android:background="#EDE7F6"
                 android:padding="8dp">
-                <ImageView
-                    android:src="@drawable/ic_add"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp" />
+
                 <TextView
-                    android:text="Add to Itinerary"
-                    android:layout_width="wrap_content"
+                    android:textSize="16sp"
+                    android:text="@string/description_title"
+                    android:textStyle="bold"
+                    android:layout_marginVertical="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/placeDescription"
+                    android:textSize="16sp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"/>
+                    tools:text="description of place"/>
+
             </LinearLayout>
-        </LinearLayout>
-
-        <!-- Description -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/other_rating_border"
-            android:padding="8dp"
-            >
-            <TextView
-                android:textSize="16sp"
-                android:text="@string/description_title"
-                android:textStyle="bold"
-                android:layout_marginBottom="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/placeDescription"
-                android:textSize="16sp"
-                android:text="hello"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
 
 
-        <!-- Website Link -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/other_rating_border"
-            android:layout_marginTop="8dp"
-            android:padding="8dp"
-            >
-            <TextView
-                android:textSize="16sp"
-                android:text="@string/website_title"
-                android:textStyle="bold"
-                android:layout_marginBottom="5dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <TextView
-                android:id="@+id/placeWebsite"
-                android:text="link"
+            <!-- Website Link -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/holo_blue_dark"
-                />
-        </LinearLayout>
+                android:orientation="vertical"
+                android:background="#E3F2FD"
+                android:layout_marginTop="8dp"
+                android:padding="8dp">
+
+                <TextView
+                    android:textSize="16sp"
+                    android:text="@string/website_title"
+                    android:textStyle="bold"
+                    android:layout_marginVertical="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/placeWebsite"
+                    android:text="link"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/holo_blue_dark" />
+
+            </LinearLayout>
 
     </LinearLayout>
 
