@@ -47,6 +47,8 @@ class ItinerarySheetAdapter(
     ) {
         val itinerary = itineraryList[position]
 
+        holder.container.removeAllViews()
+
         val imagePath = ApiConstants.IMAGE_URL + itinerary.placeDisplayId
         Glide.with(context)
             .load(imagePath)
@@ -62,9 +64,14 @@ class ItinerarySheetAdapter(
             for (dayNumber in 1..itinerary.days) {
                 val add = Button(context.requireContext()).apply {
                     text = "Day $dayNumber"
-                    textSize = 10f
-                    layoutParams = LinearLayout.LayoutParams(120, 100)
-                    setPadding(0, 0, 0, 0)
+                    textSize = 12f
+                    val params = LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                    )
+                    params.setMargins(8, 8, 8, 8)
+                    layoutParams = params
+                    setPadding(24, 12, 24, 12)
 
                     // save item to itinerary on that day
                     setOnClickListener {
