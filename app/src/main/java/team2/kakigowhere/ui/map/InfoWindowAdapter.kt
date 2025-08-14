@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.Marker
 import team2.kakigowhere.R
@@ -66,6 +67,7 @@ class InfoWindowAdapter(
             .with(context)
             .asBitmap()
             .load(imagePath)
+            .signature(ObjectKey(System.currentTimeMillis() / 60000))
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             // Match info_window.xml ImageView size to avoid huge decodes
             .override(100, 80)

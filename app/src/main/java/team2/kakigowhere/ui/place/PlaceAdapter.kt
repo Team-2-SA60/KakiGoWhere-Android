@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.model.PlaceDetailDTO
@@ -30,6 +31,7 @@ class PlaceAdapter(
                 Glide
                     .with(placeImage.context)
                     .load(imagePath)
+                    .signature(ObjectKey(System.currentTimeMillis() / 60000))
                     .placeholder(R.drawable.placeholder_image)
                     .centerCrop()
                     .into(placeImage)

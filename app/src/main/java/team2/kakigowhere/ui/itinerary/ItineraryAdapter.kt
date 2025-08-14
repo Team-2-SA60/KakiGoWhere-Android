@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.model.ItineraryDTO
@@ -52,6 +53,7 @@ class ItineraryAdapter(
         Glide
             .with(context)
             .load(placeImagePath)
+            .signature(ObjectKey(System.currentTimeMillis() / 60000))
             .placeholder(R.drawable.placeholder_image)
             .into(holder.image)
 
