@@ -44,7 +44,13 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     // permission launcher
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted -> if (isGranted) handleLocation() }
+    ) { isGranted ->
+        if (isGranted) handleLocation()
+        else Toast.makeText(
+                requireContext(),
+                "Enable location to view places near you",
+                Toast.LENGTH_SHORT).show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
