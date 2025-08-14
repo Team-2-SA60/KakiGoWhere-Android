@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import team2.kakigowhere.R
 import team2.kakigowhere.data.api.ApiConstants
 import team2.kakigowhere.data.model.ItineraryDetailDTO
@@ -71,6 +72,7 @@ class ItineraryItemAdapter(
             Glide
                 .with(context)
                 .load(placeImagePath)
+                .signature(ObjectKey(System.currentTimeMillis() / 60000))
                 .placeholder(R.drawable.kakigowhere)
                 .centerCrop()
                 .into(holder.image)

@@ -16,6 +16,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import team2.kakigowhere.R
@@ -81,6 +82,7 @@ class DetailFragment : Fragment() {
                     Glide
                         .with(this@DetailFragment)
                         .load(imagePath)
+                        .signature(ObjectKey(System.currentTimeMillis() / 60000))
                         .placeholder(R.drawable.placeholder_image)
                         .centerCrop()
                         .into(placeImage)

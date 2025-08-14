@@ -14,6 +14,7 @@ import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.launch
 import team2.kakigowhere.R
@@ -55,6 +56,7 @@ class ItinerarySheetAdapter(
         Glide
             .with(context)
             .load(imagePath)
+            .signature(ObjectKey(System.currentTimeMillis() / 60000))
             .placeholder(R.drawable.placeholder_image)
             .centerCrop()
             .into(holder.image)

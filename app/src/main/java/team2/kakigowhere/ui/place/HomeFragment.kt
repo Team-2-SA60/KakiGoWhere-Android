@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.signature.ObjectKey
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -190,6 +191,7 @@ class HomeFragment : Fragment() {
                             Glide
                                 .with(this@HomeFragment)
                                 .load(imageUrl)
+                                .signature(ObjectKey(System.currentTimeMillis() / 60000))
                                 .placeholder(R.drawable.placeholder_image)
                                 .error(R.drawable.placeholder_image)
                                 .into(image)
