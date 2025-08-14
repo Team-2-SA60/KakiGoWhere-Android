@@ -46,7 +46,7 @@
                 android:fillViewport="true"
                 android:overScrollMode="ifContentScrolls"
                 android:scrollbars="horizontal"
-                android:fadeScrollbars="true">
+                android:fadeScrollbars="false">
 
                 <LinearLayout
                     android:id="@+id/container"
