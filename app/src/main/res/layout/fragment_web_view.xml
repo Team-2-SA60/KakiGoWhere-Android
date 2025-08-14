@@ -8,16 +8,15 @@
         android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
-        android:paddingTop="32dp"/>
+        android:layout_marginTop="56dp" />
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/webToolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
+        android:layout_height="56dp"
         android:layout_gravity="top"
         android:background="?attr/colorSurface"
         android:elevation="4dp"
         app:navigationIcon="@android:drawable/ic_menu_close_clear_cancel"
-        app:title="Close" />
+        app:title="Close"/>
 </FrameLayout>

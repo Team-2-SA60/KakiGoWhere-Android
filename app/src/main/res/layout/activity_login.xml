@@ -5,17 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="24dp"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="@color/white">
 
     <!-- App Logo/Title -->
-    <TextView
+    <ImageView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="KakiGoWhere"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_marginBottom="48dp" />
+        android:layout_height="150dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/kakigowhere"/>
 
     <!-- Email Input -->
     <com.google.android.material.textfield.TextInputLayout
