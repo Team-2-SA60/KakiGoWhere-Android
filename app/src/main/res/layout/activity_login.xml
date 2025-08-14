@@ -65,15 +65,17 @@
         android:visibility="invisible" />
 
     <!-- Login Button -->
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/loginButton"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:text="Login"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:cornerRadius="8dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp"
+        app:backgroundTint="@null"
+        android:textColor="@color/white"
+        android:background="@drawable/btn_positive" />
 
     <!-- Sign Up Button -->
     <com.google.android.material.button.MaterialButton

@@ -12,15 +12,15 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:layout_marginTop="32dp"
         android:layout_marginBottom="32dp">
 
-        <TextView
+        <ImageButton
             android:id="@+id/backButton"
+            android:src="@drawable/back_arrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="&lt; Back"
-            android:textSize="16sp"
-            android:textColor="@color/black"
+            android:backgroundTint="#00000000"
             android:padding="8dp" />
 
         <View
@@ -34,20 +34,13 @@
             android:orientation="vertical"
             android:gravity="center">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/ic_profile"
-                android:background="@drawable/rounded_corners"
-                android:padding="8dp" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="KAKIGOWHERE"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                android:textColor="@color/black" />
+                android:textColor="#6200EA" />
         </LinearLayout>
     </LinearLayout>
 
@@ -66,8 +59,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Choose 1~3 Interest(s) !"
-        android:textSize="16sp"
+        android:text="Select 1 - 3 interests so that we can recommend \n places you may like! 😊"
+        android:textSize="14sp"
         android:textColor="@color/black"
         android:gravity="center"
         android:layout_marginBottom="32dp" />
@@ -76,9 +69,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginBottom="24dp" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp" />
 
     <!-- Error Message -->
     <TextView
@@ -89,18 +81,22 @@
         android:textSize="12sp"
         android:textColor="#FF6B6B"
         android:gravity="center"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="14dp"
         android:visibility="invisible" />
 
     <!-- Save Button -->
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/saveButton"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:text="Save"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:cornerRadius="8dp" />
+        app:backgroundTint="@null"
+        android:textColor="@color/white"
+        android:background="@drawable/btn_positive"
+        android:minWidth="100dp"
+        android:minHeight="38dp"
+        android:padding="0dp" />
 
     <!-- Page Indicator -->
     <TextView
@@ -110,6 +106,6 @@
         android:textSize="14sp"
         android:textColor="@color/black"
         android:layout_gravity="end"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="10dp" />
 
 </LinearLayout>
