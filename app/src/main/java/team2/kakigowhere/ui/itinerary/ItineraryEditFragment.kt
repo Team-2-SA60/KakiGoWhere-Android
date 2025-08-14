@@ -22,17 +22,18 @@ import team2.kakigowhere.data.model.ItineraryDetail
 import team2.kakigowhere.data.model.ItineraryViewModel
 
 class ItineraryEditFragment : Fragment() {
-
     private val itineraryViewModel: ItineraryViewModel by activityViewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_itinerary_edit, container, false)
-    }
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? = inflater.inflate(R.layout.fragment_itinerary_edit, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
@@ -53,12 +54,13 @@ class ItineraryEditFragment : Fragment() {
 
         // button events
         update.setOnClickListener {
-            val updatedDetail = ItineraryDetail(
-                id = detail.id,
-                date = detail.date,
-                notes = notes.text.toString(),
-                sequentialOrder = detail.sequentialOrder
-            )
+            val updatedDetail =
+                ItineraryDetail(
+                    id = detail.id,
+                    date = detail.date,
+                    notes = notes.text.toString(),
+                    sequentialOrder = detail.sequentialOrder,
+                )
             lifecycleScope.launch {
                 try {
                     val response = RetrofitClient.api.editItineraryItem(detail.id, updatedDetail)

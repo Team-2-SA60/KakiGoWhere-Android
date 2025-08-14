@@ -30,7 +30,6 @@ class InfoWindowAdapter(
     private val context: Context,
     private val places: List<PlaceDetailDTO>,
 ) : GoogleMap.InfoWindowAdapter {
-
     // Reuse a single view for performance
     private val window: View = LayoutInflater.from(context).inflate(R.layout.info_window, null)
     private val iv: ImageView = window.findViewById(R.id.icon)
@@ -63,20 +62,27 @@ class InfoWindowAdapter(
 
         // Build URL and load as bitmap so we can cache + control size
         val imagePath = ApiConstants.IMAGE_URL + place.id
-        Glide.with(context)
+        Glide
+            .with(context)
             .asBitmap()
             .load(imagePath)
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             // Match info_window.xml ImageView size to avoid huge decodes
             .override(100, 80)
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    bitmapCache.put(place.id, resource)
-                    // Because info windows are static bitmaps, force a redraw
-                    if (marker.isInfoWindowShown) marker.showInfoWindow()
-                }
-                override fun onLoadCleared(placeholder: Drawable?) { /* no-op */ }
-            })
+            .into(
+                object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?,
+                    ) {
+                        bitmapCache.put(place.id, resource)
+                        // Because info windows are static bitmaps, force a redraw
+                        if (marker.isInfoWindowShown) marker.showInfoWindow()
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) { /* no-op */ }
+                },
+            )
 
         return window
     }

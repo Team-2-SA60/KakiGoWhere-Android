@@ -29,14 +29,18 @@ class RatingsFragment : Fragment() {
     private var alreadyLoaded = false // prevents re-fetching when view is recreated quickly
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentRatingsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         ratingsAdapter = RatingsAdapter(emptyList())
 
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
@@ -54,8 +58,8 @@ class RatingsFragment : Fragment() {
             findNavController().navigate(
                 RatingsFragmentDirections.actionRatingsToWriteRating(
                     placeId = placeId,
-                    placeTitle = placeTitle
-                )
+                    placeTitle = placeTitle,
+                ),
             )
         }
 
@@ -67,7 +71,8 @@ class RatingsFragment : Fragment() {
     }
 
     private fun currentUserId(): Long =
-        requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        requireContext()
+            .getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
             .getLong("user_id", -1L)
 
     // api calls to load ratings

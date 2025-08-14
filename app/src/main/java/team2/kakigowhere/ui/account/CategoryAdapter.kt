@@ -12,10 +12,11 @@ import team2.kakigowhere.data.model.InterestCategory
 
 class CategoryAdapter(
     private val categories: List<InterestCategory>,
-    private val selected: MutableSet<Long>
+    private val selected: MutableSet<Long>,
 ) : RecyclerView.Adapter<CategoryAdapter.ViewHolder>() {
-
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ViewHolder(
+        view: View,
+    ) : RecyclerView.ViewHolder(view) {
         private val checkBox: CheckBox = view.findViewById(R.id.category_checkbox)
         private val textView: TextView = view.findViewById(R.id.category_name)
 
@@ -29,12 +30,13 @@ class CategoryAdapter(
                 if (isChecked) {
                     // If selecting a new one beyond the limit, block it
                     if (selected.size >= 3 && !selected.contains(cat.id)) {
-                        Toast.makeText(
-                            checkBox.context,
-                            "You can only select up to 3 categories",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        checkBox.isChecked = false  // revert visual
+                        Toast
+                            .makeText(
+                                checkBox.context,
+                                "You can only select up to 3 categories",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        checkBox.isChecked = false // revert visual
                     } else {
                         selected.add(cat.id)
                     }
@@ -49,13 +51,21 @@ class CategoryAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_category, parent, false)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): ViewHolder {
+        val view =
+            LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.item_category, parent, false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: ViewHolder,
+        position: Int,
+    ) {
         holder.bind(categories[position])
     }
 

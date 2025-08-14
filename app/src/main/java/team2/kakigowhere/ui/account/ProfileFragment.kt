@@ -25,14 +25,18 @@ class ProfileFragment : Fragment() {
     private val prefsName = "shared_prefs"
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         val prefs = requireContext().getSharedPreferences(prefsName, Context.MODE_PRIVATE)
 
@@ -45,14 +49,18 @@ class ProfileFragment : Fragment() {
         // Save name (local) and sync to backend
         binding.btnSaveName.setOnClickListener {
             // Validate name
-            val inputName = binding.etName.text.toString().trim()
+            val inputName =
+                binding.etName.text
+                    .toString()
+                    .trim()
             if (inputName.isEmpty() || !inputName.matches(Regex(".*[a-zA-Z].*"))) {
                 Toast.makeText(requireContext(), "Please enter a valid name with letters", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             // Save locally
-            prefs.edit()
+            prefs
+                .edit()
                 .putString("user_name", inputName)
                 .apply()
             Toast.makeText(requireContext(), "Name updated", Toast.LENGTH_SHORT).show()
@@ -61,45 +69,57 @@ class ProfileFragment : Fragment() {
             val userId = prefs.getLong("user_id", -1L)
             if (userId > 0L) {
                 // Prefer IDs; if app had older name-based storage, map names -> IDs
-                val currentInterests: List<Long> = run {
-                    val idSet = prefs.getStringSet("user_interests", emptySet()) ?: emptySet()
-                    val ids = idSet.mapNotNull { it.toLongOrNull() }
-                    if (ids.isNotEmpty()) ids else {
-                        val nameSet = prefs.getStringSet("user_interest_names", emptySet()) ?: idSet
-                        val nameToId = InterestCategoryProvider.allCategories
-                            .flatMap { listOf(it.name to it.id, it.description to it.id) }
-                            .associate { (k, v) -> k.lowercase() to v }
-                        nameSet.mapNotNull { nameToId[it.lowercase()] }
+                val currentInterests: List<Long> =
+                    run {
+                        val idSet = prefs.getStringSet("user_interests", emptySet()) ?: emptySet()
+                        val ids = idSet.mapNotNull { it.toLongOrNull() }
+                        if (ids.isNotEmpty()) {
+                            ids
+                        } else {
+                            val nameSet = prefs.getStringSet("user_interest_names", emptySet()) ?: idSet
+                            val nameToId =
+                                InterestCategoryProvider.allCategories
+                                    .flatMap { listOf(it.name to it.id, it.description to it.id) }
+                                    .associate { (k, v) -> k.lowercase() to v }
+                            nameSet.mapNotNull { nameToId[it.lowercase()] }
+                        }
                     }
-                }
 
                 val currentName = inputName
 
                 viewLifecycleOwner.lifecycleScope.launch {
                     try {
-                        val resp = RetrofitClient.api.updateTourist(
-                            userId,
-                            TouristUpdateRequest(
-                                name = currentName,
-                                interestCategoryIds = currentInterests
+                        val resp =
+                            RetrofitClient.api.updateTourist(
+                                userId,
+                                TouristUpdateRequest(
+                                    name = currentName,
+                                    interestCategoryIds = currentInterests,
+                                ),
                             )
-                        )
                         if (resp.isSuccessful) {
                             Toast.makeText(requireContext(), "Name synced", Toast.LENGTH_SHORT).show()
                         } else {
-                            val errBody = try { resp.errorBody()?.string() } catch (_: Exception) { null }
-                            Toast.makeText(
-                                requireContext(),
-                                "Sync failed: HTTP ${resp.code()} ${errBody?.take(200) ?: ""}",
-                                Toast.LENGTH_LONG
-                            ).show()
+                            val errBody =
+                                try {
+                                    resp.errorBody()?.string()
+                                } catch (_: Exception) {
+                                    null
+                                }
+                            Toast
+                                .makeText(
+                                    requireContext(),
+                                    "Sync failed: HTTP ${resp.code()} ${errBody?.take(200) ?: ""}",
+                                    Toast.LENGTH_LONG,
+                                ).show()
                         }
                     } catch (e: Exception) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Failed to sync name: ${e.message}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toast
+                            .makeText(
+                                requireContext(),
+                                "Failed to sync name: ${e.message}",
+                                Toast.LENGTH_LONG,
+                            ).show()
                     }
                 }
             }
@@ -127,13 +147,15 @@ class ProfileFragment : Fragment() {
 
     private fun resolveInterestDisplay(prefs: SharedPreferences): String {
         // Map category id -> user-facing label
-        val idToLabel = InterestCategoryProvider.allCategories
-            .associate { it.id to it.description }
+        val idToLabel =
+            InterestCategoryProvider.allCategories
+                .associate { it.id to it.description }
 
         // Map various name forms -> user-facing label (case-insensitive)
-        val nameToLabel = InterestCategoryProvider.allCategories
-            .flatMap { listOf(it.name to it.description, it.description to it.description) }
-            .associate { (k, v) -> k.lowercase() to v }
+        val nameToLabel =
+            InterestCategoryProvider.allCategories
+                .flatMap { listOf(it.name to it.description, it.description to it.description) }
+                .associate { (k, v) -> k.lowercase() to v }
 
         // 1) Preferred: IDs stored in user_interests
         val idSet = prefs.getStringSet("user_interests", emptySet()) ?: emptySet()

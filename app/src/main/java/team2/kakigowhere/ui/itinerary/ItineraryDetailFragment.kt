@@ -26,21 +26,24 @@ import team2.kakigowhere.data.model.ItineraryViewModel
 import java.time.LocalDate
 import java.util.SortedMap
 
-class ItineraryDetailFragment : Fragment(), View.OnClickListener {
-
+class ItineraryDetailFragment :
+    Fragment(),
+    View.OnClickListener {
     private val itineraryViewModel: ItineraryViewModel by activityViewModels()
     private lateinit var touristItinerary: ItineraryDTO
     private lateinit var itemList: MutableList<ItineraryDetailDTO>
     private lateinit var email: String
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_itinerary_detail, container, false)
-    }
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? = inflater.inflate(R.layout.fragment_itinerary_detail, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
@@ -68,8 +71,11 @@ class ItineraryDetailFragment : Fragment(), View.OnClickListener {
 
                     // if empty list of itinerary
                     val emptyText = view.findViewById<TextView>(R.id.empty_itinerary)
-                    if (itemList.isEmpty()) emptyText.visibility = View.VISIBLE
-                    else emptyText.visibility = View.GONE
+                    if (itemList.isEmpty()) {
+                        emptyText.visibility = View.VISIBLE
+                    } else {
+                        emptyText.visibility = View.GONE
+                    }
 
                     // render items if itinerary list not empty
                     var sortedMapByDate = listToMap(itemList)
@@ -90,7 +96,7 @@ class ItineraryDetailFragment : Fragment(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        when(v?.id) {
+        when (v?.id) {
             R.id.delete_itinerary -> {
                 lifecycleScope.launch {
                     try {

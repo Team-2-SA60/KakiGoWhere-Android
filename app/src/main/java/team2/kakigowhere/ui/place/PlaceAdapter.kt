@@ -11,22 +11,24 @@ import team2.kakigowhere.databinding.ItemPlaceBinding
 
 class PlaceAdapter(
     private var places: List<PlaceDetailDTO>,
-    private val onItemClick: (PlaceDetailDTO) -> Unit
+    private val onItemClick: (PlaceDetailDTO) -> Unit,
 ) : RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
-
     fun update(newItems: List<PlaceDetailDTO>) {
         places = newItems
         notifyDataSetChanged()
     }
 
-    inner class PlaceViewHolder(private val binding: ItemPlaceBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class PlaceViewHolder(
+        private val binding: ItemPlaceBinding,
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(place: PlaceDetailDTO) {
-            binding.apply{
+            binding.apply {
                 placeName.text = place.name
                 placeRating.text = if (place.averageRating == 0.0) "Rating Not Available" else "Rating: %.1f".format(place.averageRating)
 
                 val imagePath = ApiConstants.IMAGE_URL + place.id
-                Glide.with(placeImage.context)
+                Glide
+                    .with(placeImage.context)
                     .load(imagePath)
                     .placeholder(R.drawable.placeholder_image)
                     .centerCrop()
@@ -39,16 +41,23 @@ class PlaceAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
-        val binding = ItemPlaceBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int,
+    ): PlaceViewHolder {
+        val binding =
+            ItemPlaceBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false,
+            )
         return PlaceViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: PlaceViewHolder,
+        position: Int,
+    ) {
         holder.bind(places[position])
     }
 

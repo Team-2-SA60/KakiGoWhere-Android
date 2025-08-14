@@ -24,28 +24,31 @@ import team2.kakigowhere.data.model.ItineraryViewModel
 import java.time.LocalDate
 
 class ItineraryCreateFragment : Fragment() {
-
     private lateinit var email: String
     private val itineraryViewModel: ItineraryViewModel by activityViewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_itinerary_create, container, false)
-    }
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View? = inflater.inflate(R.layout.fragment_itinerary_create, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         // set up calendar state
         val datePicker = view.findViewById<DatePicker>(R.id.calendar_view)
-        val setCalendar = Calendar.getInstance().apply {
-            set(
-                LocalDate.now().year,
-                LocalDate.now().monthValue - 1,
-                LocalDate.now().dayOfMonth
-            )}
+        val setCalendar =
+            Calendar.getInstance().apply {
+                set(
+                    LocalDate.now().year,
+                    LocalDate.now().monthValue - 1,
+                    LocalDate.now().dayOfMonth,
+                )
+            }
         datePicker.minDate = setCalendar.timeInMillis
 
         // get user email from fragment args
@@ -68,7 +71,7 @@ class ItineraryCreateFragment : Fragment() {
         create: Button,
         name: EditText,
         calendar: DatePicker,
-        email: String
+        email: String,
     ) {
         create.setOnClickListener {
             if (create.isEnabled) {
@@ -84,7 +87,7 @@ class ItineraryCreateFragment : Fragment() {
                             Toast.makeText(requireContext(), "Itinerary created", Toast.LENGTH_SHORT).show()
                             itineraryViewModel.loadItineraries(email)
                             findNavController().navigate(
-                                ItineraryCreateFragmentDirections.actionCreateItineraryFragmentToItineraryFragment()
+                                ItineraryCreateFragmentDirections.actionCreateItineraryFragmentToItineraryFragment(),
                             )
                         } else {
                             val error = response.errorBody()?.string()?.substringAfter("title: ")
@@ -98,5 +101,4 @@ class ItineraryCreateFragment : Fragment() {
             }
         }
     }
-
 }
