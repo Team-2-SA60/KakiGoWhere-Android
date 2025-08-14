@@ -79,6 +79,7 @@ class LocationHelper(
             locationRequest,
             object : LocationCallback() {
                 override fun onLocationResult(result: LocationResult) {
+                    if (fragment.userHasInteracted) return
                     var location = result.lastLocation!!
                     var latlng = LatLng(location.latitude, location.longitude)
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 16f))
