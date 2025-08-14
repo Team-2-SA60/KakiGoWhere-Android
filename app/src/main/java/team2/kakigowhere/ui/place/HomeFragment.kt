@@ -204,7 +204,7 @@ class HomeFragment : Fragment() {
                         }
                     } else {
                         tvTitle.text = "No Upcoming itineraries"
-                        tvDates.text = "Create one from the Saved tab"
+                        tvDates.text = "Create one from the 'Itinerary' tab"
                         card.isClickable = false
                     }
                 } else {

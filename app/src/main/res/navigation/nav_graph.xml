@@ -91,6 +91,9 @@
         <action
             android:id="@+id/action_itineraryItemFragment_to_editItineraryItemFragment"
             app:destination="@id/editItineraryItemFragment"/>
+        <action
+            android:id="@+id/action_itineraryItemFragment_to_detailFragment"
+            app:destination="@id/detailFragment"/>
         <argument
             android:name="itinerary"
             app:argType="team2.kakigowhere.data.model.ItineraryDTO"/>
