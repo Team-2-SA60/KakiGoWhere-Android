@@ -18,8 +18,11 @@ class PlaceViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = RetrofitClient.api.getPlaces()
-                if (response.isSuccessful) _places.value = response.body()
-                else throw Exception ("API Error ${response.code()}")
+                if (response.isSuccessful) {
+                    _places.value = response.body()
+                } else {
+                    throw Exception("API Error ${response.code()}")
+                }
             } catch (t: Throwable) {
                 _error.value = t.message
             }

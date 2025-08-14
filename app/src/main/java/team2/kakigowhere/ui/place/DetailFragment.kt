@@ -29,7 +29,6 @@ import java.time.LocalDate
 import java.util.Locale.US
 
 class DetailFragment : Fragment() {
-
     private lateinit var placeDetail: PlaceDetailDTO
     lateinit var bottomSheet: LinearLayout
     lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
@@ -41,14 +40,18 @@ class DetailFragment : Fragment() {
     private val binding get() = _binding!!
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         // handle place detail display
@@ -61,20 +64,22 @@ class DetailFragment : Fragment() {
                 setUpBottomSheet()
 
                 binding.apply {
-
                     // set place details
                     placeName.text = placeDetail.name
                     placeRating.text =
-                        if (placeDetail.averageRating == 0.0) "Rating Not Available"
-                        else
+                        if (placeDetail.averageRating == 0.0) {
+                            "Rating Not Available"
+                        } else {
                             formatRating(placeDetail.averageRating)
+                        }
                     placeHours.text = if (placeDetail.open) "Open Now" else "Closed"
                     placeDescription.text = placeDetail.description
                     placeWebsite.text = placeDetail.url
                     renderOpeningHours(placeDetail.openingDescription)
 
                     val imagePath = ApiConstants.IMAGE_URL + placeDetail.id
-                    Glide.with(this@DetailFragment)
+                    Glide
+                        .with(this@DetailFragment)
                         .load(imagePath)
                         .placeholder(R.drawable.placeholder_image)
                         .centerCrop()
@@ -89,8 +94,8 @@ class DetailFragment : Fragment() {
                         findNavController().navigate(
                             DetailFragmentDirections.actionDetailFragmentToRatingFragment(
                                 placeId = placeDetail.id,
-                                placeTitle = placeDetail.name
-                            )
+                                placeTitle = placeDetail.name,
+                            ),
                         )
                     }
 
@@ -98,7 +103,7 @@ class DetailFragment : Fragment() {
                         val url = placeDetail.url
                         if (url.isNotBlank()) {
                             findNavController().navigate(
-                                DetailFragmentDirections.actionDetailFragmentToWebViewFragment(url = url)
+                                DetailFragmentDirections.actionDetailFragmentToWebViewFragment(url = url),
                             )
                         }
                     }
@@ -107,8 +112,8 @@ class DetailFragment : Fragment() {
                         findNavController().navigate(
                             DetailFragmentDirections.actionDetailFragmentToMapFragment(
                                 placeId = placeDetail.id,
-                                showBack = true
-                            )
+                                showBack = true,
+                            ),
                         )
                     }
 
@@ -119,7 +124,6 @@ class DetailFragment : Fragment() {
                 }
             }
         }
-
     }
 
     private fun setUpBottomSheet() {
@@ -131,19 +135,24 @@ class DetailFragment : Fragment() {
             val recyclerView = bottomSheet.findViewById<RecyclerView>(R.id.itinerary_view)
 
             val emptySheet = bottomSheet.findViewById<TextView>(R.id.empty_sheet)
-            if (itineraryList.isEmpty()) emptySheet.visibility = View.VISIBLE
-            else emptySheet.visibility = View.GONE
+            if (itineraryList.isEmpty()) {
+                emptySheet.visibility = View.VISIBLE
+            } else {
+                emptySheet.visibility = View.GONE
+            }
 
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
-            recyclerView.adapter = ItinerarySheetAdapter(
-                this@DetailFragment,
-                placeDetail.id,
-                itineraryList,
-                onItineraryUpdate = {
-                    val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
-                    val email = prefs.getString("user_email", "") ?: ""
-                    itineraryViewModel.loadItineraries(email)
-                })
+            recyclerView.adapter =
+                ItinerarySheetAdapter(
+                    this@DetailFragment,
+                    placeDetail.id,
+                    itineraryList,
+                    onItineraryUpdate = {
+                        val prefs = requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+                        val email = prefs.getString("user_email", "") ?: ""
+                        itineraryViewModel.loadItineraries(email)
+                    },
+                )
         }
 
         bottomSheet.findViewById<Button>(R.id.close_sheet).setOnClickListener {
@@ -176,4 +185,3 @@ class DetailFragment : Fragment() {
         _binding = null
     }
 }
-

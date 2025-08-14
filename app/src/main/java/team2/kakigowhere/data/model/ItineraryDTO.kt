@@ -8,14 +8,14 @@ import java.time.format.DateTimeFormatter
 data class Itinerary(
     var id: Long? = null,
     var title: String,
-    var startDate: String
+    var startDate: String,
 )
 
 data class ItineraryDetail(
     var id: Long? = null,
     var date: String,
     var notes: String = "",
-    var sequentialOrder: Int? = null
+    var sequentialOrder: Int? = null,
 )
 
 @Parcelize
@@ -24,7 +24,7 @@ data class ItineraryDTO(
     var title: String,
     var startDate: String,
     var days: Long,
-    var placeDisplayId: Long
+    var placeDisplayId: Long,
 ) : Parcelable {
     // convert date in String to LocalDate
     val getStartDate: LocalDate get() = LocalDate.parse(startDate, DateTimeFormatter.ISO_LOCAL_DATE)
@@ -46,7 +46,7 @@ data class ItineraryDetailDTO(
     var placeId: Long,
     var placeTitle: String,
     var placeIsOpen: Boolean,
-    var placeOpenHours: String
+    var placeOpenHours: String,
 ) : Parcelable {
     // convert date in String to LocalDate
     val itemDate: LocalDate get() = LocalDate.parse(date, DateTimeFormatter.ISO_LOCAL_DATE)

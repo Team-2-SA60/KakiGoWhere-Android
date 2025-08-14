@@ -25,14 +25,18 @@ class ExploreFragment : Fragment() {
     private var originalPlaces = listOf<PlaceDetailDTO>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentExploreBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.loadingOverlay.visibility = View.VISIBLE
@@ -59,7 +63,10 @@ class ExploreFragment : Fragment() {
             setupRecycler(currentFilteredPlaces)
         }
         binding.searchButton.setOnClickListener {
-            val q = binding.searchInput.text.toString().trim()
+            val q =
+                binding.searchInput.text
+                    .toString()
+                    .trim()
             if (q.isEmpty()) {
                 Toast.makeText(requireContext(), "Enter a search term", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -81,12 +88,14 @@ class ExploreFragment : Fragment() {
     }
 
     private fun setupRecycler(list: List<PlaceDetailDTO>) {
-        adapter = PlaceAdapter(list) { rowItem ->
-            // Navigate passing the PlaceDTO directly
-            val action = ExploreFragmentDirections
-                .actionExploreFragmentToDetailFragment(rowItem.id)
-            findNavController().navigate(action)
-        }
+        adapter =
+            PlaceAdapter(list) { rowItem ->
+                // Navigate passing the PlaceDTO directly
+                val action =
+                    ExploreFragmentDirections
+                        .actionExploreFragmentToDetailFragment(rowItem.id)
+                findNavController().navigate(action)
+            }
 
         binding.recyclerViewExplore.apply {
             layoutManager = LinearLayoutManager(requireContext())

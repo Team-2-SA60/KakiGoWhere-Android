@@ -21,22 +21,23 @@ import team2.kakigowhere.data.model.LocationViewModel
 
 class LocationHelper(
     private val fragment: MapsFragment,
-    private val locationViewModel: LocationViewModel
+    private val locationViewModel: LocationViewModel,
 ) {
     private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(fragment.requireActivity())
     private val settingsClient = LocationServices.getSettingsClient(fragment.requireActivity())
-    private val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
-        .setMinUpdateIntervalMillis(2000)
-        .build()
+    private val locationRequest =
+        LocationRequest
+            .Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
+            .setMinUpdateIntervalMillis(2000)
+            .build()
 
     // to check if permission is granted, else request it
 
-    fun hasPermission(): Boolean {
-        return ActivityCompat.checkSelfPermission(
+    fun hasPermission(): Boolean =
+        ActivityCompat.checkSelfPermission(
             fragment.requireContext(),
-            Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION,
         ) == PackageManager.PERMISSION_GRANTED
-    }
 
     fun requestPermission(launcher: ActivityResultLauncher<String>) {
         launcher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -46,13 +47,16 @@ class LocationHelper(
 
     fun checkLocationSettings(
         onEnabled: () -> Unit,
-        onFallback: () -> Unit
+        onFallback: () -> Unit,
     ) {
-        val builder = LocationSettingsRequest.Builder()
-            .addLocationRequest(locationRequest)
-            .setAlwaysShow(true)
+        val builder =
+            LocationSettingsRequest
+                .Builder()
+                .addLocationRequest(locationRequest)
+                .setAlwaysShow(true)
 
-        settingsClient.checkLocationSettings(builder.build())
+        settingsClient
+            .checkLocationSettings(builder.build())
             .addOnSuccessListener { onEnabled() }
             .addOnFailureListener { e ->
                 if (e is ResolvableApiException) {
@@ -85,8 +89,7 @@ class LocationHelper(
                     googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 16f))
                 }
             },
-            Looper.getMainLooper()
+            Looper.getMainLooper(),
         )
     }
-
 }

@@ -12,11 +12,13 @@ import com.google.android.material.appbar.MaterialToolbar
 import team2.kakigowhere.R
 
 class WebViewFragment : Fragment(R.layout.fragment_web_view) {
-
     private val args: WebViewFragmentArgs by navArgs()
     private lateinit var webView: WebView
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         webView = view.findViewById(R.id.webView)
 
@@ -36,10 +38,13 @@ class WebViewFragment : Fragment(R.layout.fragment_web_view) {
             viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (webView.canGoBack()) webView.goBack()
-                    else findNavController().popBackStack()
+                    if (webView.canGoBack()) {
+                        webView.goBack()
+                    } else {
+                        findNavController().popBackStack()
+                    }
                 }
-            }
+            },
         )
     }
 

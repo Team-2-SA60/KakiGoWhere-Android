@@ -8,7 +8,6 @@ import kotlinx.coroutines.launch
 import team2.kakigowhere.data.api.RetrofitClient
 
 class ItineraryViewModel : ViewModel() {
-
     private val _itineraries = MutableLiveData<List<ItineraryDTO>>()
     val itineraries: LiveData<List<ItineraryDTO>> = _itineraries
 
@@ -19,8 +18,11 @@ class ItineraryViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = RetrofitClient.api.getItineraries(email)
-                if (response.isSuccessful) _itineraries.value = response.body()
-                else throw Exception ("API Error ${response.code()}")
+                if (response.isSuccessful) {
+                    _itineraries.value = response.body()
+                } else {
+                    throw Exception("API Error ${response.code()}")
+                }
             } catch (t: Throwable) {
                 _error.value = t.message
             }

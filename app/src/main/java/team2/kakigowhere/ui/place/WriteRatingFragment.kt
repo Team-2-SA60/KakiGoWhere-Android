@@ -29,14 +29,18 @@ class WriteRatingFragment : Fragment() {
     private var existingRatingId: Long? = null // to know if update vs create
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentWriteRatingBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         // Title from args; fallback to API if missing
         if (!placeTitle.isNullOrBlank()) {
             binding.placeTitle.text = placeTitle
@@ -53,7 +57,8 @@ class WriteRatingFragment : Fragment() {
     }
 
     private fun currentUserId(): Long =
-        requireContext().getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
+        requireContext()
+            .getSharedPreferences("shared_prefs", Context.MODE_PRIVATE)
             .getLong("user_id", -1L)
 
     private fun loadPlaceTitle() {
@@ -82,11 +87,18 @@ class WriteRatingFragment : Fragment() {
     }
 
     private fun submitRating(userId: Long) {
-        val ratingValue = binding.ratingBar.rating.toInt().coerceIn(1, 5)
+        val ratingValue =
+            binding.ratingBar.rating
+                .toInt()
+                .coerceIn(1, 5)
         if (binding.ratingBar.rating != ratingValue.toFloat()) {
             binding.ratingBar.rating = ratingValue.toFloat()
         }
-        val commentText = binding.comment.text?.toString()?.trim().orEmpty()
+        val commentText =
+            binding.comment.text
+                ?.toString()
+                ?.trim()
+                .orEmpty()
 
         if (commentText.isEmpty()) {
             Toast.makeText(requireContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show()
@@ -94,15 +106,17 @@ class WriteRatingFragment : Fragment() {
         }
 
         // construct request DTO
-        val request = RatingRequest(
-            rating = ratingValue,
-            comment = commentText
-        )
+        val request =
+            RatingRequest(
+                rating = ratingValue,
+                comment = commentText,
+            )
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val resp = withContext(Dispatchers.IO) {
-                RetrofitClient.api.submitOrUpdateRating(placeId, userId, request)
-            }
+            val resp =
+                withContext(Dispatchers.IO) {
+                    RetrofitClient.api.submitOrUpdateRating(placeId, userId, request)
+                }
             if (resp.isSuccessful) {
                 parentFragmentManager.setFragmentResult("rating_updated", Bundle.EMPTY)
                 findNavController().navigateUp()

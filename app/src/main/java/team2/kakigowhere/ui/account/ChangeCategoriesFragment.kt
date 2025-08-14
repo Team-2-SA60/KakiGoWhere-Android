@@ -17,7 +17,6 @@ import team2.kakigowhere.data.model.TouristUpdateRequest
 import team2.kakigowhere.databinding.FragmentChangeCategoriesBinding
 
 class ChangeCategoriesFragment : Fragment() {
-
     private var _binding: FragmentChangeCategoriesBinding? = null
     private val binding get() = _binding!!
     private val prefsName = "shared_prefs"
@@ -25,13 +24,16 @@ class ChangeCategoriesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentChangeCategoriesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
         // Load SharedPreferences
         val prefs = requireContext().getSharedPreferences(prefsName, Context.MODE_PRIVATE)
@@ -69,16 +71,18 @@ class ChangeCategoriesFragment : Fragment() {
 
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
-                    val resp = RetrofitClient.api.updateTourist(
-                        userId,
-                        TouristUpdateRequest(name = name, interestCategoryIds = chosenIds)
-                    )
+                    val resp =
+                        RetrofitClient.api.updateTourist(
+                            userId,
+                            TouristUpdateRequest(name = name, interestCategoryIds = chosenIds),
+                        )
                     if (resp.isSuccessful) {
                         // Persist locally after successful update
-                        val chosenNames = categories
-                            .filter { it.id in chosenIds }
-                            .map { it.description } // use the label ML expects (e.g., "Museums")
-                            .toSet()
+                        val chosenNames =
+                            categories
+                                .filter { it.id in chosenIds }
+                                .map { it.description } // use the label ML expects (e.g., "Museums")
+                                .toSet()
 
                         prefs.edit {
                             putStringSet("user_interests", chosenStr)
@@ -90,12 +94,18 @@ class ChangeCategoriesFragment : Fragment() {
                         Toast.makeText(requireContext(), "Interests synced", Toast.LENGTH_SHORT).show()
                         parentFragmentManager.popBackStack()
                     } else {
-                        val errBody = try { resp.errorBody()?.string() } catch (_: Exception) { null }
-                        Toast.makeText(
-                            requireContext(),
-                            "Sync failed: HTTP ${resp.code()} ${errBody?.take(200) ?: ""}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        val errBody =
+                            try {
+                                resp.errorBody()?.string()
+                            } catch (_: Exception) {
+                                null
+                            }
+                        Toast
+                            .makeText(
+                                requireContext(),
+                                "Sync failed: HTTP ${resp.code()} ${errBody?.take(200) ?: ""}",
+                                Toast.LENGTH_LONG,
+                            ).show()
                     }
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "Failed to sync: ${e.message}", Toast.LENGTH_LONG).show()

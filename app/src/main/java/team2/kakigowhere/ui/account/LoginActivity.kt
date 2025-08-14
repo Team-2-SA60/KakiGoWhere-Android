@@ -12,8 +12,7 @@ import retrofit2.Response
 import team2.kakigowhere.data.api.RetrofitClient
 import team2.kakigowhere.data.model.LoginResponse
 
-class   LoginActivity : AppCompatActivity() {
-
+class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -44,12 +43,13 @@ class   LoginActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 try {
                     // Send credentials as JSON map { "email": "...", "password": "..." }
-                    val response: Response<LoginResponse> = RetrofitClient.api.login(
-                        mapOf(
-                            "email" to email,
-                            "password" to password
+                    val response: Response<LoginResponse> =
+                        RetrofitClient.api.login(
+                            mapOf(
+                                "email" to email,
+                                "password" to password,
+                            ),
                         )
-                    )
 
                     if (response.isSuccessful && response.body() != null) {
                         val user = response.body()!!
@@ -57,11 +57,12 @@ class   LoginActivity : AppCompatActivity() {
 
                         // Store IDs for backend sync, and names/descriptions for display fallback
                         val interestIdSet = interests.map { it.id.toString() }.toSet()
-                        val interestNameSet = interests
-                            .flatMap { listOfNotNull(it.name, it.description) }
-                            .map { it.trim() }
-                            .filter { it.isNotEmpty() }
-                            .toSet()
+                        val interestNameSet =
+                            interests
+                                .flatMap { listOfNotNull(it.name, it.description) }
+                                .map { it.trim() }
+                                .filter { it.isNotEmpty() }
+                                .toSet()
 
                         // Save user info in SharedPreferences
                         val prefs = getSharedPreferences("shared_prefs", MODE_PRIVATE)
@@ -81,24 +82,26 @@ class   LoginActivity : AppCompatActivity() {
                         startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                         finish()
                     } else {
-                        val errorMessage = when (response.code()) {
-                            400 -> "User does not exist."
-                            401 -> "Password is incorrect."
-                            else -> "Login failed: ${response.code()}"
-                        }
-                        Toast.makeText(
-                            this@LoginActivity,
-                            errorMessage,
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        val errorMessage =
+                            when (response.code()) {
+                                400 -> "User does not exist."
+                                401 -> "Password is incorrect."
+                                else -> "Login failed: ${response.code()}"
+                            }
+                        Toast
+                            .makeText(
+                                this@LoginActivity,
+                                errorMessage,
+                                Toast.LENGTH_SHORT,
+                            ).show()
                     }
-
                 } catch (e: Exception) {
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Network error: ${e.localizedMessage}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    Toast
+                        .makeText(
+                            this@LoginActivity,
+                            "Network error: ${e.localizedMessage}",
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
             }
         }

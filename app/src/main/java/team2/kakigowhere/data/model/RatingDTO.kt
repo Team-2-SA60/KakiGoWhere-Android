@@ -1,6 +1,5 @@
 package team2.kakigowhere.data.model
 
-
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
@@ -10,24 +9,23 @@ data class Rating(
     var rating: Int,
     var comment: String,
     var placeId: Long,
-    var touristId: Long
-
+    var touristId: Long,
 ) : Parcelable
 
-data class RatingItem (
+data class RatingItem(
     val ratingId: Long,
     val touristId: Long,
     val touristName: String,
     val rating: Int,
-    val comment: String?
+    val comment: String?,
 )
 
-data class RatingRequest (
+data class RatingRequest(
     val rating: Int,
-    val comment: String
+    val comment: String,
 )
 
-data class RatingSummary (
+data class RatingSummary(
     val averageRating: Double,
-    val ratingCount: Int
+    val ratingCount: Int,
 )

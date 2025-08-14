@@ -15,7 +15,6 @@ import team2.kakigowhere.databinding.ActivityRegisterPage2Binding
 import team2.kakigowhere.ui.account.CategoryAdapter
 
 class RegisterPage2Activity : AppCompatActivity() {
-
     private lateinit var binding: ActivityRegisterPage2Binding
     private lateinit var adapter: CategoryAdapter
 
@@ -36,10 +35,11 @@ class RegisterPage2Activity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = CategoryAdapter(
-            categories = InterestCategoryProvider.allCategories,
-            selected = mutableSetOf() // save selected id
-        )
+        adapter =
+            CategoryAdapter(
+                categories = InterestCategoryProvider.allCategories,
+                selected = mutableSetOf(), // save selected id
+            )
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
     }
@@ -54,22 +54,24 @@ class RegisterPage2Activity : AppCompatActivity() {
                 val email = intent.getStringExtra("email") ?: ""
                 val password = intent.getStringExtra("password") ?: ""
 
-                val request = RegisterRequestDTO(
-                    name = name,
-                    email = email,
-                    password = password,
-                    interestCategoryIds = selectedInterestIds
-                )
+                val request =
+                    RegisterRequestDTO(
+                        name = name,
+                        email = email,
+                        password = password,
+                        interestCategoryIds = selectedInterestIds,
+                    )
 
                 lifecycleScope.launch {
                     try {
                         val response = RetrofitClient.api.registerTourist(request)
                         if (response.isSuccessful) {
-                            Toast.makeText(
-                                this@RegisterPage2Activity,
-                                "Registration successful!",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast
+                                .makeText(
+                                    this@RegisterPage2Activity,
+                                    "Registration successful!",
+                                    Toast.LENGTH_SHORT,
+                                ).show()
                             startActivity(Intent(this@RegisterPage2Activity, LoginActivity::class.java))
                             finish()
                         } else {

@@ -6,7 +6,8 @@ import kotlin.jvm.java
 
 object MLRetrofitClient {
     val api: MLApiService by lazy {
-        Retrofit.Builder()
+        Retrofit
+            .Builder()
             .baseUrl(ApiConstants.ML_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

@@ -27,10 +27,11 @@ class ItinerarySheetAdapter(
     private val context: DetailFragment,
     private val placeId: Long,
     private val itineraryList: List<ItineraryDTO>,
-    private val onItineraryUpdate: () -> Unit
+    private val onItineraryUpdate: () -> Unit,
 ) : RecyclerView.Adapter<ItinerarySheetAdapter.ItinerarySheetViewHolder>() {
-
-    inner class ItinerarySheetViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ItinerarySheetViewHolder(
+        itemView: View,
+    ) : RecyclerView.ViewHolder(itemView) {
         val image = itemView.findViewById<ImageView>(R.id.image)
         val title = itemView.findViewById<TextView>(R.id.title)
         val container = itemView.findViewById<LinearLayout>(R.id.container)
@@ -38,7 +39,7 @@ class ItinerarySheetAdapter(
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): ItinerarySheetViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.itinerary_view, parent, false)
         return ItinerarySheetViewHolder(view)
@@ -46,12 +47,13 @@ class ItinerarySheetAdapter(
 
     override fun onBindViewHolder(
         holder: ItinerarySheetViewHolder,
-        position: Int
+        position: Int,
     ) {
         val itinerary = itineraryList[position]
 
         val imagePath = ApiConstants.IMAGE_URL + itinerary.placeDisplayId
-        Glide.with(context)
+        Glide
+            .with(context)
             .load(imagePath)
             .placeholder(R.drawable.placeholder_image)
             .centerCrop()
@@ -62,39 +64,46 @@ class ItinerarySheetAdapter(
         // display based on number of days in itinerary
         if (itinerary.days > 0L) {
             for (dayNumber in 1..itinerary.days) {
-                val add = Button(context.requireContext()).apply {
-                    // set layout parameters for the button
-                    text = "Day $dayNumber"
-                    textSize = 10f
-                    setTextColor("#6200EA".toColorInt())
-                    layoutParams = LinearLayout.LayoutParams(120, 80).apply {
-                        setMargins(10, 0, 10, 0)
-                    }
-                    setPadding(0, 0, 0, 0)
-                    background = ContextCompat.getDrawable(context, R.drawable.btn_transparent_positive)
-                    backgroundTintList = null
-                    transformationMethod = null
+                val add =
+                    Button(context.requireContext()).apply {
+                        // set layout parameters for the button
+                        text = "Day $dayNumber"
+                        textSize = 10f
+                        setTextColor("#6200EA".toColorInt())
+                        layoutParams =
+                            LinearLayout.LayoutParams(120, 80).apply {
+                                setMargins(10, 0, 10, 0)
+                            }
+                        setPadding(0, 0, 0, 0)
+                        background = ContextCompat.getDrawable(context, R.drawable.btn_transparent_positive)
+                        backgroundTintList = null
+                        transformationMethod = null
 
-                    // save item to itinerary on that day
-                    setOnClickListener {
-                        onDayClick(itinerary, dayNumber)
+                        // save item to itinerary on that day
+                        setOnClickListener {
+                            onDayClick(itinerary, dayNumber)
+                        }
                     }
-                }
                 holder.container.addView(add)
             }
         } else {
-            val text = TextView(context.requireContext()).apply {
-                text = "No days set for itinerary."
-                layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-                )
-            }
+            val text =
+                TextView(context.requireContext()).apply {
+                    text = "No days set for itinerary."
+                    layoutParams =
+                        LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                        )
+                }
             holder.container.addView(text)
         }
     }
 
-    private fun onDayClick(itinerary: ItineraryDTO, day: Long) {
+    private fun onDayClick(
+        itinerary: ItineraryDTO,
+        day: Long,
+    ) {
         var addDate = itinerary.getStartDate.plusDays(day - 1)
         val detail = ItineraryDetail(date = addDate.toString())
         context.lifecycleScope.launch {

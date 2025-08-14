@@ -19,14 +19,14 @@ data class PlaceDetailDTO(
     val averageRating: Double,
     val open: Boolean,
     val active: Boolean,
-    val url: String
+    val url: String,
 )
 
 @Parcelize
 data class InterestCategory(
     var id: Long,
     var name: String,
-    var description: String
+    var description: String,
 ) : Parcelable
 
 data class OpeningHours(
@@ -36,7 +36,7 @@ data class OpeningHours(
     val openMinute: Int,
     val closeDay: Int,
     val closeHour: Int,
-    val closeMinute: Int
+    val closeMinute: Int,
 )
 
 data class PlaceEvent(
@@ -44,7 +44,7 @@ data class PlaceEvent(
     val name: String,
     val description: String,
     val startDate: String,
-    val endDate: String
+    val endDate: String,
 )
 
 @Parcelize
@@ -53,5 +53,5 @@ data class LoginResponse(
     val email: String,
     val name: String,
     val role: String,
-    val interestCategories: List<InterestCategory>? = emptyList()
-) :Parcelable
+    val interestCategories: List<InterestCategory>? = emptyList(),
+) : Parcelable

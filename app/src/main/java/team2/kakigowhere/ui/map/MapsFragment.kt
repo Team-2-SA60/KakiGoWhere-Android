@@ -26,8 +26,9 @@ import team2.kakigowhere.data.model.LocationViewModel
 import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.data.model.PlaceViewModel
 
-class MapsFragment : Fragment(), OnMapReadyCallback {
-
+class MapsFragment :
+    Fragment(),
+    OnMapReadyCallback {
     private val placeViewModel: PlaceViewModel by activityViewModels()
     private val locationViewModel: LocationViewModel by activityViewModels()
 
@@ -42,39 +43,51 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     var userHasInteracted = false
 
     // permission launcher
-    private val locationPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) handleLocation()
-        else Toast.makeText(
-                requireContext(),
-                "Enable location to view places near you",
-                Toast.LENGTH_SHORT).show()
-    }
+    private val locationPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission(),
+        ) { isGranted ->
+            if (isGranted) {
+                handleLocation()
+            } else {
+                Toast
+                    .makeText(
+                        requireContext(),
+                        "Enable location to view places near you",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        locationSettingsLauncher = registerForActivityResult(
-            ActivityResultContracts.StartIntentSenderForResult()
-        ) { result ->
-            if (result.resultCode != Activity.RESULT_OK) {
-                locationViewModel.userDeniedLocation = true
-                Toast.makeText(
-                    requireContext(),
-                    "Enable location to view places near you",
-                    Toast.LENGTH_SHORT).show()
+        locationSettingsLauncher =
+            registerForActivityResult(
+                ActivityResultContracts.StartIntentSenderForResult(),
+            ) { result ->
+                if (result.resultCode != Activity.RESULT_OK) {
+                    locationViewModel.userDeniedLocation = true
+                    Toast
+                        .makeText(
+                            requireContext(),
+                            "Enable location to view places near you",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                }
             }
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? = inflater.inflate(R.layout.fragment_maps, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?,
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
         places = placeViewModel.places.value!!
@@ -106,8 +119,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
 
         // check if location permissions and settings enabled
         if (args.placeId == 0L) {
-            if (locationHelper.hasPermission()) handleLocation()
-            else locationHelper.requestPermission(locationPermissionLauncher)
+            if (locationHelper.hasPermission()) {
+                handleLocation()
+            } else {
+                locationHelper.requestPermission(locationPermissionLauncher)
+            }
         }
 
         // initialise map of places
@@ -128,27 +144,35 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
             if (args.showBack) {
                 backButton.visibility = View.VISIBLE
                 backButton.setOnClickListener { findNavController().navigateUp() }
-            } else backButton.visibility = View.GONE
+            } else {
+                backButton.visibility = View.GONE
+            }
         }
     }
 
     private fun handleLocation() {
         locationHelper.checkLocationSettings(
             onEnabled = { locationHelper.centerToCurrentLocation(googleMap) },
-            onFallback = { Toast.makeText(
-                requireContext(),
-                "Enable location to view places near you",
-                Toast.LENGTH_SHORT).show() }
+            onFallback = {
+                Toast
+                    .makeText(
+                        requireContext(),
+                        "Enable location to view places near you",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+            },
         )
     }
 
     private fun addPlaceMarkers(googleMap: GoogleMap) {
         places.forEach { place ->
             val location = LatLng(place.latitude, place.longitude)
-            val marker = googleMap.addMarker(
-                MarkerOptions()
-                    .position(location)
-                    .title(place.name))
+            val marker =
+                googleMap.addMarker(
+                    MarkerOptions()
+                        .position(location)
+                        .title(place.name),
+                )
             marker?.tag = place.id
             markersMap[place.id] = marker!!
         }
@@ -174,7 +198,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
         googleMap.setOnInfoWindowClickListener { marker ->
             val place = places.find { it.id == marker.tag }
             findNavController().navigate(
-                MapsFragmentDirections.actionMapFragmentToDetailFragment(place!!.id)
+                MapsFragmentDirections.actionMapFragmentToDetailFragment(place!!.id),
             )
         }
     }

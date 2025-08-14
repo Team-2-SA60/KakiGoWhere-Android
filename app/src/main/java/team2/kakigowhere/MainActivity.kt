@@ -13,7 +13,6 @@ import team2.kakigowhere.data.model.ItineraryViewModel
 import team2.kakigowhere.data.model.PlaceViewModel
 
 class MainActivity : AppCompatActivity() {
-
     private val placeViewModel: PlaceViewModel by viewModels()
     private val itineraryViewModel: ItineraryViewModel by viewModels()
 
@@ -47,10 +46,11 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(
                         R.id.homeFragment,
                         null,
-                        NavOptions.Builder()
+                        NavOptions
+                            .Builder()
                             .setPopUpTo(navController.graph.startDestinationId, false)
                             .setLaunchSingleTop(true)
-                            .build()
+                            .build(),
                     )
                     true
                 }
@@ -58,10 +58,11 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(
                         R.id.mapFragment,
                         null,
-                        NavOptions.Builder()
+                        NavOptions
+                            .Builder()
                             .setPopUpTo(navController.graph.startDestinationId, false)
                             .setLaunchSingleTop(true)
-                            .build()
+                            .build(),
                     )
                     true
                 }
@@ -69,10 +70,11 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(
                         R.id.exploreFragment,
                         null,
-                        NavOptions.Builder()
+                        NavOptions
+                            .Builder()
                             .setPopUpTo(navController.graph.startDestinationId, false)
                             .setLaunchSingleTop(true)
-                            .build()
+                            .build(),
                     )
                     true
                 }
@@ -80,10 +82,11 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(
                         R.id.itineraryFragment,
                         null,
-                        NavOptions.Builder()
+                        NavOptions
+                            .Builder()
                             .setPopUpTo(navController.graph.startDestinationId, false)
                             .setLaunchSingleTop(true)
-                            .build()
+                            .build(),
                     )
                     true
                 }
@@ -91,10 +94,11 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(
                         R.id.profileFragment,
                         null,
-                        NavOptions.Builder()
+                        NavOptions
+                            .Builder()
                             .setPopUpTo(navController.graph.startDestinationId, false)
                             .setLaunchSingleTop(true)
-                            .build()
+                            .build(),
                     )
                     true
                 }
