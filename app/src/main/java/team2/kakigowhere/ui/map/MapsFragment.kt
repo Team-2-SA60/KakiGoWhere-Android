@@ -39,7 +39,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     private val markersMap = mutableMapOf<Long, Marker>()
     private val args: MapsFragmentArgs by navArgs()
     private var isMapReady = false
-    private var userHasInteracted = false
+    var userHasInteracted = false
 
     // permission launcher
     private val locationPermissionLauncher = registerForActivityResult(
@@ -127,7 +127,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun handleLocation() {
-        if (userHasInteracted) return
         locationHelper.checkLocationSettings(
             onEnabled = { locationHelper.centerToCurrentLocation(googleMap) },
             onFallback = { Toast.makeText(
