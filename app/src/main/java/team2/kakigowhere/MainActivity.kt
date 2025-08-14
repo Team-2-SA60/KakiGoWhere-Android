@@ -76,9 +76,9 @@ class MainActivity : AppCompatActivity() {
                     )
                     true
                 }
-                R.id.savedFragment -> {
+                R.id.itineraryFragment -> {
                     navController.navigate(
-                        R.id.savedFragment,
+                        R.id.itineraryFragment,
                         null,
                         NavOptions.Builder()
                             .setPopUpTo(navController.graph.startDestinationId, false)

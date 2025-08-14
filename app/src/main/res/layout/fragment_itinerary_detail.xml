@@ -3,20 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".ui.ItineraryDetailFragment">
+    tools:context=".ui.itinerary.ItineraryDetailFragment">
+
+    <ImageButton
+        android:id="@+id/detail_back"
+        android:src="@drawable/back_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="4dp"
+        android:backgroundTint="#00000000"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_margin="20dp">
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="8dp">
 
         <TextView
             android:id="@+id/title_display"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:textSize="20dp"
             tools:text="Itinerary title"/>
 
@@ -24,17 +37,43 @@
             android:id="@+id/delete_itinerary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/selected_color"
-            android:text="Delete"/>
+            android:layout_gravity="center_vertical"
+            android:text="Delete"
+            app:backgroundTint="@null"
+            android:textColor="@color/selected_color"
+            android:background="@drawable/btn_transparent_negative"
+            android:minWidth="80dp"
+            android:minHeight="37dp"
+            android:padding="0dp"/>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="#000"
+        android:layout_marginStart="16sp"
+        android:layout_marginEnd="16sp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/empty_itinerary"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:visibility="gone"
+        android:text="No days planned for this itinerary. \n Add new day to itinerary!"
+        android:textColor="@color/unselected_color"
+        android:textSize="18sp"
+        android:textStyle="italic" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itinerary_days"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp" />
+        android:padding="16dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,17 +87,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="20dp"
-            android:backgroundTint="@color/selected_color"
-            android:text="Delete last day"/>
+            android:text="Delete last day"
+            app:backgroundTint="@null"
+            android:textColor="@color/selected_color"
+            android:background="@drawable/btn_transparent_negative"
+            android:minWidth="140dp"
+            android:minHeight="37dp"
+            android:padding="0dp"/>
 
         <Button
             android:id="@+id/add_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:text="Add new day"/>
+            android:text="Add new day"
+            app:backgroundTint="@null"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_positive"
+            android:minWidth="140dp"
+            android:minHeight="37dp"
+            android:padding="0dp"/>
 
     </LinearLayout>
-
 
 </LinearLayout>

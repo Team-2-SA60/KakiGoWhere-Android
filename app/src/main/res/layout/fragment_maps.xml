@@ -4,7 +4,7 @@
     android:id="@+id/fragment_maps_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MapsFragment">
+    tools:context=".ui.map.MapsFragment">
 
     <!-- Google Map -->
     <fragment
@@ -14,10 +14,14 @@
         android:layout_height="match_parent" />
 
     <!-- Back button, visibility controlled in code -->
-    <Button
+    <ImageButton
+        android:src="@drawable/back_arrow"
         android:id="@+id/backButton"
         android:text="Back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp" />
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="4dp"
+        android:backgroundTint="#00000000" />
+
 </FrameLayout>

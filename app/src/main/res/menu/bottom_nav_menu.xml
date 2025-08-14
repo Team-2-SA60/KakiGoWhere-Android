@@ -13,9 +13,9 @@
         android:icon="@drawable/ic_explore"
         android:title="Explore" />
     <item
-        android:id="@+id/savedFragment"
+        android:id="@+id/itineraryFragment"
         android:icon="@drawable/ic_bookmark"
-        android:title="Saved" />
+        android:title="Itinerary" />
     <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/ic_profile"

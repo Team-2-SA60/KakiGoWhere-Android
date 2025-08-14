@@ -1,62 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Back Button -->
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="4dp"
+        android:backgroundTint="#00000000"
+        android:src="@drawable/back_arrow" />
 
     <LinearLayout
         android:id="@+id/ratings"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="15dp"
         android:paddingStart="15dp"
+        android:paddingTop="15dp"
         android:paddingEnd="15dp"
         android:paddingBottom="5dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        >
-
-        <!-- Back Button -->
-        <Button
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/back"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:paddingBottom="8dp" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Title -->
         <TextView
             android:id="@+id/placeTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="Marina Bay Sands"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:paddingBottom="8dp" />
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <!-- Ratings Panel -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ratings"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingBottom="8dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:background="#EEEEEE"
-            android:padding="8dp"
             android:layout_marginBottom="15dp"
-            android:gravity="center_vertical">
+            android:background="#EDE7F6"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/averageRating"
@@ -64,37 +58,44 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="N/A"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/ratingCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="2"
                 android:text="0 rating(s)"
-                android:textSize="18sp"
-                android:layout_marginStart="8dp" />
+                android:textSize="14sp" />
 
             <Button
                 android:id="@+id/btnWriteEdit"
-                style="@style/ratingbutton" android:layout_width="wrap_content"
+                style="@style/ratingbutton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Write / Edit Rating"
-                android:paddingHorizontal="12dp"
-                android:layout_marginStart="8dp" />
+                android:text="Write/Edit Rating"
+                android:textStyle="bold"
+                app:backgroundTint="@null"
+                android:textColor="@drawable/btn_text_color"
+                android:background="@drawable/btn_positive"
+                android:minWidth="140dp"
+                android:minHeight="34dp"
+                android:padding="0dp"/>
+
         </LinearLayout>
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/myRating"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:orientation="vertical"
+            android:layout_height="135dp"
             android:background="@drawable/my_rating_border"
-            android:padding="10dp"
+            android:clipToPadding="false"
+            android:orientation="vertical"
             android:overScrollMode="ifContentScrolls"
-            android:clipToPadding="false">
+            android:padding="10dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -106,24 +107,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Your Rating"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvMyRating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
                     android:text="4 / 5"
-                    android:textSize="18sp"
-                    android:layout_marginTop="4dp" />
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tvMyComment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
                     android:text="Your comment goes here."
-                    android:textSize="18sp"
-                    android:layout_marginTop="6dp" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
@@ -131,14 +132,12 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvOtherRatings"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:padding="16dp"
         app:layout_constraintTop_toBottomOf="@id/ratings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

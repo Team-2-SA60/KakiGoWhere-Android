@@ -2,20 +2,6 @@ package team2.kakigowhere.data.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import com.google.gson.annotations.SerializedName
-
-//data class PlaceDTO(
-//    val id: Long,
-//    val googleId: String,
-//    val name: String,
-//    val address: String,
-//    val latitude: Double,
-//    val longitude: Double,
-//    val isActive: Boolean,
-//    val isOpen: Boolean,
-//    val averageRating: Double,
-//    val interestCategories: List<InterestCategory>
-//)
 
 data class PlaceDetailDTO(
     val id: Long,
@@ -33,9 +19,9 @@ data class PlaceDetailDTO(
     val averageRating: Double,
     val open: Boolean,
     val active: Boolean,
-    @SerializedName("url")
     val url: String
 )
+
 @Parcelize
 data class InterestCategory(
     var id: Long,
@@ -67,6 +53,5 @@ data class LoginResponse(
     val email: String,
     val name: String,
     val role: String,
-    @SerializedName("interestCategories")
-    val interestsCategories: List<InterestCategory>? = emptyList()
+    val interestCategories: List<InterestCategory>? = emptyList()
 ) :Parcelable

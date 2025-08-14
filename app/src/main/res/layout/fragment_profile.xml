@@ -1,63 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/profile_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:layout_marginBottom="20dp"
+        android:background="#EDE7F6"
+        android:text=" My Profile"
+        android:textSize="20dp"
+        android:textStyle="bold"/>
 
     <!-- Name Field -->
-    <EditText
-        android:id="@+id/etName"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Your Name"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btnSaveName"
-        app:layout_constraintHorizontal_chainStyle="packed" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btnSaveName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save Name"
-        app:layout_constraintBaseline_toBaselineOf="@id/etName"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Your Name"
+            android:background="@android:drawable/editbox_background_normal"
+            android:layout_marginEnd="16dp" />
 
-    <!-- Interests Field -->
-    <TextView
-        android:id="@+id/etInterests"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Your Interests (comma-separated)"
-        app:layout_constraintTop_toBottomOf="@id/etName"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="24dp"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <Button
+            android:id="@+id/btnSaveName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Update name"
+            app:backgroundTint="@null"
+            android:textColor="@drawable/btn_text_color"
+            android:background="@drawable/btn_positive"
+            android:minWidth="110dp"
+            android:minHeight="33dp"
+            android:padding="0dp" />
 
-    <!-- Change Interests -->
-    <Button
-        android:id="@+id/btnChangeCategories"
-        android:layout_width="0dp"
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Change Interests"
+        android:orientation="vertical">
+
+        <!-- Interests Field -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:gravity="center"
+            android:textColor="@color/unselected_color"
+            android:text="You're interested in:"/>
+
+        <TextView
+            android:id="@+id/etInterests"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:text="Your Interests (comma-separated)" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/etInterests"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:orientation="horizontal"
+        android:gravity="center">
 
-    <!-- Log Out -->
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Log Out"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/btnChangeCategories"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- Log Out -->
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:text="Log Out"
+            app:backgroundTint="@null"
+            android:textColor="@color/selected_color"
+            android:background="@drawable/btn_transparent_negative"
+            android:minWidth="100dp"
+            android:minHeight="37dp"
+            android:padding="0dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Change Interests -->
+        <Button
+            android:id="@+id/btnChangeCategories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:text="Change Interests"
+            app:backgroundTint="@null"
+            android:textColor="#6200EA"
+            android:background="@drawable/btn_transparent_positive"
+            android:minWidth="140dp"
+            android:minHeight="37dp"
+            android:padding="0dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

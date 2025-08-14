@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Your Rating"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="4 / 5"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:layout_marginTop="4dp" />
 
         <TextView
@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Your comment goes here."
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:layout_marginTop="6dp" />
 
 </LinearLayout>

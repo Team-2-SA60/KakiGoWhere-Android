@@ -8,21 +8,21 @@
     <!-- Home Fragment -->
     <fragment
         android:id="@+id/homeFragment"
-        android:name="team2.kakigowhere.ui.HomeFragment"
+        android:name="team2.kakigowhere.ui.place.HomeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_savedItemFragment"
-            app:destination="@id/savedItemFragment" />
+            android:id="@+id/action_homeFragment_to_itineraryItemFragment"
+            app:destination="@id/itineraryItemFragment" />
     </fragment>
 
     <!-- Explore Fragment -->
     <fragment
         android:id="@+id/exploreFragment"
-        android:name="team2.kakigowhere.ui.ExploreFragment"
+        android:name="team2.kakigowhere.ui.place.ExploreFragment"
         android:label="Explore"
         tools:layout="@layout/fragment_explore">
         <action
@@ -30,10 +30,10 @@
             app:destination="@id/detailFragment" />
     </fragment>
 
-    <!-- DetailFragment -->
+    <!-- Detail Fragment -->
     <fragment
         android:id="@+id/detailFragment"
-        android:name="team2.kakigowhere.ui.DetailFragment"
+        android:name="team2.kakigowhere.ui.place.DetailFragment"
         android:label="Details"
         tools:layout="@layout/fragment_detail">
         <action
@@ -50,10 +50,10 @@
             app:argType="long"/>
     </fragment>
 
-    <!-- MapFragment -->
+    <!-- Map Fragment -->
     <fragment
         android:id="@+id/mapFragment"
-        android:name="team2.kakigowhere.ui.MapsFragment"
+        android:name="team2.kakigowhere.ui.map.MapsFragment"
         android:label="Map"
         tools:layout="@layout/fragment_maps">
         <action
@@ -69,37 +69,37 @@
             android:defaultValue="false"/>
     </fragment>
 
-    <!-- SavedFragment -->
+    <!-- Itinerary Fragment -->
     <fragment
-        android:id="@+id/savedFragment"
-        android:name="team2.kakigowhere.ui.ItineraryFragment"
-        android:label="Saved"
-        tools:layout="@layout/fragment_saved">
+        android:id="@+id/itineraryFragment"
+        android:name="team2.kakigowhere.ui.itinerary.ItineraryFragment"
+        android:label="Itinerary"
+        tools:layout="@layout/fragment_itinerary">
         <action
-            android:id="@+id/action_savedFragment_to_savedItemFragment"
-            app:destination="@id/savedItemFragment"/>
+            android:id="@+id/action_itineraryFragment_to_itineraryItemFragment"
+            app:destination="@id/itineraryItemFragment"/>
         <action
-            android:id="@+id/action_savedFragment_to_createItineraryFragment"
+            android:id="@+id/action_itineraryFragment_to_createItineraryFragment"
             app:destination="@id/createItineraryFragment"/>
     </fragment>
 
     <fragment
-        android:id="@+id/savedItemFragment"
-        android:name="team2.kakigowhere.ui.ItineraryDetailFragment"
+        android:id="@+id/itineraryItemFragment"
+        android:name="team2.kakigowhere.ui.itinerary.ItineraryDetailFragment"
         android:label="Saved Item"
         tools:layout="@layout/fragment_itinerary_detail">
         <action
-            android:id="@+id/action_savedItemFragment_to_editSavedItemFragment"
-            app:destination="@id/editSavedItemFragment"/>
+            android:id="@+id/action_itineraryItemFragment_to_editItineraryItemFragment"
+            app:destination="@id/editItineraryItemFragment"/>
         <argument
             android:name="itinerary"
             app:argType="team2.kakigowhere.data.model.ItineraryDTO"/>
     </fragment>
 
     <fragment
-        android:id="@+id/editSavedItemFragment"
-        android:name="team2.kakigowhere.ui.ItineraryEditFragment"
-        android:label="Edit Saved Item"
+        android:id="@+id/editItineraryItemFragment"
+        android:name="team2.kakigowhere.ui.itinerary.ItineraryEditFragment"
+        android:label="Edit Itinerary Item"
         tools:layout="@layout/fragment_itinerary_edit">
         <argument
             android:name="itinerary_detail"
@@ -108,27 +108,23 @@
 
     <fragment
         android:id="@+id/createItineraryFragment"
-        android:name="team2.kakigowhere.ui.ItineraryCreateFragment"
+        android:name="team2.kakigowhere.ui.itinerary.ItineraryCreateFragment"
         android:label="Create Itinerary"
         tools:layout="@layout/fragment_itinerary_create">
         <action
-            android:id="@+id/action_createItineraryFragment_to_savedFragment"
-            app:destination="@id/savedFragment"/>
+            android:id="@+id/action_createItineraryFragment_to_itineraryFragment"
+            app:destination="@id/itineraryFragment"/>
         <argument
             android:name="tourist_email"
             app:argType="string"/>
     </fragment>
 
-
-    <!-- ProfileFragment -->
+    <!-- Profile Fragment -->
     <fragment
         android:id="@+id/profileFragment"
-        android:name="team2.kakigowhere.ui.ProfileFragment"
+        android:name="team2.kakigowhere.ui.account.ProfileFragment"
         android:label="Profile"
         tools:layout="@layout/fragment_profile">
-
-
-        <!-- NEW: action to ChangeCategoriesFragment -->
         <action
             android:id="@+id/action_profileFragment_to_changeCategoriesFragment"
             app:destination="@id/changeCategoriesFragment" />
@@ -137,17 +133,16 @@
             app:destination="@id/ratingFragment" />
     </fragment>
 
-    <!-- NEW: ChangeCategoriesFragment entry -->
     <fragment
         android:id="@+id/changeCategoriesFragment"
-        android:name="team2.kakigowhere.ui.ChangeCategoriesFragment"
+        android:name="team2.kakigowhere.ui.account.ChangeCategoriesFragment"
         android:label="Change Interests"
         tools:layout="@layout/fragment_change_categories" />
 
     <!-- Rating fragment -->
     <fragment
         android:id="@+id/ratingFragment"
-        android:name="team2.kakigowhere.ui.RatingsFragment"
+        android:name="team2.kakigowhere.ui.place.RatingsFragment"
         android:label="Ratings"
         tools:layout="@layout/fragment_ratings">
         <action
@@ -163,7 +158,7 @@
 
     <fragment
         android:id="@+id/writeRatingFragment"
-        android:name="team2.kakigowhere.ui.WriteRatingFragment"
+        android:name="team2.kakigowhere.ui.place.WriteRatingFragment"
         android:label="Write/Edit Rating">
         <argument
             android:name="place_id"
@@ -173,10 +168,10 @@
             app:argType="string" />
     </fragment>
 
-    <!-- WebView fragment -->
+    <!-- WebView Fragment -->
     <fragment
         android:id="@+id/webViewFragment"
-        android:name="team2.kakigowhere.ui.WebViewFragment"
+        android:name="team2.kakigowhere.ui.place.WebViewFragment"
         android:label="Website"
         tools:layout="@layout/fragment_web_view">
         <argument

@@ -2,26 +2,66 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="550dp"
+    android:layout_height="480dp"
     android:orientation="vertical"
-    android:background="@color/material_dynamic_primary80"
+    android:background="@drawable/rounded_corners"
     android:visibility="gone"
     app:behavior_peekHeight="0dp"
     app:behavior_hideable="true"
     app:behavior_draggable="false"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <TextView
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:text="Add to Itinerary"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/close_sheet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="×"
+            android:textSize="28sp"
+            android:textColor="@color/black"
+            android:backgroundTint="#E3F2FD"
+            android:minWidth="38dp"
+            android:minHeight="44dp"
+            android:padding="0dp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginHorizontal="16dp"
+        android:background="@color/material_dynamic_neutral70" />
+
+    <TextView
+        android:id="@+id/empty_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:gravity="center"
-        android:text="Add to itinerary"
-        android:textSize="18sp"
-        android:textStyle="bold"/>
+        android:visibility="gone"
+        android:text="You don't have any existing itineraries. \nGo to 'Itinerary' tab to create an itinerary."/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/itinerary_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="10dp"/>
 
 </LinearLayout>
