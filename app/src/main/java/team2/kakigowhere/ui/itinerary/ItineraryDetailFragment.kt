@@ -8,8 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.NumberPicker
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +27,7 @@ import team2.kakigowhere.data.model.ItineraryDetailDTO
 import team2.kakigowhere.data.model.ItineraryViewModel
 import java.time.LocalDate
 import java.util.SortedMap
+import kotlin.math.min
 
 class ItineraryDetailFragment :
     Fragment(),
@@ -55,11 +58,13 @@ class ItineraryDetailFragment :
         var deleteBtn = view.findViewById<Button>(R.id.delete_itinerary)
         var addDayBtn = view.findViewById<Button>(R.id.add_day)
         var deleteDayBtn = view.findViewById<Button>(R.id.delete_day)
+        var bulkDaysBtn = view.findViewById<Button>(R.id.bulk_days)
         var backBtn = view.findViewById<ImageButton>(R.id.detail_back)
 
         deleteBtn.setOnClickListener(this)
         addDayBtn.setOnClickListener(this)
         deleteDayBtn.setOnClickListener(this)
+        bulkDaysBtn.setOnClickListener(this)
         backBtn.setOnClickListener(this)
 
         // set up display of itinerary items
@@ -148,6 +153,9 @@ class ItineraryDetailFragment :
                     }
                 }
             }
+            R.id.bulk_days -> {
+                showBulkDaysDialog()
+            }
             R.id.detail_back -> {
                 findNavController().navigateUp()
             }
@@ -160,5 +168,88 @@ class ItineraryDetailFragment :
         var sortedListByOrder = list.sortedBy { it.sequentialOrder }
         val sortedMapByDate = sortedListByOrder.groupBy { it.itemDate }.toSortedMap()
         return sortedMapByDate
+    }
+
+    private fun showBulkDaysDialog() {
+        // Create dialog layout programmatically
+        val numberPicker = NumberPicker(requireContext()).apply {
+            minValue = 1
+            maxValue = 10
+            value = 1
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Bulk Days Operation")
+            .setMessage("Select number of days to add or delete:")
+            .setView(numberPicker)
+            .setPositiveButton("Add Days") { _, _ ->
+                val count = numberPicker.value
+                addMultipleDays(count)
+            }
+            .setNegativeButton("Delete Days") { _, _ ->
+                val count = numberPicker.value
+                deleteMultipleDays(count)
+            }
+            .setNeutralButton("Cancel", null)
+            .show()
+    }
+
+    private fun addMultipleDays(count: Int) {
+        lifecycleScope.launch {
+            try {
+                var lastDate = touristItinerary.getLastDate()
+                var successCount = 0
+                
+                for (i in 1..count) {
+                    val addedDate = lastDate.plusDays(i.toLong())
+                    val addedDay = ItineraryDetail(date = addedDate.toString())
+                    
+                    val response = RetrofitClient.api.addItineraryDay(touristItinerary.id, addedDay)
+                    if (response.isSuccessful) {
+                        successCount++
+                    }
+                }
+                
+                if (successCount > 0) {
+                    Toast.makeText(requireContext(), "Added $successCount days to itinerary", Toast.LENGTH_LONG).show()
+                    itineraryViewModel.loadItineraries(email)
+                    findNavController().navigateUp()
+                } else {
+                    Toast.makeText(requireContext(), "Failed to add days", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error adding multiple days", Toast.LENGTH_SHORT).show()
+                Log.d("API Error", e.toString())
+            }
+        }
+    }
+
+    private fun deleteMultipleDays(count: Int) {
+        lifecycleScope.launch {
+            try {
+                var sortedListByDate = itemList.sortedBy { it.itemDate }
+                var successCount = 0
+                
+                // Delete from the last day backwards
+                for (i in 0 until min(count, sortedListByDate.size)) {
+                    val dateToDelete = sortedListByDate[sortedListByDate.size - 1 - i].date
+                    val response = RetrofitClient.api.deleteItineraryDay(touristItinerary.id, dateToDelete)
+                    if (response.isSuccessful) {
+                        successCount++
+                    }
+                }
+                
+                if (successCount > 0) {
+                    Toast.makeText(requireContext(), "Deleted $successCount days from itinerary", Toast.LENGTH_LONG).show()
+                    itineraryViewModel.loadItineraries(email)
+                    findNavController().navigateUp()
+                } else {
+                    Toast.makeText(requireContext(), "Failed to delete days", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error deleting multiple days", Toast.LENGTH_SHORT).show()
+                Log.d("API Error", e.toString())
+            }
+        }
     }
 }

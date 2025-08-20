@@ -86,12 +86,26 @@
             android:id="@+id/delete_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="10dp"
             android:text="Delete last day"
             app:backgroundTint="@null"
             android:textColor="@color/selected_color"
             android:background="@drawable/btn_transparent_negative"
-            android:minWidth="140dp"
+            android:minWidth="120dp"
+            android:minHeight="37dp"
+            android:padding="0dp"/>
+
+        <Button
+            android:id="@+id/bulk_days"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:text="Bulk days"
+            app:backgroundTint="@null"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_positive"
+            android:minWidth="100dp"
             android:minHeight="37dp"
             android:padding="0dp"/>
 
@@ -99,12 +113,12 @@
             android:id="@+id/add_day"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:text="Add new day"
             app:backgroundTint="@null"
             android:textColor="@color/white"
             android:background="@drawable/btn_positive"
-            android:minWidth="140dp"
+            android:minWidth="120dp"
             android:minHeight="37dp"
             android:padding="0dp"/>
 
