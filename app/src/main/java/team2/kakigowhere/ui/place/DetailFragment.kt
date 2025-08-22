@@ -2,12 +2,14 @@ package team2.kakigowhere.ui.place
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log.e
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +29,7 @@ import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.databinding.FragmentDetailBinding
 import team2.kakigowhere.ui.ItinerarySheetAdapter
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Locale.US
 
 class DetailFragment : Fragment() {
@@ -124,6 +127,32 @@ class DetailFragment : Fragment() {
                         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                     }
                 }
+
+                binding.eventContainer.visibility = View.GONE
+                val today = LocalDate.now()
+                // filter for active today
+                val items =
+                    placeDetail.placeEvents
+                        .filter { e ->
+                            runCatching {
+                                val s = LocalDate.parse(e.startDate)
+                                val d = LocalDate.parse(e.endDate)
+                                !today.isBefore(s) && !today.isAfter(d)
+                            }.getOrDefault(false)
+                        }.distinctBy { Triple(it.name, it.startDate, it.endDate) }
+                        .sortedWith(compareBy({ it.startDate }, { it.endDate }, { it.name }))
+
+                if (items.isNotEmpty()) {
+                    val lines =
+                        items.map { e ->
+                            val desc = e.description.takeIf { it.isNotBlank() }?.let { " ($it)" } ?: ""
+                            "${dateRangeFormatter(e.startDate, e.endDate)}: ${e.name}$desc"
+                        }
+                    binding.eventDescription.text = lines.joinToString("\n")
+                    binding.eventContainer.visibility = View.VISIBLE
+                } else {
+                    binding.eventContainer.visibility = View.GONE
+                }
             }
         }
     }
@@ -181,6 +210,21 @@ class DetailFragment : Fragment() {
         val i = v.toInt()
         return if (v == i.toDouble()) "$i / 5" else String.format(US, "%.1f / 5", v)
     }
+
+    // pretty format the date
+    private val dateFormat = DateTimeFormatter.ofPattern("d MMM yyyy", US)
+
+    private fun dateRangeFormatter(
+        start: String,
+        end: String,
+    ): String =
+        try {
+            val s = LocalDate.parse(start)
+            val e = LocalDate.parse(end)
+            if (s == e) s.format(dateFormat) else "${s.format(dateFormat)} – ${e.format(dateFormat)}"
+        } catch (_: Exception) {
+            "$start – $end"
+        }
 
     override fun onDestroyView() {
         super.onDestroyView()
