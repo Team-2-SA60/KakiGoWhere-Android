@@ -19,7 +19,7 @@ import team2.kakigowhere.data.model.ItineraryDetailDTO
 
 class ItineraryItemAdapter(
     private val context: ItineraryDetailFragment,
-    private val items: List<ItineraryDetailDTO>
+    private val items: List<ItineraryDetailDTO>,
 ) : RecyclerView.Adapter<ItineraryItemAdapter.ItemViewHolder>() {
     inner class ItemViewHolder(
         itemView: View,
@@ -89,7 +89,7 @@ class ItineraryItemAdapter(
 
             holder.itemView.setOnClickListener {
                 context.findNavController().navigate(
-                    ItineraryDetailFragmentDirections.actionItineraryItemFragmentToDetailFragment(item.placeId)
+                    ItineraryDetailFragmentDirections.actionItineraryItemFragmentToDetailFragment(item.placeId),
                 )
             }
         }

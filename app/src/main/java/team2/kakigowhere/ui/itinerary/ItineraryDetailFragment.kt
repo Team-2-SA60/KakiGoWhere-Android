@@ -172,25 +172,25 @@ class ItineraryDetailFragment :
 
     private fun showBulkDaysDialog() {
         // Create dialog layout programmatically
-        val numberPicker = NumberPicker(requireContext()).apply {
-            minValue = 1
-            maxValue = 10
-            value = 1
-        }
+        val numberPicker =
+            NumberPicker(requireContext()).apply {
+                minValue = 1
+                maxValue = 10
+                value = 1
+            }
 
-        AlertDialog.Builder(requireContext())
+        AlertDialog
+            .Builder(requireContext())
             .setTitle("Bulk Days Operation")
             .setMessage("Select number of days to add or delete:")
             .setView(numberPicker)
             .setPositiveButton("Add Days") { _, _ ->
                 val count = numberPicker.value
                 addMultipleDays(count)
-            }
-            .setNegativeButton("Delete Days") { _, _ ->
+            }.setNegativeButton("Delete Days") { _, _ ->
                 val count = numberPicker.value
                 deleteMultipleDays(count)
-            }
-            .setNeutralButton("Cancel", null)
+            }.setNeutralButton("Cancel", null)
             .show()
     }
 
@@ -199,17 +199,17 @@ class ItineraryDetailFragment :
             try {
                 var lastDate = touristItinerary.getLastDate()
                 var successCount = 0
-                
+
                 for (i in 1..count) {
                     val addedDate = lastDate.plusDays(i.toLong())
                     val addedDay = ItineraryDetail(date = addedDate.toString())
-                    
+
                     val response = RetrofitClient.api.addItineraryDay(touristItinerary.id, addedDay)
                     if (response.isSuccessful) {
                         successCount++
                     }
                 }
-                
+
                 if (successCount > 0) {
                     Toast.makeText(requireContext(), "Added $successCount days to itinerary", Toast.LENGTH_LONG).show()
                     itineraryViewModel.loadItineraries(email)
@@ -229,7 +229,7 @@ class ItineraryDetailFragment :
             try {
                 var sortedListByDate = itemList.sortedBy { it.itemDate }
                 var successCount = 0
-                
+
                 // Delete from the last day backwards
                 for (i in 0 until min(count, sortedListByDate.size)) {
                     val dateToDelete = sortedListByDate[sortedListByDate.size - 1 - i].date
@@ -238,7 +238,7 @@ class ItineraryDetailFragment :
                         successCount++
                     }
                 }
-                
+
                 if (successCount > 0) {
                     Toast.makeText(requireContext(), "Deleted $successCount days from itinerary", Toast.LENGTH_LONG).show()
                     itineraryViewModel.loadItineraries(email)
