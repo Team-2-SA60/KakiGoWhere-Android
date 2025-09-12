@@ -39,16 +39,26 @@ class ExploreFragment : Fragment() {
     ) {
         super.onViewCreated(view, savedInstanceState)
 
+        // init adapter + recycler once
+        adapter = PlaceAdapter { rowItem ->
+            val action = ExploreFragmentDirections.actionExploreFragmentToDetailFragment(rowItem.id)
+            findNavController().navigate(action)
+        }
+        binding.recyclerViewExplore.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = this@ExploreFragment.adapter
+        }
+
         fetchPlaces()
 
         binding.sortDefault.setOnClickListener {
             currentFilteredPlaces = currentFilteredPlaces.sortedBy { it.name }
-            setupRecycler(currentFilteredPlaces)
+            showList(currentFilteredPlaces)
         }
 
         binding.sortRating.setOnClickListener {
             currentFilteredPlaces = currentFilteredPlaces.sortedByDescending { it.averageRating }
-            setupRecycler(currentFilteredPlaces)
+            showList(currentFilteredPlaces)
         }
 
         binding.searchButton.setOnClickListener {
@@ -62,10 +72,10 @@ class ExploreFragment : Fragment() {
             }
             currentFilteredPlaces = originalPlaces.filter { it.name.contains(q, true) }
             if (currentFilteredPlaces.isEmpty()) {
-                setupRecycler(emptyList())
+                showList(emptyList())
                 binding.tvNoResult.visibility = View.VISIBLE
             } else {
-                setupRecycler(currentFilteredPlaces.sortedBy { it.name })
+                showList(currentFilteredPlaces.sortedBy { it.name })
             }
         }
 
@@ -76,20 +86,8 @@ class ExploreFragment : Fragment() {
         }
     }
 
-    private fun setupRecycler(list: List<PlaceDetailDTO>) {
-        adapter =
-            PlaceAdapter(list) { rowItem ->
-                // Navigate passing the PlaceDTO directly
-                val action =
-                    ExploreFragmentDirections
-                        .actionExploreFragmentToDetailFragment(rowItem.id)
-                findNavController().navigate(action)
-            }
-
-        binding.recyclerViewExplore.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = this@ExploreFragment.adapter
-        }
+    private fun showList(list: List<PlaceDetailDTO>) {
+        adapter.submitList(list)
         binding.tvNoResult.visibility = View.GONE
     }
 
@@ -103,7 +101,7 @@ class ExploreFragment : Fragment() {
             currentFilteredPlaces = originalPlaces
 
             withContext(Dispatchers.Main) {
-                setupRecycler(currentFilteredPlaces.sortedBy { it.name })
+                showList(currentFilteredPlaces.sortedBy { it.name })
                 binding.loadingOverlay.visibility = View.GONE
             }
         }

@@ -6,8 +6,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import team2.kakigowhere.data.model.ItineraryViewModel
 import team2.kakigowhere.data.model.PlaceViewModel
@@ -38,72 +38,12 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-        // sets bottom navigation view with the navigation controller
+        // Hook up BottomNavigationView with NavController to enable
+        // multiple back stacks and proper state restoration across tabs
         val navView = findViewById<BottomNavigationView>(R.id.bottom_nav_view)
-        navView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.homeFragment -> {
-                    navController.navigate(
-                        R.id.homeFragment,
-                        null,
-                        NavOptions
-                            .Builder()
-                            .setPopUpTo(navController.graph.startDestinationId, false)
-                            .setLaunchSingleTop(true)
-                            .build(),
-                    )
-                    true
-                }
-                R.id.mapFragment -> {
-                    navController.navigate(
-                        R.id.mapFragment,
-                        null,
-                        NavOptions
-                            .Builder()
-                            .setPopUpTo(navController.graph.startDestinationId, false)
-                            .setLaunchSingleTop(true)
-                            .build(),
-                    )
-                    true
-                }
-                R.id.exploreFragment -> {
-                    navController.navigate(
-                        R.id.exploreFragment,
-                        null,
-                        NavOptions
-                            .Builder()
-                            .setPopUpTo(navController.graph.startDestinationId, false)
-                            .setLaunchSingleTop(true)
-                            .build(),
-                    )
-                    true
-                }
-                R.id.itineraryFragment -> {
-                    navController.navigate(
-                        R.id.itineraryFragment,
-                        null,
-                        NavOptions
-                            .Builder()
-                            .setPopUpTo(navController.graph.startDestinationId, false)
-                            .setLaunchSingleTop(true)
-                            .build(),
-                    )
-                    true
-                }
-                R.id.profileFragment -> {
-                    navController.navigate(
-                        R.id.profileFragment,
-                        null,
-                        NavOptions
-                            .Builder()
-                            .setPopUpTo(navController.graph.startDestinationId, false)
-                            .setLaunchSingleTop(true)
-                            .build(),
-                    )
-                    true
-                }
-                else -> false
-            }
-        }
+        navView.setupWithNavController(navController)
+
+        // Optional: ignore reselection to preserve current scroll/child back stack
+        navView.setOnItemReselectedListener { /* no-op */ }
     }
 }

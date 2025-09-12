@@ -60,6 +60,7 @@ dependencies {
 
     implementation(libs.play.services.maps)
     implementation(libs.play.services.location)
+    implementation(libs.maps.utils)
 
     implementation(libs.retrofit2.retrofit)
     implementation(libs.retrofit2.converter.gson)

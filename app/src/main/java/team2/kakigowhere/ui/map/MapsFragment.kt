@@ -21,6 +21,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.maps.android.clustering.ClusterManager
+import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import team2.kakigowhere.R
 import team2.kakigowhere.data.model.LocationViewModel
 import team2.kakigowhere.data.model.PlaceDetailDTO
@@ -37,7 +40,9 @@ class MapsFragment :
     private lateinit var locationHelper: LocationHelper
     lateinit var locationSettingsLauncher: ActivityResultLauncher<IntentSenderRequest>
 
-    private val markersMap = mutableMapOf<Long, Marker>()
+    // Marker map no longer needed with cluster manager
+    private lateinit var clusterManager: ClusterManager<PlaceClusterItem>
+    private lateinit var clusterRenderer: DefaultClusterRenderer<PlaceClusterItem>
     private val args: MapsFragmentArgs by navArgs()
     private var isMapReady = false
     var userHasInteracted = false
@@ -90,16 +95,16 @@ class MapsFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        places = placeViewModel.places.value!!
+        // Initialize helper; places will be loaded via observer when available
         locationHelper = LocationHelper(this, locationViewModel)
 
         // update map when Place live data is updated
-        placeViewModel.places.observe(viewLifecycleOwner) { places ->
-            if (places != null) {
-                // notify when map is ready
-                val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-                mapFragment.getMapAsync(this)
-            }
+        placeViewModel.places.observe(viewLifecycleOwner) { list ->
+            // When places load the first time, ensure map is created
+            val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+            mapFragment.getMapAsync(this)
+            // Store latest list
+            if (list != null) places = list
         }
     }
 
@@ -127,17 +132,21 @@ class MapsFragment :
         }
 
         // initialise map of places
-        places = placeViewModel.places.value!!
-        if (places.isNotEmpty()) {
-            addPlaceMarkers(googleMap)
-            setLaunchDetailFragment(googleMap)
+        val current = if (this::places.isInitialized) places else placeViewModel.places.value.orEmpty()
+        if (current.isNotEmpty()) {
+            places = current
+            setUpClustering()
 
             // below logics run if navigated from Detail Fragment
             if (args.placeId != 0L) {
-                val place = places.find { it.id == args.placeId }!!
-                val location = LatLng(place.latitude, place.longitude)
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16f))
-                markersMap[args.placeId]?.showInfoWindow()
+                val item = clusterManager.algorithm.items.find { it.place.id == args.placeId }
+                if (item != null) {
+                    val location = item.position
+                    googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16f))
+                    // Attempt to show info window for the item marker
+                    val m = (clusterManager.renderer as? DefaultClusterRenderer<PlaceClusterItem>)?.getMarker(item)
+                    m?.showInfoWindow()
+                }
             }
 
             val backButton = requireView().findViewById<ImageButton>(R.id.backButton)
@@ -147,6 +156,62 @@ class MapsFragment :
             } else {
                 backButton.visibility = View.GONE
             }
+        }
+    }
+
+    private fun setUpClustering() {
+        // Create or reset cluster manager
+        clusterManager = ClusterManager(requireContext(), googleMap)
+        clusterRenderer =
+            object : DefaultClusterRenderer<PlaceClusterItem>(requireContext(), googleMap, clusterManager) {
+                override fun onClusterItemRendered(item: PlaceClusterItem, marker: Marker) {
+                    super.onClusterItemRendered(item, marker)
+                    // Preserve old behavior: tag marker with place id so InfoWindowAdapter works
+                    marker.tag = item.place.id
+                }
+            }
+        clusterManager.renderer = clusterRenderer
+
+        // Forward map events to cluster manager
+        googleMap.setOnCameraIdleListener(clusterManager)
+        googleMap.setOnMarkerClickListener(clusterManager)
+
+        // Custom info window for individual items
+        clusterManager.markerCollection.setInfoWindowAdapter(InfoWindowAdapter(requireContext(), places))
+
+        // Navigate when user taps info window
+        clusterManager.setOnClusterItemInfoWindowClickListener { item ->
+            findNavController().navigate(
+                MapsFragmentDirections.actionMapFragmentToDetailFragment(item.place.id),
+            )
+        }
+
+        // Nice UX: center when tapping an item (let default show info window)
+        clusterManager.setOnClusterItemClickListener { item ->
+            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(item.position, 16f))
+            false
+        }
+
+        // Add all items and cluster
+        val items = places.map { PlaceClusterItem(it) }
+        clusterManager.clearItems()
+        clusterManager.addItems(items)
+        clusterManager.cluster()
+
+        // Make clusters clickable: zoom into bounds of items
+        clusterManager.setOnClusterClickListener { cluster ->
+            try {
+                val builder = LatLngBounds.Builder()
+                cluster.items.forEach { builder.include(it.position) }
+                val bounds = builder.build()
+                val padding = 100 // px
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+            } catch (_: Exception) {
+                // Fallback: slight zoom-in on cluster position
+                val target = cluster.position
+                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(target, googleMap.cameraPosition.zoom + 1f))
+            }
+            true
         }
     }
 
@@ -164,44 +229,7 @@ class MapsFragment :
         )
     }
 
-    private fun addPlaceMarkers(googleMap: GoogleMap) {
-        places.forEach { place ->
-            val location = LatLng(place.latitude, place.longitude)
-            val marker =
-                googleMap.addMarker(
-                    MarkerOptions()
-                        .position(location)
-                        .title(place.name),
-                )
-            marker?.tag = place.id
-            markersMap[place.id] = marker!!
-        }
-
-        // set custom info window adapter
-        googleMap.setInfoWindowAdapter(InfoWindowAdapter(requireContext(), places))
-
-        // handle marker clicks
-        googleMap.setOnMarkerClickListener { marker ->
-            val place = places.find { it.id == marker.tag }
-            if (place != null) {
-                val location = LatLng(place.latitude, place.longitude)
-                googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(location, 16f))
-                marker.showInfoWindow()
-                true
-            } else {
-                false
-            }
-        }
-    }
-
-    private fun setLaunchDetailFragment(googleMap: GoogleMap) {
-        googleMap.setOnInfoWindowClickListener { marker ->
-            val place = places.find { it.id == marker.tag }
-            findNavController().navigate(
-                MapsFragmentDirections.actionMapFragmentToDetailFragment(place!!.id),
-            )
-        }
-    }
+    // Legacy marker helpers removed in favor of clustering
 
     override fun onResume() {
         super.onResume()

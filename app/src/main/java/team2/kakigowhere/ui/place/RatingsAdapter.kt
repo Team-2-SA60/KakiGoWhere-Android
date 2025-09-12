@@ -4,16 +4,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import team2.kakigowhere.R
 import team2.kakigowhere.data.model.RatingItem
 
-class RatingsAdapter(
-    private var items: List<RatingItem>,
-) : RecyclerView.Adapter<RatingsAdapter.RatingViewHolder>() {
-    fun submitList(newList: List<RatingItem>) {
-        items = newList
-        notifyDataSetChanged()
+class RatingsAdapter : ListAdapter<RatingItem, RatingsAdapter.RatingViewHolder>(DIFF) {
+    companion object {
+        private val DIFF =
+            object : DiffUtil.ItemCallback<RatingItem>() {
+                override fun areItemsTheSame(oldItem: RatingItem, newItem: RatingItem): Boolean =
+                    oldItem.ratingId == newItem.ratingId
+
+                override fun areContentsTheSame(oldItem: RatingItem, newItem: RatingItem): Boolean =
+                    oldItem == newItem
+            }
     }
 
     inner class RatingViewHolder(
@@ -39,11 +45,9 @@ class RatingsAdapter(
         holder: RatingViewHolder,
         position: Int,
     ) {
-        val dto = items[position]
+        val dto = getItem(position)
         holder.name.text = dto.touristName
         holder.rating.text = "${dto.rating} / 5"
         holder.comment.text = dto.comment ?: ""
     }
-
-    override fun getItemCount(): Int = items.size
 }
