@@ -2,6 +2,8 @@ package team2.kakigowhere.ui.place
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.signature.ObjectKey
@@ -11,12 +13,17 @@ import team2.kakigowhere.data.model.PlaceDetailDTO
 import team2.kakigowhere.databinding.ItemPlaceBinding
 
 class PlaceAdapter(
-    private var places: List<PlaceDetailDTO>,
     private val onItemClick: (PlaceDetailDTO) -> Unit,
-) : RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
-    fun update(newItems: List<PlaceDetailDTO>) {
-        places = newItems
-        notifyDataSetChanged()
+) : ListAdapter<PlaceDetailDTO, PlaceAdapter.PlaceViewHolder>(DIFF) {
+    companion object {
+        private val DIFF =
+            object : DiffUtil.ItemCallback<PlaceDetailDTO>() {
+                override fun areItemsTheSame(oldItem: PlaceDetailDTO, newItem: PlaceDetailDTO): Boolean =
+                    oldItem.id == newItem.id
+
+                override fun areContentsTheSame(oldItem: PlaceDetailDTO, newItem: PlaceDetailDTO): Boolean =
+                    oldItem == newItem
+            }
     }
 
     inner class PlaceViewHolder(
@@ -36,9 +43,7 @@ class PlaceAdapter(
                     .centerCrop()
                     .into(placeImage)
 
-                root.setOnClickListener {
-                    onItemClick(place)
-                }
+                root.setOnClickListener { onItemClick(place) }
             }
         }
     }
@@ -60,8 +65,6 @@ class PlaceAdapter(
         holder: PlaceViewHolder,
         position: Int,
     ) {
-        holder.bind(places[position])
+        holder.bind(getItem(position))
     }
-
-    override fun getItemCount(): Int = places.size
 }

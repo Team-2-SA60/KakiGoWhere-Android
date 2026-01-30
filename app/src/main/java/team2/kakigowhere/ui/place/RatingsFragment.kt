@@ -41,7 +41,7 @@ class RatingsFragment : Fragment() {
         view: View,
         savedInstanceState: Bundle?,
     ) {
-        ratingsAdapter = RatingsAdapter(emptyList())
+        ratingsAdapter = RatingsAdapter()
 
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
         binding.placeTitle.text = placeTitle

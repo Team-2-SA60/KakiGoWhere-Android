@@ -55,12 +55,11 @@ class HomeFragment : Fragment() {
         val emptyView = view.findViewById<TextView>(R.id.tvEmpty)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter =
-            PlaceAdapter(emptyList()) { place ->
-                findNavController().navigate(
-                    HomeFragmentDirections.actionHomeFragmentToDetailFragment(place.id),
-                )
-            }
+        adapter = PlaceAdapter { place ->
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToDetailFragment(place.id),
+            )
+        }
         recyclerView.adapter = adapter
 
         // observe live data from Place view model
@@ -78,7 +77,7 @@ class HomeFragment : Fragment() {
 
                 if (interests.isEmpty()) {
                     showEmpty(emptyView, recyclerView)
-                    adapter.update(emptyList())
+                    adapter.submitList(emptyList())
                     return@launch
                 }
 
@@ -90,9 +89,9 @@ class HomeFragment : Fragment() {
 
                 if (recPlaces.isEmpty()) {
                     showEmpty(emptyView, recyclerView)
-                    adapter.update(emptyList())
+                    adapter.submitList(emptyList())
                 } else {
-                    adapter.update(recPlaces)
+                    adapter.submitList(recPlaces)
                     showList(recyclerView, emptyView)
                 }
             }
